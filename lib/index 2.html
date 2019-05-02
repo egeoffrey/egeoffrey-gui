@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>myHouse</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+<!-- jQuery -->
+<script src="jquery/jquery.min.js"></script>
+
+<!-- MQTT -->
+<script src="mqtt/mqttws31.min.js"></script>
+
+<!-- Bootstrap -->
+<script src="bootstrap/bootstrap.min.js"></script>
+<link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="font-awesome/font-awesome.min.css">
+<!-- <link rel="stylesheet" href="font-awesome/font-awesome-animation.min.css"> -->
+
+<!-- SlimScroll -->
+<script src="slimScroll/jquery.slimscroll.min.js"></script>
+
+<!-- FastClick -->
+<script src="fastclick/fastclick.min.js"></script>
+
+<!--  Bootstrap-notify -->
+<script src="bootstrap-notify/bootstrap-notify.min.js"></script>
+
+<!--  JsonEditor -->
+<script src="jsoneditor/jsoneditor.min.js"></script>
+
+<!--  Touchspin -->
+<script src="touchspin/touchspin.min.js"></script>
+<link rel="stylesheet" href="touchspin/touchspin.min.css" />
+
+<!-- TitaToggle -->
+<link rel="stylesheet" href="titatoggle/titatoggle.min.css" />
+
+<!--  Datatables -->
+<script src="datatables/datatables.min.js"></script>
+<script src="datatables-plugins/dataTables.responsive.min.js"></script>
+<script src="datatables-plugins/dataTables.colResize.js"></script>
+<link rel="stylesheet" href="datatables/datatables.min.css" />
+<link rel="stylesheet" href="datatables-plugins/dataTables.fontAwesome.css" />
+<link rel="stylesheet" href="datatables-plugins/responsive.dataTables.min.css" />
+
+<!--  dhtmlxscheduler -->
+<script src="dhtmlxscheduler/dhtmlxscheduler.js"></script>
+<script src="dhtmlxscheduler/ext/dhtmlxscheduler_recurring.js"></script>
+<script src="dhtmlxscheduler/ext/dhtmlxscheduler_serialize.js"></script>
+<script src="dhtmlxscheduler/ext/dhtmlxscheduler_quick_info.js"></script>
+<script src="dhtmlxscheduler/ext/dhtmlxscheduler_key_nav.js"></script>
+<script src="dhtmlxscheduler/ext/dhtmlxscheduler_collision.js"></script>
+<script src="dhtmlxscheduler/ext/dhtmlxscheduler_minical.js"></script>
+<script src="dhtmlxscheduler/ext/dhtmlxscheduler_limit.js"></script>
+<script src="dhtmlxscheduler/ext/dhtmlxscheduler_responsive.js"></script>
+<link rel="stylesheet" href="dhtmlxscheduler/dhtmlxscheduler_flat.css" />
+<link rel="stylesheet" href="dhtmlxscheduler/ext/dhtmlxscheduler_responsive.css" />
+	
+<!--  Highstock -->
+<script src="highstock/highstock.js"></script>
+<script src="highstock/highcharts-more.js"></script>
+<script src="highstock/modules/exporting.js"></script>
+<script src="highstock/modules/offline-exporting.js"></script>
+
+<!--  AdminLTE -->
+<link rel="stylesheet" href="AdminLTE/AdminLTE.css">
+<link rel="stylesheet" href="AdminLTE/all-skins.css">
+
+<!--  js-yaml -->
+
+<script src="js-yaml/js-yaml.min.js"></script>
+
+<!-- IE8 Respond -->
+<!--[if lt IE 9]>
+        <script src="IE8/html5shiv.min.js"></script>
+        <script src="IE8/respond.min.js"></script>
+    <![endif]-->
+</head>
+<style>
+th.dt-center, td.dt-center { text-align: center; }
+.center-block {float: none !important}
+.col-centered{
+    margin: 0 auto;
+    float: none;
+}
+
+.modal-dialog {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.modal-content {
+  height: auto;
+  border-radius: 0;
+}
+
+</style>
+
+<body class="hold-transition sidebar-mini">
+	<div class="wrapper">
+
+		<!-- =============================================== -->
+		<header class="main-header">
+			<a href="/" class="logo"> 
+				<span class="logo-mini"><b>my</b>H</span> 
+				<span class="logo-lg"><b><i class="fa fa-home"></i>
+						my</b>House</span>
+			</a>
+
+			<nav class="navbar navbar-static-top" role="navigation">
+				<a href="" id="sidebar-button" class="sidebar-toggle" data-toggle="offcanvas" role="button"> 
+					<span class="sr-only">Toggle navigation</span> 
+					<span class="icon-bar"></span> 
+					<span class="icon-bar"></span> 
+					<span class="icon-bar"></span>
+				</a>
+				<div class="navbar-custom-menu">
+					<ul class="nav navbar-nav">
+						<li class="dropdown notifications-menu hidden" id="clock_container">
+							<a class="logo"> 
+								<span class="logo-mini"><i class="fa fa-clock-o"></i></span> 
+								<span class="logo-lg"><b><i class="fa fa-clock-o"></i></b> <span id="clock"></span>
+							</a>
+						</li>
+						<li class="dropdown notifications-menu">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								<i class="fa fa-ban"></i>
+								<span class="label label-danger" id="notification_alert_count"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<ul class="menu" id="notification_alert"></ul>
+								</li>
+								<li class="footer"><a href="#alerts">View all</a></li>
+							</ul>
+						</li>
+						<li class="dropdown notifications-menu">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								<i class="fa fa-warning"></i>
+								<span class="label label-warning" id="notification_warning_count"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<ul class="menu" id="notification_warning"></ul>
+								</li>
+								<li class="footer"><a href="#alerts">View all</a></li>
+							</ul>
+						</li>
+						<li class="dropdown notifications-menu">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								<i class="fa fa-info"></i>
+								<span class="label label-success" id="notification_info_count"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<ul class="menu" id="notification_info"></ul>
+								</li>
+								<li class="footer"><a href="#alerts">View all</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+
+		<!-- =============================================== -->
+		<aside class="main-sidebar">
+			<section class="sidebar">
+
+				<ul class="sidebar-menu">
+					<li class="header"><a id="status"><i
+							class="fa fa-circle text-red"></i> Offline</a></li>
+				</ul>
+
+				<ul class="sidebar-menu" id="menu">
+				</ul>
+
+			</section>
+		</aside>
+
+		<!-- =============================================== -->
+
+		<div class="content-wrapper">
+			<section class="content-header">
+				<h1 id="title"></h1>
+			</section>
+			<section class="content">
+				<div id="body"></div>
+				<div style="padding: 10px 0px; text-align: center;">
+					<div class="text-muted"><a href="#">Go to Top</a></div>
+				</div>
+			</section>
+		</div>
+
+		<!-- =============================================== -->
+
+		<div class="modal fade modal-fullscreen force-fullscreen" id="popup">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="popup_title"></h4>
+					</div>
+					<div class="modal-body">
+						<div class="row"><div class="col-lg-12 center-block" id="popup_body"></div></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary pull-rigth" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- =============================================== -->
+		<footer class="main-footer" id="footer">
+			<div class="pull-right hidden-xs">
+				<b>Version</b> <span id="version"></span>
+			</div>
+			<strong>Copyright &copy; 2018 <a href="http://my-house.sourceforge.net" target="_new">myHouse</a>.
+			</strong> All rights reserved.
+		</footer>
+		
+		<!-- =============================================== -->
+		
+		<aside class="control-sidebar hidden control-sidebar-dark">
+			<ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+				<li><a><i class='fa fa-paint-brush'></i></a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="control-sidebar-skin-tab">
+					<div>
+					<ul class="list-unstyled clearfix">
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="blue" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9;"></span><span class="bg-light-blue" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin">Blue</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="black" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div style="box-shadow: 0 0 2px rgba(0,0,0,0.1)" class="clearfix"><span style="display:block; width: 20%; float: left; height: 7px; background: #fefefe;"></span><span style="display:block; width: 80%; float: left; height: 7px; background: #fefefe;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #222;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin">Black</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="purple" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px;" class="bg-purple-active"></span><span class="bg-purple" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin">Purple</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="green" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px;" class="bg-green-active"></span><span class="bg-green" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin">Green</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="red" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px;" class="bg-red-active"></span><span class="bg-red" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin">Red</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="yellow" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px;" class="bg-yellow-active"></span><span class="bg-yellow" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin">Yellow</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="blue-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9;"></span><span class="bg-light-blue" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin" style="font-size: 12px">Blue Light</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="black-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div style="box-shadow: 0 0 2px rgba(0,0,0,0.1)" class="clearfix"><span style="display:block; width: 20%; float: left; height: 7px; background: #fefefe;"></span><span style="display:block; width: 80%; float: left; height: 7px; background: #fefefe;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin" style="font-size: 12px">Black Light</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="purple-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px;" class="bg-purple-active"></span><span class="bg-purple" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin" style="font-size: 12px">Purple Light</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="green-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px;" class="bg-green-active"></span><span class="bg-green" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin" style="font-size: 12px">Green Light</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="red-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px;" class="bg-red-active"></span><span class="bg-red" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin" style="font-size: 12px">Red Light</p></li>
+						<li style="float:left; width: 33.33333%; padding: 5px;"><a href="javascript:void(0);" data-skin="yellow-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover"><div><span style="display:block; width: 20%; float: left; height: 7px;" class="bg-yellow-active"></span><span class="bg-yellow" style="display:block; width: 80%; float: left; height: 7px;"></span></div><div><span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span></div></a><p class="text-center no-margin" style="font-size: 12px;">Yellow Light</p></li>
+					</ul>
+					</div>
+				</div>
+			</div>
+		</aside>
+		<div class="control-sidebar-bg"></div>
+
+		<!-- =============================================== -->
+	</div>
+
+	<script src="AdminLTE/app.js"></script>
+
+
+	<script type="text/javascript">
+	// current module
+	var current_module = '';
+	// configuration
+	var conf = {};
+	// refresher
+	var refresher;
+	// hostname
+	var hostname = '';
+	// available skins
+	var skins = [
+		"skin-blue",
+		"skin-black",
+		"skin-red",
+		"skin-yellow",
+		"skin-purple",
+		"skin-green",
+		"skin-blue-light",
+		"skin-black-light",
+		"skin-red-light",
+		"skin-yellow-light",
+		"skin-purple-light",
+		"skin-green-light"
+	];
+	// scheduler's events
+	var scheduler_events = [];
+
+	/**
+		MAIN ENTRY POINT
+	**/
+    
+	$(document).ready(function(){
+		// request the configuration first
+		$.getJSON(hostname+"config",function(data) {
+			conf = data;
+			//Add the change skin listener
+			$("[data-skin]").on('click', function (e) {
+				e.preventDefault();
+				// save the skin
+				setting_save('skin',$(this).data('skin'));
+				// load the skin
+				load_skin($(this).data('skin'));
+			});
+			// load the default or saved skin
+			load_skin(conf["gui"]["skin"])
+			// set the version
+			load_version();
+			// load the status
+			load_status();
+			// load the side menu
+			load_menu();
+			// load the clock
+			if (conf["gui"]["clock"]["enabled"]) {
+				$("#clock_container").removeClass("hidden");
+				setInterval(load_clock, 1000);
+			}
+			// load the alerts
+			load_alerts();
+			// load the given module
+			current_module = conf['gui']['default_module'];
+			if (location.hash) current_module = location.hash.replace('#','');
+			load_module(current_module);
+			// whenever the hash changes, load the requested module
+			window.onhashchange = function() {
+				if (location.hash) current_module = location.hash.replace('#','');
+				load_module(current_module);
+			};
+		});
+	});
+
+	/**
+		LOAD MAIN PAGE COMPONENTS
+	**/
+
+	// load the internet status and public hostname
+	function load_status() {
+		log("info","loading internet status");
+		$.getJSON(hostname+"internet_status",function(data) {
+			$("#status").html('<i class="fa fa-circle text-success"></i><span title="'+data.hostname+' ('+data.region+')">'+data.hostname+'</span>');
+			log("info","current hostname: "+data.hostname);
+		});
+	}
+	
+	// load menu
+	function load_menu() {
+		log("info","loading menu");
+		// empty the menu
+		$("#menu").empty()
+		for (var i = 0; i < conf["gui"]["sections"].length; i++) {
+			var section = conf["gui"]["sections"][i];
+			var section_id = section["section_id"]
+			var label = lang(section["display_name"])
+			$("#menu").append('<li class="header">'+label.toUpperCase()+'</li>');
+			for (var j = 0; j < conf["modules"].length; j++) {
+				var module = conf['modules'][j];
+				if (! module["enabled"]) continue;
+				if (module["section_id"] != section_id) continue;
+				log("info","adding menu item "+lang(module['display_name']));
+				$("#menu").append('<li id="menu_item_'+module["module_id"]+'"><a href="#'+module['module_id']+'"> <i class="fa '+module['icon']+'"></i> <span>'+capitalizeFirst(lang(module['display_name']))+'</span></a></li>');
+				// close the menu on click on mobile devices
+				$("#menu_item_"+module["module_id"]).click(function(){
+					if ($("body").hasClass('sidebar-open')) $("body").removeClass('sidebar-open').removeClass('sidebar-collapse').trigger('collapsed.pushMenu');
+				})
+			}
+		}
+	}
+	
+	// load version
+	function load_version() {
+		log("info","setting version to "+conf['constants']['version']);
+		$("#version").html(conf['constants']['version']);
+	}
+	
+	// load the clock
+	function load_clock() {
+		clock_conf = conf["gui"]["clock"];
+        var date = new Date();
+        var h = date.getHours();
+		var meridiem = "";
+		if (clock_conf["24_hours"]) h = pad_number(h);
+		else {
+			if (h >= 12) meridiem = " PM";
+			else meridiem = " AM";
+			if (h > 12) h = h - 12;
+			else if (h === 0) h = 12;	
+		}
+        var m = pad_number(date.getMinutes());
+        var s = pad_number(date.getSeconds());
+		var clock = h+":"+m;
+		if (clock_conf["show_seconds"]) clock = clock+":"+s;
+		clock = clock + meridiem;
+		$("#clock").html(clock);
+	}
+	
+	// add a trailing 0 to a number
+	function pad_number(number) {
+		if (number < 10) return "0" + number;
+		return number
+	}
+	
+	// load alerts
+	function load_alerts() {
+		log("info","loading alerts");
+		severity = ['alert','warning','info']
+		for (var i = 0; i < severity.length; i++) {
+			// retrieve the alerts
+			$.getJSON(hostname+"alerts/"+severity[i]+"/recent",function(severity) {
+				return function (data) {
+					var widget = "#notification_"+severity;
+					var widget_counter = "#notification_"+severity+"_count"
+					// empty the widget
+					$(widget).empty()
+					$(widget_counter).html("")
+					// set the counter
+					if (data.length > 0) $(widget_counter).html(data.length)
+					for (var j = 0; j < data.length; j++) {
+						// for each alert, add it to the list
+						$(widget).prepend('<li><a href="#alerts" title="'+data[j][1]+'">'+data[j][1]+'</a></li>')
+					}
+				};
+			}(severity[i]));			
+		}
+	}
+	
+	// load module
+	function load_module(module_id) {
+		log("info","loading module "+module_id);
+		var module = get_module(module_id);
+		if (module == null) return;
+		// set auto-refresh
+		var minutes = conf["gui"]["auto_refresh_min"]
+		if ("auto_refresh_min" in module) minutes = module["auto_refresh_min"]
+		auto_refresh(minutes*60);
+		// clean up the body
+		$("#body").empty();
+		// load data from the sensors of the current module
+		load_widgets(module_id);
+	}	
+
+	// load data the widgets of the current module
+	function load_widgets(module_id) {
+		$("#body").append('<div id="widgets"></div>');
+		var module = get_module(module_id);
+		$("#title").text(lang(module["display_name"]));
+		if (module == null) return;
+		if (! ('widgets' in module)) return;
+		for (var i = 0; i < module["widgets"].length; i++) {
+			// for each row
+			var row = module_id+"_"+i;
+			$("#widgets").append('<div class="row" id="'+row+'">');
+			for (var j = 0; j < module["widgets"][i].length; j++) {
+				// for each widget
+				widget = module["widgets"][i][j];
+				log("info","["+module_id+"] loading widget "+widget["widget_id"]);
+				if (! widget["enabled"]) continue;
+				// add an empty widget template
+				tag = "#"+widget["widget_id"];
+				var offset = 0;
+				if ("offset" in widget) offset = widget["offset"]
+				$("#"+row).append(get_widget_template(tag,lang(widget["display_name"]),widget["size"],offset));
+				// load the widget
+				load_widget(tag,widget)
+				// configure the refresh button
+				$(tag+"_refresh").click(function(tag,widget) {
+					return function () {
+						// clear the widget and load it
+						$(tag).html("");
+						load_widget(tag,widget)
+					};
+				}(tag,widget));
+				// configure the maximize button
+				$(tag+"_popup").click(function(tag,widget) {
+					return function () {
+						// clear the widget and load it
+						$("#popup_body").html("");
+						$("#popup_title").html(lang(widget["display_name"]));
+						load_widget("#popup_body",widget)
+						$("#popup").modal()
+					};
+				}(tag,widget));				
+			}
+			// end of the row
+			$("#"+row).append('</div>');
+		}
+	}
+	
+	// load a given widget
+	function load_widget(tag,widget) {
+		if (! ('layout' in widget)) return;
+		// search for the "current_header" layout
+		var current_header_layout = get_current_header_layout(widget)
+		// add the current layout if requested
+		if (current_header_layout != null) add_current_header(tag,widget["layout"][current_header_layout])
+		else add_empty_header(tag)
+		// load each layout in the widget
+		for (var i = 0; i < widget["layout"].length; i++) {
+			layout = widget["layout"][i]
+			layout["current_header_layout"] = current_header_layout
+			if (layout["type"] == "sensor_group_summary") add_sensor_group_summary_chart(tag+"_body",layout)
+			else if (layout["type"] == "image") add_sensor_image(tag+"_body",layout)
+			else if (layout["type"] == "sensor_group_timeline") add_sensor_group_timeline_chart(tag+"_body",layout)
+			else if (layout["type"] == "chart_short_inverted" || layout["type"] == "chart_short") add_sensor_chart(tag+"_body",layout)
+			else if (layout["type"] == "alerts") add_alerts_widget(tag+"_body",layout)
+			else if (layout["type"] == "checkbox") add_html_control(tag+"_body",tag+"_body_"+i,layout)
+			else if (layout["type"] == "input") add_html_control(tag+"_body",tag+"_body_"+i,layout)
+			else if (layout["type"] == "separator") add_html_separator(tag+"_body",tag+"_body_"+i,layout)
+			else if (layout["type"] == "clock") add_clock(tag+"_body",tag+"_body_"+i,layout)
+			else if (layout["type"] == "current_measure") add_current_measure(tag+"_body",tag+"_body_"+i,layout)
+			else if (layout["type"] == "button") add_button(tag+"_body",tag+"_body_"+i,layout)
+			else if (layout["type"] == "calendar") add_calender_widget(tag+"_body",layout)
+			else if (layout["type"] == "configuration") add_configuration_widget(tag+"_body",layout)
+			else if (layout["type"] == "data") add_sensor_data(tag+"_body",layout)
+			else if (layout["type"] == "table") add_sensor_table(tag+"_body",layout)
+			else if (layout["type"] == "map") add_sensor_map(tag+"_body",layout)
+			else if (layout["type"] == "current_header") continue
+			else log("warning","unknown layout "+layout["type"])
+		}
+	}
+	
+	/**
+		WIDGETS
+	**/
+	
+	// add a sensor summary widget
+	function add_sensor_group_summary_chart(tag,layout) {
+		if ("group" in layout) {
+			sensors = get_group_string(layout["group"])
+			if (sensors == null) return;
+		}
+		else if ("sensors" in layout) {
+			sensors = []
+			for (var i = 0; i < layout["sensors"].length; i++) { 
+				// for each sensor, retrieve it and add it to the array
+				var sensor_string = layout["sensors"][i]
+				var sensor = get_sensor_string(sensor_string)
+				if (sensor != null) sensors.push(sensor)
+			}
+			if (sensors.length == 0) return
+		}
+		else return
+		var options = $.extend(true,{}, conf["constants"]["charts"]["chart_sensor_group_summary"]);
+		if (layout["current_header_layout"] != null) options["chart"]["height"] = conf["constants"]["chart_short_height"]
+		$(tag).highcharts(options);
+		var chart = $(tag).highcharts();
+		// for each sensor	
+		for (var i = 0; i < sensors.length; i++) {
+			var sensor = sensors[i];
+			var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+			if ("exclude" in layout && layout["exclude"].indexOf(sensor_url.replaceAll("/",":")) > -1) continue
+			// skip flags
+			if (sensor['format'] == 'string') continue;
+			var is_flag = false;
+			if ("series" in sensor) {
+				for (var j = 0; j < sensor["series"].length; j++) {
+					if ("type" in sensor["series"][j] && sensor["series"][j]["type"] == "flags") is_flag = true;
+				}
+				if (is_flag) continue;
+			}
+			// add the sensor to the xAxis
+			chart['xAxis'][0]['categories'].push(lang(sensor["display_name"]));
+			// apply the suffix to the today's series
+			chart.series[1].update({"dataLabels":{"enabled": true,"format":'{y}'+conf['general']['formats'][sensor["format"]]['suffix']}});
+			// add the point for yesterday's range
+			add_point(chart,sensor_url+"/yesterday/range",0,i);
+			// add the point for today's range
+			add_point(chart,sensor_url+"/today/range",1,i);
+		}
+		// make the chart adapting to the modal
+		$('#popup').on('show.bs.modal', function() {
+			$(tag).css('visibility', 'hidden');
+		});
+		$('#popup').on('shown.bs.modal', function() {
+			$(tag).css('visibility', 'initial');
+			chart.reflow();
+		});
+	}
+	
+	// add a sensor timeline widget
+	function add_sensor_group_timeline_chart(tag,layout) {
+		if ("group" in layout) {
+			sensors = get_group_string(layout["group"])
+			if (sensors == null) return;
+		}
+		else if ("sensors" in layout) {
+			sensors = []
+			for (var i = 0; i < layout["sensors"].length; i++) { 
+				// for each sensor, retrieve it and add it to the array
+				var sensor_string = layout["sensors"][i]
+				var sensor = get_sensor_string(sensor_string)
+				if (sensor != null) sensors.push(sensor)
+			}
+			if (sensors.length == 0) return
+		}
+		else return
+		var options = $.extend(true,{},conf["constants"]["charts"]["chart_"+layout["type"]+"_"+layout["timeframe"]]);
+		if (layout["current_header_layout"] != null) options["chart"]["height"] = conf["constants"]["chart_short_height"]
+		$(tag).highcharts('StockChart',options);
+		var chart = $(tag).highcharts();
+		// for each sensor
+		for (var i = 0; i < sensors.length; i++) {
+			var sensor = sensors[i];
+			var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+			if (! ("series" in sensor)) continue;
+			// add each series, to the chart
+			for (var j = 0; j < sensor["series"].length; j++) {
+				series = sensor["series"][j]
+				if ("exclude" in layout && (layout["exclude"].indexOf(sensor_url.replaceAll("/",":")) > -1 || layout["exclude"].indexOf(sensor_url.replaceAll("/",":")+","+series["series_id"]) > -1)) continue
+				// ignore range series for realtime charts
+				if (layout["timeframe"] == "realtime" && series["series_id"] == "range") continue
+				// add the series to the chart
+				add_series(chart,sensor_url+"/"+layout["timeframe"]+"/"+series["series_id"],sensor,j);
+			}
+		}
+		// make the chart adapting to the modal
+		$('#popup').on('show.bs.modal', function() {
+			$(tag).css('visibility', 'hidden');
+		});
+		$('#popup').on('shown.bs.modal', function() {
+			$(tag).css('visibility', 'initial');
+			chart.reflow();
+		});
+	}	
+	
+	// add a generic sensor chart widget
+	function add_sensor_chart(tag,layout) {
+		if (!("sensor" in layout)) return
+		sensor = get_sensor_string(layout["sensor"])
+		if (sensor == null) return;
+		var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+		// add the chart
+		var options = $.extend(true,{}, conf["constants"]["charts"][layout["type"]]);
+		if (layout["current_header_layout"] != null) options["chart"]["height"] = conf["constants"]["chart_short_height"]
+		// set min/max based on the format
+		if (sensor["format"] == "percentage") options["yAxis"]["max"] = 100;
+		$(tag).highcharts(options);
+		var chart = $(tag).highcharts();
+		// add each series to the chart
+		if (! ("series" in sensor)) return;
+		for (var i = 0; i < sensor["series"].length; i++) {
+			series = sensor["series"][i];
+				if ("exclude" in layout && (layout["exclude"].indexOf(sensor_url.replaceAll("/",":")) > -1 || layout["exclude"].indexOf(sensor_url.replaceAll("/",":")+","+series["series_id"]) > -1)) continue
+			add_series(chart,sensor_url+"/"+layout["timeframe"]+"/"+series["series_id"],sensor,i);
+		}
+		// make the chart adapting to the modal
+		$('#popup').on('show.bs.modal', function() {
+			$(tag).css('visibility', 'hidden');
+		});
+		$('#popup').on('shown.bs.modal', function() {
+			$(tag).css('visibility', 'initial');
+			chart.reflow();
+		});
+	}
+	
+	// add an image widget
+	function add_sensor_image(tag,layout) {
+		if (!("sensor" in layout)) return
+		sensor = get_sensor_string(layout["sensor"])
+		if (sensor == null) return;
+		var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+		// add the image to the layout
+		$(tag).html('<img class="img-responsive" src="'+sensor_url+'/current'+'?timestamp='+Date.now()+'" />');
+	}
+	
+	// add a map widget
+	function add_sensor_map(tag,layout) {
+		var id = tag.replace("#","")
+		$(tag).html('<div id="'+id+'_map" style="width:100%; height:'+conf["gui"]["maps"]["size_x"]+'px;"></div>')
+		// load google maps api (lazy loading since we need the api_key from the conf)
+		var script = document.createElement('script');
+		script.src = "http://maps.google.com/maps/api/js?key="+conf["gui"]["maps"]["api_key"];
+		script.onload = function(tag,layout) {
+			return function () {
+				var script = document.createElement('script');
+				script.src = "gmaps/gmaps.min.js";
+				// load gmaps 
+				script.onload = function(tag,layout) {
+					return function () {
+						//create the map
+						map = new GMaps({
+							div: tag+"_map",
+							lat: 0,
+							lng: 0,
+							mapType: conf["gui"]["maps"]["type"],
+							zoom: 2
+						});
+						// retrieve the sensors belonging to the group
+						if (!("group" in layout)) return
+						sensors = get_group_string(layout["group"])
+						if (sensors == null) return;
+						for (var i = 0; i < sensors.length; i++) {
+							// for each sensor
+							var sensor = sensors[i];
+							var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];							
+							// request the data 
+							$.getJSON(sensor_url+"/"+layout["timeframe"]+"/avg",function(tag,layout,map) {
+								return function (data) {
+									if (data.length == 0) return
+									var waypoints = []
+									for (var i = 0; i < data.length; i++) {
+										// for each position of the sensor
+										var position = JSON.parse(data[i][1])
+										if (!("latitude" in position)) continue;
+										// add a marker
+										var options = {
+											lat: position["latitude"],
+											lng: position["longitude"],
+											label: position["label"],
+											icon: null,
+											infoWindow: { content: position["text"]}
+										}
+										// customize the layout of the marker when tracking position
+										if (layout["tracking"]) {
+											if (i == (data.length-1)) {
+												// this is the last position, if the position is not accurate, draw a circle around it
+												if (position["accuracy"] > 500) {
+													map.drawCircle({
+														lat: position["latitude"],
+														lng: position["longitude"],
+														radius: position["accuracy"],
+														strokeColor: '#BBD8E9',
+														strokeOpacity: 1,
+														strokeWeight: 3,
+														fillColor: '#BBD8E9',
+														fillOpacity: 0.6
+													});
+												}
+											} else {
+												// for intermediate positions, remote the label and use a small blue dot as icon
+												options["label"] = null;
+												options["icon"] = "https://maps.gstatic.com/intl/en_us/mapfiles/markers2/measle_blue.png";
+											}
+										}
+										// add the marker to the map
+										map.addMarker(options)
+										// keep track of the waypoint
+										waypoints.push({location:position["latitude"]+","+position["longitude"],stopover: true})
+									}
+									// auto zoom the map
+									map.fitZoom();
+									if (layout["tracking"]) {
+										// build the route
+										if (waypoints.length < 2) return;
+										// set origin and destination
+										var first = JSON.parse(data[0][1])
+										var last = JSON.parse(data[(data.length-1)][1])
+										// draw the route
+										map.drawRoute({
+											origin: [first["latitude"],first["longitude"]],
+											destination: [last["latitude"],last["longitude"]],
+											travelMode: 'driving',
+											strokeColor: get_color(),
+											strokeOpacity: 0.6,
+											strokeWeight: 6,
+											waypoints: waypoints
+										});
+									}
+									// auto zoom the map
+									map.fitZoom();
+								}; // end return function()
+							}(tag,layout,map));// end get json
+						} // end for each sensor
+					}; // end function ()
+				}(tag,layout); // onload gmaps.js
+				// append gmaps to head
+				document.head.appendChild(script);
+			}; // end function ()
+		}(tag,layout); // onload google maps
+		// append google api to head
+		document.head.appendChild(script);
+	}
+
+	// add a sensor table data widget
+	function add_sensor_table(tag,layout) {
+		tag = tag.replace("#","")
+		// define and add the table html
+		var table_html = '<table id="'+tag+'_table" class="table table-bordered table-striped"><thead><tr>';
+		var columns = layout["columns"].split(",")
+		for (var i = 0; i < columns.length; i++) {
+			table_html = table_html+"<th>"+columns[i]+"</th>";
+		}
+		table_html = table_html+ '</tr></thead><tbody></tbody></table>';
+		tag = "#"+tag
+		$(tag).append(table_html);
+		// define datatables options
+		var options = {
+			"responsive": true,
+			"dom": "Zlfrtip",
+			"fixedColumns": false,
+			"paging": true,
+			"lengthChange": false,
+			"searching": true,
+			"ordering": false,
+			"info": true,
+			"autoWidth": true,
+		};
+		// add the table
+		$(tag+"_table").DataTable(options);
+		var table = $(tag+"_table").DataTable();
+		// load the table
+		if (!("sensor" in layout)) return
+		sensor = get_sensor_string(layout["sensor"])
+		if (sensor == null) return;
+		var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+		// add the image to the layout
+		$.getJSON(sensor_url+"/current",function(table) {
+			return function (data) {
+				if (data.length == 0) return
+				var lines = data[0].split("\n")
+				for (var i = 0; i < lines.length; i++) {
+					var line = lines[i]
+					var columns = line.split("|_|")
+					table.row.add(columns).draw();
+				}
+			};
+		}(table));
+	}
+	
+	// add a sensor data widget
+	function add_sensor_data(tag,layout) {
+		if (!("sensor" in layout)) return
+		sensor = get_sensor_string(layout["sensor"])
+		if (sensor == null) return;
+		var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+		// add the image to the layout
+		$.getJSON(sensor_url+"/current",function(tag) {
+			return function (data) {
+				data[0] = data[0].replaceAll("\n","<br>")
+				if (data.length > 0) $(tag).html('<div class="mailbox-read-message" align="left">'+data[0]+'</div>')
+			};
+		}(tag));
+	}
+	
+	// add an alert widget
+	function add_alerts_widget(tag,layout) {
+		// define the alerts table
+		var table_html = '<table id="alerts_table" class="table table-bordered table-striped">\
+							<thead>\
+								<tr>\
+									<th>Severity</th>\
+									<th>Time</th>\
+									<th>Message</th>\
+								</tr>\
+							</thead>\
+							<tbody></tbody>\
+						  </table>';
+		// define datatables options
+		var options = {
+			"responsive": true,
+			"dom": "Zlfrtip",
+			"paging": true,
+			"lengthChange": false,
+			"searching": true,
+			"ordering": true,
+			"info": true,
+			"autoWidth": true,
+			"columnDefs": [
+				{
+					"targets": 0,
+					"width": "10%",
+					"render": function ( data, type, row ) {
+						if (data == "alert") { icon = "ban"; color = "#dd4b39" }
+						else if (data == "warning") { icon = "warning"; color = "#f39c12" }
+						else if (data == "info") { icon = "info"; color = "#0073b7" }
+						return '<i class="icon fa fa-'+icon+'" style="color:'+color+'"></i>'
+					},
+					"className": "dt-center",
+				},
+				{
+					"targets": 1,
+					"width": "10%",
+					"className": "dt-center",
+				},
+				{
+					"targets": 2,
+					"width": "80%",
+				},
+			],
+		};
+		// create the widget and the table
+		$(tag).append(table_html);
+		$("#alerts_table").DataTable(options);
+		var table = $("#alerts_table").DataTable();
+		// add alerts to the table
+		var severity = ['alert','warning','info']
+		for (var i = 0; i < severity.length; i++) {
+			// retrieve the alerts
+			$.getJSON(hostname+"alerts/"+severity[i]+"/history",function(severity) {
+				return function (data) {
+					for (var j = 0; j < data.length; j++) {
+						// for each alert, add it to the table
+						table.row.add([severity,data[j][0],data[j][1]]).draw(false);
+					}
+					// reorder the data
+					table.order( [ 1, 'desc' ] ).draw();
+				};
+			}(severity[i]));
+		}
+	}
+	
+	// add a configuration widget
+	function add_configuration_widget(tag,layout) {
+		var editor_id = "json_editor"
+		var buttons_html =  '\
+			<div class="row">\
+				<div class="col-md-12">\
+					<button id="save" class="btn btn-default">Save</button>\
+					<button id="restart_service" class="btn btn-primary">Restart Service</button>\
+				</div>\
+			</div>'
+		// add the buttons and the editor 
+		$(tag).append(buttons_html)
+		$(tag).append('<div class="row"><div id="'+editor_id+'" class="col-md-12" style="text-align:left;"></div></div>');
+		// configure the editor
+		var options = {
+			startval: JSON.parse(conf["config_json"]),
+			schema: JSON.parse(conf["constants"]["config_schema_json"]),
+		}
+		JSONEditor.defaults.theme = 'bootstrap3';
+		JSONEditor.defaults.iconlib = 'fontawesome4';
+		JSONEditor.defaults.editors.object.options.collapsed = true;
+		// add it
+		var editor = new JSONEditor($("#"+editor_id)[0],options)
+		// configure the save button
+		$("#save").unbind().on('click',function() {
+			var errors = editor.validate();
+			if (errors.length) {
+				notify("danger","Invalid configuration. See the console for the errors")
+				console.log(errors)
+			}
+			else {
+				$.post(hostname+"/save_config", {"configuration": JSON.stringify(editor.getValue())}, function (data) {
+					if (data != '"OK"') 
+						notify("danger","Unable to save the configuration")
+					else notify("success","The configuration has been saved. Restart the service to apply the changes")
+				});
+			}
+		});
+		// configure the restart button
+		$("#restart_service").unbind().on('click',function() {
+			$.get(hostname+"/restart")
+			var notify_object = $.notify('<strong>Restarting the service,</strong> please wait...', {
+				allow_dismiss: false,
+				showProgressbar: true,
+			});
+			auto_refresh(null);
+			setTimeout(function() {
+				notify_object.update({'type': 'success', 'message': '<strong>Success</strong>, reloading...'});
+				location.reload();
+			}, 5500);
+		});
+	}
+	
+	// add a custom form widget
+	function add_form_widget(tag,widget) {
+		$(tag).html("")
+		$(tag).append('<div class="container">')
+		for (var i = 0; i < widget["layout"].length; i++) add_html_control(tag,tag+"_"+i,widget["layout"][i])
+		$(tag).append('</div>')
+	}
+	
+	// add a html separator
+	function add_html_separator(body,tag,layout) {
+		var style = "";
+		if ("color" in layout) style = style + "border-color: "+layout["color"]+";";
+		if ("height" in layout) style = style + "border-width: "+layout["height"]+"px;";
+		$(body).append('<hr style="'+style+'"></hr>');
+	}
+
+	// add a clock
+	function add_clock(body,tag,layout) {
+		tag = tag.replace("#","");
+		// add the clock placeholder
+		var clock_html = '<div class="text-center" id="'+tag+'_clock"></div>';
+		$(body).append(clock_html);
+		// Create the chart
+		var now = getNow();
+		Highcharts.chart(tag+"_clock", {
+			chart: {
+				type: 'gauge',
+				plotBackgroundColor: null,
+				plotBackgroundImage: null,
+				plotBorderWidth: 0,
+				plotShadow: false,
+				height: 200
+			},
+			credits: { enabled: false },
+			title: { text: '' },
+			pane: {
+				background: [
+					{ },
+					{
+						backgroundColor: Highcharts.svg ? {
+							radialGradient: {
+								cx: 0.5,
+								cy: -0.4,
+								r: 1.9
+							},
+							stops: [
+								[0.5, 'rgba(255, 255, 255, 0.2)'],
+								[0.5, 'rgba(200, 200, 200, 0.2)']
+							]
+						} : null
+					}
+				]
+			},
+			yAxis: {
+				labels: { distance: -20 },
+				min: 0,
+				max: 12,
+				lineWidth: 0,
+				showFirstLabel: false,
+				minorTickInterval: 'auto',
+				minorTickWidth: 1,
+				minorTickLength: 5,
+				minorTickPosition: 'inside',
+				minorGridLineWidth: 0,
+				minorTickColor: '#666',
+				tickInterval: 1,
+				tickWidth: 2,
+				tickPosition: 'inside',
+				tickLength: 10,
+				tickColor: '#666'
+			},
+			exporting: { enabled: false},
+			tooltip: {
+				formatter: function () {
+					return this.series.chart.tooltipText;
+				}
+			},
+			series: [{
+				data: [{
+					id: 'hour',
+					y: now.hours,
+					dial: {
+						radius: '60%',
+						baseWidth: 4,
+						baseLength: '95%',
+						rearLength: 0
+					}
+				}, {
+					id: 'minute',
+					y: now.minutes,
+					dial: {
+						baseLength: '95%',
+						rearLength: 0
+					}
+				}, {
+					id: 'second',
+					y: now.seconds,
+					dial: {
+						radius: '100%',
+						baseWidth: 1,
+						rearLength: '20%'
+					}
+				}],
+				animation: false,
+				dataLabels: { enabled: false }
+			}]
+		},
+		function (chart) {
+			setInterval(function () {
+				now = getNow();
+				if (chart.axes) { // not destroyed
+					var hour = chart.get('hour'),
+						minute = chart.get('minute'),
+						second = chart.get('second'),
+						// run animation unless we're wrapping around from 59 to 0
+						animation = now.seconds === 0 ?
+							false : {
+								easing: 'easeOutBounce'
+							};
+					// Cache the tooltip text
+					chart.tooltipText = pad(Math.floor(now.hours), 2) + ':' + pad(Math.floor(now.minutes * 5), 2) + ':' + pad(now.seconds * 5, 2);
+					hour.update(now.hours, true, animation);
+					minute.update(now.minutes, true, animation);
+					second.update(now.seconds, true, animation);
+				}
+			}, 1000);
+		});		
+	}
+	
+	// add a button
+	function add_button(body,tag,layout) {
+		tag = tag.replace("#","")
+		// define the button
+		input_html = '<div class="input-group"><button type="button" class="btn btn-primary btn-lg" id="'+tag+'_input">'+lang(layout["display_name"])+'</button></div>'
+		tag = "#"+tag
+		// add it to the page
+		$(body).append(input_html);
+		// act on click
+		$(tag+"_input").click(function(tag,actions) {
+			return function () {
+				$(tag).removeClass("btn-primary");
+				for (var i = 0; i < actions.length; i++) {
+					var split = actions[i].split(",",2)
+					if (split[0] == "send") $.get(split[1]);
+					if (split[0] == "wait") setTimeout(function(){ },split[1]);
+				}
+				$(tag).addClass("btn-primary")
+			};
+		}(tag+"_input",layout["actions"]));
+	}
+	
+	// add the current measure layout
+	function add_current_measure(body,tag,layout) {
+		// add the label
+		if ("display_name" in layout) $(body).append('<div class="text-center">'+lang(layout["display_name"])+'</div>');
+		tag = tag.replace("#","")
+		var html = '\
+					<h3 class="profile-username text-center"><span id="'+tag+'_current"></span><span id="'+tag+'_current_suffix"></span></h3>\
+					<p class="text-muted text-center" id="'+tag+'_timestamp"></p>';
+		tag = "#"+tag;
+		// add the html
+		$(body).append(html);
+		// set the current measure
+		if ("sensor" in layout) {
+			if (!("sensor" in layout)) return
+			sensor = get_sensor_string(layout["sensor"])
+			if (sensor == null) return;
+			var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+			set_html(tag+"_current",sensor_url+"/current");
+			$(tag+"_current_suffix").html(conf['general']['formats'][sensor['format']]['suffix']);
+		}
+		// if a timestamp has to be set, retrieve it
+		if ("timestamp" in layout) {
+			sensor = get_sensor_string(layout["timestamp"])
+			if (sensor == null) return;
+			var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+			// set the timestamp
+			set_html(tag+"_timestamp",sensor_url+"/timestamp");			
+		}
+	}
+	
+	// add a html control
+	function add_html_control(body,tag,layout) {
+		var type = layout["type"]
+		tag = tag.replace("#","")
+		// define the HTML inputs
+		checkbox_html = '<div class="input-group"><div class="checkbox checkbox-slider--%style% checkbox-slider-lg"><label><input type="checkbox" id="'+tag+'_checkbox"><span></span></label></div></div>'
+		input_html = '<div class="input-group input-group-lg"><input style="text-align:center;" id="'+tag+'_input" class="form-control input-lg" type="text" value=""></div>'
+		tag = "#"+tag
+		// add the label
+		if ("display_name" in layout) $(body).append('<div class="text-center">'+lang(layout["display_name"])+'</div>');
+		// add the HTML of the requested input
+		if (type == "input") {
+			// add the input box
+			$(body).append(input_html);
+			$(tag+"_"+type).TouchSpin({
+					min: 0,
+					max: 100,
+					step: 0.1,
+					decimals: 1,
+					boostat: 5,
+					maxboostedstep: 10,
+			});
+		} 
+		else if (type == "checkbox") {
+			style = "a";
+			if ("style" in layout) style = layout["style"]
+			checkbox_html = checkbox_html.replace("%style%",style);
+			// add the checkbox
+			$(body).append(checkbox_html);	
+		}
+		// retrieve the sensor to control
+		if (!("sensor" in layout)) return
+		sensor = get_sensor_string(layout["sensor"])
+		if (sensor == null) return;
+		var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+		// set the current value
+		$.getJSON(hostname+sensor_url+"/current",function(tag) {
+			return function (data) {
+				if (data.length > 0) {
+					if (type == "input") $(tag).val(data[0])
+					if (type == "checkbox") $(tag).prop("checked",data[0]);
+				}
+				else log("warning","invalid data received: "+data);
+			};
+		}(tag+"_"+type));
+		// disabled it if requested
+		if ("disabled" in layout && layout["disabled"]) $(tag+"_"+type).attr("disabled", true);
+		// listen for changes
+		$(tag+"_"+type).change(function(tag,sensor_url,type) {
+			return function () {
+				// set the new value
+				if (type == "input") var new_value = $(tag).val();
+				if (type == "checkbox") var new_value = $(tag).is(':checked') ? 1 : 0;
+				$.getJSON(hostname+sensor_url+"/set/"+new_value,function(tag,new_value,type) {
+					return function (data) {
+						if (data != "OK") {
+							// handle errors
+							if (type == "input") log("warning","error setting value "+new_value+" to "+sensor_url);
+							if (type == "checkbox") $(tag).prop("checked", !$(tag).prop("checked"));
+						}
+					};
+				}(tag,new_value,type));
+				// if there is message to send
+				var send_types = ["send","send_on","send_off"]
+				for (var i in send_types) {
+					var send_type = send_types[i]
+					if (! (send_type in layout)) continue;
+					// by default attach the new_value to the "send" url
+					var url = layout["send"]+new_value;
+					// if send_on or send_off, just use the url
+					if (send_type == "send_on" && new_value == 1) url = layout["send_on"];
+					if (send_type == "send_off" && new_value == 0) url = layout["send_off"];
+					$.getJSON(url,function(url) {
+						return function (data) {
+							if (data != "OK") {
+								// handle errors
+								log("warning","error to visit "+url);
+							}
+						};
+					}(url));
+				}
+			};
+		}(tag+"_"+type,sensor_url,type));
+	}
+	
+	// add a calendar widget
+	function add_calender_widget(tag,layout) {
+		var id = tag.replace("#","")
+		// add the calendar
+		$(tag).html('<div class="'+id+'_calendar" style="width:100%; height:950px;"></div>')
+		$("."+id+"_calendar").dhx_scheduler({
+			xml_date: "%Y-%m-%d %H:%i",
+			mode: "week",
+			details_on_create: true,
+			details_on_dblclick: true,
+			occurrence_timestamp_in_utc: false,
+			include_end_by: true,
+			repeat_precise: true,
+			touch: "force",
+			time_step: 15,
+			mark_now: true,
+			wide_form: false,
+			hour_size_px: 35,
+			scroll_hour: 6,
+		});
+		// clear previously attached events
+		scheduler.clearAll();
+		if (scheduler_events.length > 0) {
+			for (var i = 0; i < scheduler_events.length; i++) {
+				scheduler.detachEvent(scheduler_events[i]);
+			}
+			scheduler_events = [];
+		}
+		// init responsive
+		initResponsive(scheduler);
+		// configure the time step
+		if ("time_step" in layout) scheduler.config.time_step = layout["time_step"];
+		// configure the mini-calendars
+		scheduler_events.push(scheduler.attachEvent("onLightbox", function(){
+			var lightbox_form = scheduler.getLightbox();
+			var inputs = lightbox_form.getElementsByTagName('input');
+			var date_of_end = null;
+			for (var i=0; i<inputs.length; i++) {
+				if (inputs[i].name == "date_of_end") {
+					date_of_end = inputs[i];
+					break;
+				}
+			}
+			var repeat_end_date_format = scheduler.date.date_to_str(scheduler.config.repeat_date);
+			var show_minical = function(){
+				if (scheduler.isCalendarVisible()) scheduler.destroyCalendar();
+				else {
+					scheduler.renderCalendar({
+						position:date_of_end,
+						date: scheduler.getState().date,
+						navigation:true,
+						handler:function(date,calendar) {
+							date_of_end.value = repeat_end_date_format(date);
+							scheduler.destroyCalendar()
+						}
+					});
+				}
+			};
+			date_of_end.onclick = show_minical;
+		}));
+		// configure event details sections
+		scheduler.config.lightbox.sections = [
+			{ name:"description", height:30, map_to:"text", type:"textarea" , focus:true, },
+			{ name:"recurring", type:"recurring", map_to:"rec_type", button:"recurring" },
+			{ name:"time", height:72, type:"calendar_time", map_to:"auto" }
+		];
+		// configure default value
+		scheduler_events.push(scheduler.attachEvent("onBeforeLightbox", function (id){
+			scheduler.resetLightbox();
+			var event = scheduler.getEvent(id);
+			if (event.text == "New event") {
+				// newly created event, default to empty string
+				event.text = ""
+				if ("default_value" in layout) {
+					// default value set
+					if (is_sensor(layout["default_value"])) {
+						// default value is a sensor, retrieve the current measure
+						sensor = get_sensor_string(layout["default_value"])
+						if (sensor == null) return;
+						var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+						$.getJSON(sensor_url+"/current",function(id) {
+							return function (data) {
+								if (data.length == 0) return
+								// set the default value
+								scheduler.formSection('description').setValue(data[0]);
+							};
+						}(id));
+					}
+					else {
+						// set the static value
+						event.text = layout["default_value"]
+					}
+				}
+			}
+			return true;
+		}));
+		// configure the event template
+		if ("event_template" in layout) {
+			scheduler.templates.event_text=function(start,end,event){
+				text = layout["event_template"].replace("%value%",event.text);
+				return text;
+			}
+		}
+		// load the events
+		if (!("sensor" in layout)) return
+		sensor = get_sensor_string(layout["sensor"])
+		if (sensor == null) return;
+		var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+		$.getJSON(hostname+sensor_url+"/calendar", function (data) {
+			data = JSON.parse(data)
+			if (data.length > 0)  scheduler.parse(data[0],"json");
+		});
+		// listen for changes
+		var onChange = function(id,e){
+			// on change save the events
+			var now = new Date()
+			var start = new Date(now.setDate(now.getDate() - 2))
+			var now = new Date()
+			var end = new Date(now.setMonth(now.getMonth() + 2))
+			var events = scheduler.getEvents(start,end)
+			// save both the events for being displaying and for the analysis
+			value = JSON.stringify([scheduler.toJSON(),JSON.stringify(events)])
+			$.post(hostname+sensor_url+"/set/post", {value: value}, function (data) {
+				if (data != '"OK"') log("warning","error saving calendar "+value+" to "+sensor_url);
+			});
+		};
+		// on any change, save the calendar
+		scheduler_events.push(scheduler.attachEvent("onEventAdded",onChange));
+		scheduler_events.push(scheduler.attachEvent("onEventChanged",onChange));
+		scheduler_events.push(scheduler.attachEvent("onEventCopied",onChange));
+		scheduler_events.push(scheduler.attachEvent("onEventDeleted",onChange));
+	}
+	
+	/**
+		WIDGET HELPER FUNCTIONS
+	**/	
+	
+	// return an empty HTML widget template
+	function get_widget_template(tag,title,size,offset) {
+		tag = tag.replace("#","")
+		// define the widget HTML
+		var html = '\
+					<div class="col-lg-#size# col-md-offset-#offset#">\
+							<div class="box box-solid box-primary">\
+								<div class="box-header">\
+									<h3 class="box-title">#title#</h3>\
+									<div class="box-tools pull-right">\
+										<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>\
+										</button>\
+										<button id="#tag#_refresh" type="button" class="btn btn-box-tool"><i class="fa fa-refresh"></i></button>\
+										<button id="#tag#_popup" type="button" class="btn btn-box-tool" ><i class="fa fa-arrows-alt"></i></button>\
+									</div>\
+								</div>\
+								<div class="box-body no-padding box-primary">\
+								    <div class="box-body" id="#tag#" align="center">\
+									</div>\
+								</div>\
+							</div>\
+					</div>\
+				';		
+		// replace the placeholders with the provided input
+		html = html.replaceAll("#size#",size);
+		html = html.replaceAll("#offset#",offset);
+		html = html.replaceAll("#title#",title);
+		html = html.replaceAll("#tag#",tag);
+		return html;
+	}
+	
+	// add the current measure widget
+	function add_current_header(tag,layout) {
+		tag = tag.replace("#","")
+		var summary_body = '\
+			<div class="box-profile">\
+				<img class="profile-user-img img-responsive img-circle" id="'+tag+'_icon" src="images/unknown.png">\
+					<h3 class="profile-username text-center"><span id="'+tag+'_current"></span><span id="'+tag+'_current_suffix"></span></h3>\
+					<p class="text-muted text-center" id="'+tag+'_timestamp"></p>\
+					<div id="'+tag+'_body"></div>\
+				<div>';
+		tag = "#"+tag;
+		// add the summary body to it
+		$(tag).html(summary_body);
+		// add the summary icon
+		if ("icon" in layout) {
+			$(tag+"_icon").attr('src',layout["icon"]);
+		}
+		// set the current measure
+		if ("sensor" in layout) {
+			if (!("sensor" in layout)) return
+			sensor = get_sensor_string(layout["sensor"])
+			if (sensor == null) return;
+			var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+			set_html(tag+"_current",sensor_url+"/current");
+			$(tag+"_current_suffix").html(conf['general']['formats'][sensor['format']]['suffix']);
+			// set the timestamp
+			set_html(tag+"_timestamp",sensor_url+"/timestamp");
+		}
+		// if a different timestamp has to be set, retrieve it
+		if ("timestamp" in layout) {
+			sensor = get_sensor_string(layout["timestamp"])
+			if (sensor == null) return;
+			var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
+			// set the timestamp
+			set_html(tag+"_timestamp",sensor_url+"/timestamp");			
+		}
+	}
+	
+	// get the current layout id
+	function get_current_header_layout(widget) {
+		var current_layout = -1
+		for (var i = 0; i < widget["layout"].length; i++) {
+			if (widget["layout"][i]["type"] == "current_header") current_layout = i
+		}
+		if (current_layout >= 0) return current_layout
+		else return null
+	}
+	
+	// add an empty widget header
+	function add_empty_header(tag) {
+		tag = tag.replace("#","")
+		$("#"+tag).append('<div id="'+tag+'_body"></div>')
+	}
+	
+	/**
+		CHART HELPER FUNCTIONS
+	**/	
+	
+	// add a new series to a chart
+	function add_series(chart,url,sensor,series_index) {
+		// draw a static line
+		if ("value" in sensor['series'][series_index]) {
+			chart["yAxis"][0].addPlotLine(sensor['series'][series_index])
+			return
+		}
+		// retrieve the data from the series
+		$.getJSON(hostname+url, function(chart,sensor,series_index) {
+				return function (data) {
+					// get the series template
+					var series = $.extend(true,{}, sensor['series'][series_index]);
+					var null_value = null;
+					if ("null_value" in series) null_value = series["null_value"]
+					// set the name and the id
+					series['name'] = lang(sensor['display_name'])+" "+sensor['series'][series_index]['series_id'];
+					series['id'] = sensor['sensor_id']+":"+sensor['series'][series_index]['series_id'];
+					// add the sensor suffix and tooltip
+					apply_format(series,sensor['format']);
+					//add the data to it
+					series['data'] = data;
+					// if the data is a string, add flags
+					if ("type" in sensor['series'][series_index] && sensor['series'][series_index]['type'] == "flags") {
+						flags = [];
+						for (var i = 0; i < data.length; i++) {
+							if (data[i][1] === null_value || data[i][1] === null || data[i][1] === "") continue;
+							flags[i] = {'x': data[i][0], 'shape': 'circlepin', 'title': '<img width="'+series['width']+'" heigth="'+series['heigth']+'" src="images/'+sensor['module_id']+":"+sensor['group_id']+":"+sensor['sensor_id']+"_"+data[i][1]+'.png">'};
+						}
+						series['data'] = flags;
+					}
+					// attach the series to the chart
+					chart.addSeries(series);
+				};
+		}(chart,sensor,series_index));
+	}
+	
+	// add a new point to an existing series
+	function add_point(chart,url,series_index,category_index) {
+		$.getJSON(hostname+url, function(chart,series_index,category_index) {
+				return function (data) {
+					// add the category index to the data
+					data = [category_index,data[0],data[1]]
+					// add the data as a new point to an existing series
+					chart.series[series_index].addPoint(data);
+				};
+		}(chart,series_index,category_index));
+	}
+
+	/**
+		OTHER HELPER FUNCTIONS 
+	**/
+	
+	// helper to replace all occurences in a string
+	String.prototype.replaceAll = function (find, replace) {
+		var str = this;
+		return str.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
+	};
+	
+	// capitalize the first letter
+	function capitalizeFirst(string) {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+	
+	// set the html of a given tag
+	function set_html(tag,url) {
+		$.getJSON(hostname+url, function(tag) {
+				return function (data) {
+					if (data.length != 1) $(tag).html("");
+					$(tag).html(data[0]);
+				};
+		}(tag));
+	}
+	
+	// set an image src
+	function set_img(tag,url,prefix,suffix) {
+		$.getJSON(hostname+url, function(tag) {
+				return function (data) {
+					if (data.length != 1) return;
+					$(tag).attr('src','images/'+prefix+data[0]+suffix);
+				};
+		}(tag,prefix,suffix));
+	}
+
+	// apply a given format to a chart series
+	function apply_format(series,format) {
+		if (!('tooltip' in series)) series['tooltip'] = {};
+		if (!('dataLabels' in series)) series['dataLabels'] = {};
+		series['tooltip']['valueSuffix'] = conf['general']['formats'][format]['suffix'];
+		series['dataLabels']['format'] = '{y}'+conf['general']['formats'][format]['suffix'];
+	}
+	
+	// return a module data
+	function get_module(module_id) {
+		if (module_id == null) module_id = current_module;
+		for (var i = 0; i < conf["modules"].length; i++) {
+			var module = conf["modules"][i];
+			if (! module["enabled"]) continue
+			if (module["module_id"] == module_id) return module;
+		}
+		return null
+	}
+	
+	// return the sensors belonging to the same group
+	function get_group(module_id,group_id) {
+		var sensors = []
+		if (module_id == null) module_id = current_module;
+		for (var i = 0; i < conf["modules"].length; i++) {
+			var module = conf["modules"][i];
+			if (! module["enabled"]) continue
+			if (!("sensors" in module)) continue
+			for (var j = 0; j < module["sensors"].length; j++) {
+				var sensor = module["sensors"][j];
+				if (sensor["enabled"] && sensor["module_id"] == module_id && sensor["group_id"] == group_id) sensors.push(sensor);
+			}
+		}
+		if (sensors.length == 0) return null
+		return sensors
+	}
+	
+	// return the sensors belonging to the same group
+	function get_group_string(group_string) {
+		var split = group_string.split(":",2)
+		if (split.length < 2) return null
+		return get_group(split[0],split[1])
+	}
+
+	// fetch a sensor
+	function get_sensor(module_id,group_id,sensor_id) {
+		if (module_id == null) module_id = current_module;
+		var sensors = get_group(module_id,group_id);
+		if (sensors == null) return null;
+		for (var j = 0; j < sensors.length; j++) {
+			var sensor = sensors[j];
+			if (sensor["enabled"] && sensor["sensor_id"] == sensor_id) return sensor;
+		}
+		return null
+	}
+	
+	// fetch a sensor
+	function get_sensor_string(sensor_string) {
+		var split = sensor_string.split(":",3)
+		if (split.length < 3) return null
+		return get_sensor(split[0],split[1],split[2])
+	}	
+
+	// auto refresh the page
+	function auto_refresh(seconds) {
+		if ((seconds == null || seconds == 0) && refresher) {
+			clearInterval(refresher);
+			return;
+		}
+		if (!(seconds > 0)) return;
+		if (refresher) clearInterval(refresher);
+		refresher = setInterval(function(){
+			load_module(current_module);
+			load_alerts();
+		}, seconds*1000);
+	}
+	
+	// log to console a message
+	function log(level,message) {
+		if (conf["gui"]["debug_console"] || level != "info") console.log(level.toUpperCase()+": "+message);
+	}
+	
+	// notify the user about something
+	function notify(type,message) {
+		options = {
+			message: message,
+		}
+		settings = {
+			type: type,
+		}
+		var title = null
+		if (type == "danger") title = "Error"
+		else if (type == "warning") title = "Warning"
+		if (title != null) options["title"] = "<strong>"+title+":</strong> "
+		$.notify(options,settings);
+	}
+	
+	// store a setting in the browser
+	function setting_save(name, val) {
+		if (typeof (Storage) !== "undefined") localStorage.setItem(name, val);
+		return null
+	}
+	
+	// get a pre-stored setting
+	function setting_load(name) {
+		if (typeof (Storage) !== "undefined") return localStorage.getItem(name);
+		return null
+	}	
+	
+	// return a random HTML color
+	function get_color() {
+		var letters = '0123456789ABCDEF';
+		var color = '#';
+		for (var i = 0; i < 6; i++ ) {
+			color += letters[Math.floor(Math.random() * 16)];
+		}
+		return color;
+	}
+	
+	// set the sking to the GUI
+	function load_skin(skin) {
+		// load the saved skin
+		var saved_skin = setting_load('skin');
+		if (saved_skin && $.inArray(saved_skin, skins)) skin = saved_skin
+		// remove all the skins from the body first
+		$.each(skins, function (i) {
+			$("body").removeClass(skins[i]);
+		});
+		// apply the new skin
+		$("body").addClass("skin-"+skin);
+	}
+	
+	// # return the text for the configured language
+	function lang(display_name){
+        language = conf["general"]["language"]
+        // return the text corresponding to the configured language
+        if (language in display_name) return display_name[language]
+		log("warning","cannot find language "+language+" in "+display_name)
+        return "N.A."
+	}
+	
+	// return now's time in a structured way
+	function getNow() {
+		var now = new Date();
+		return {
+			hours: now.getHours() + now.getMinutes() / 60,
+			minutes: now.getMinutes() * 12 / 60 + now.getSeconds() * 12 / 3600,
+			seconds: now.getSeconds() * 12 / 60
+		};
+	}
+
+	// pad a number, create an array of the remaining length + 1 and join it with 0's
+	function pad(number, length) {
+		return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+	}
+	
+	// Easing function from https://github.com/danro/easing-js/blob/master/easing.js
+	Math.easeOutBounce = function (pos) {
+		if ((pos) < (1 / 2.75)) return (7.5625 * pos * pos);
+		if (pos < (2 / 2.75)) return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+		if (pos < (2.5 / 2.75)) return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+		return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+	};
+	
+	// return true if a string is a sensor
+	function is_sensor(string) {
+		var matches = string.match(/:/g);
+		if (matches == null) return false;
+		if (matches.length == 2) return true;
+		return false;
+	}
+	
+</script>
+
+</body>
+</html>
