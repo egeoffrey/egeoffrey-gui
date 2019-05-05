@@ -210,7 +210,7 @@ class Gui extends Module {
             }
         }
         else if (message.args == "house") {
-            if (! this.is_valid_configuration(["timezone", "skin", "name"], message.get_data())) return
+            if (! this.is_valid_module_configuration(["timezone", "skin", "name"], message.get_data())) return
             this.house = message.get_data()
             $("#house_name").html(this.house["name"])
             this.date = new DateTimeUtils(message.get("timezone"))

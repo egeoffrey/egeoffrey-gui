@@ -49,9 +49,9 @@ class Configuration extends Widget {
         var configuration_array = []
         if (request == "house") configuration_array = ["house", "users", "groups"]
         else if (request == "controller") configuration_array = ["controller/#"]
-        else if (request == "services") configuration_array = ["services/#"]
-        else if (request == "input") configuration_array = ["input/#"]
-        else if (request == "output") configuration_array = ["output/#"]
+        else if (request == "service") configuration_array = ["service/#"]
+        else if (request == "interaction") configuration_array = ["interaction/#"]
+        else if (request == "notification") configuration_array = ["notification/#"]
         else if (request == "sensors") configuration_array = ["sensors/#"]
         else if (request == "rules") configuration_array = ["rules/#"]
         else if (request == "gui") configuration_array = ["gui/menu", "gui/charts"]
@@ -88,9 +88,9 @@ class Configuration extends Widget {
                     <select class="form-control" id="'+this.id+'_selector">\
                         <option value="house">house</option>\
                         <option value="controller">controller</option>\
-                        <option value="input">input</option>\
-                        <option value="output">output</option>\
-                        <option value="services">services</option>\
+                        <option value="interaction">interaction</option>\
+                        <option value="notification">notification</option>\
+                        <option value="service">service</option>\
                         <option value="sensors">sensors</option>\
                         <option value="rules">rules</option>\
                         <option value="gui">gui</option>\

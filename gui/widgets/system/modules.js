@@ -54,9 +54,9 @@ class Modules extends Widget {
             <div class="form-group">\
                 <select class="form-control" id="'+this.id+'_selector">\
                     <option value="controller">controller</option>\
-                    <option value="services">services</option>\
-                    <option value="input">input</option>\
-                    <option value="output">output</option>\
+                    <option value="service">service</option>\
+                    <option value="interaction">interaction</option>\
+                    <option value="notification">notification</option>\
                 </select>\
             </div>\
         '
@@ -137,7 +137,7 @@ class Modules extends Widget {
             $("#"+this.id+"_ping_"+message.sender.replace("/","_")).html(latency+"s")
 
         }
-        else if (message.sender.startsWith("controller/watchdog") && message.command == "DISCOVER" && message.args == "res") {
+        else if (message.sender.startsWith("system/watchdog") && message.command == "DISCOVER" && message.args == "res") {
             // for each module managed by the watchdog
             var watchdog = message.sender
             for (var module of message.get_data()) {
@@ -153,7 +153,7 @@ class Modules extends Widget {
                 var running_icon = '<i id="'+this.id+'_running_'+module_id+'" class="" style="color: green;"></i>'
                 var configured_icon = '<i id="'+this.id+'_configured_'+module_id+'" class="" style="color: green;"></i>'
                 var debug_html = '<input id="'+this.id+'_debug_'+module_id+'" type="checkbox">'
-                var set_html = this.filter == "output" ? '<div class="input-group margin"><input type="text" id="'+this.id+'_set_text_'+module_id+'" class="form-control"><span class="input-group-btn"><button type="button" id="'+this.id+'_set_'+module_id+'" class="btn btn-default" ><span class="fas fa-sign-out-alt"></span></button></span></div><br>' : ""
+                var set_html = this.filter == "notification" ? '<div class="input-group margin"><input type="text" id="'+this.id+'_set_text_'+module_id+'" class="form-control"><span class="input-group-btn"><button type="button" id="'+this.id+'_set_'+module_id+'" class="btn btn-default" ><span class="fas fa-sign-out-alt"></span></button></span></div><br>' : ""
                 var edit_html = '<button type="button" id="'+this.id+'_edit_'+module_id+'" class="btn btn-default"><i class="fas fa-edit"></i></button>'
                 var start_html = '<button type="button" id="'+this.id+'_start_'+module_id+'" class="btn btn-default" disabled><i class="fas fa-play"></i></button>'
                 var stop_html = '<button type="button" id="'+this.id+'_stop_'+module_id+'" class="btn btn-default" disabled><i class="fas fa-stop"></i></button>'
@@ -225,8 +225,8 @@ class Modules extends Widget {
                         gui.send(message)
                     };
                 }(module, watchdog));
-                // for an output module, manually run it
-                if (this.filter == "output") {
+                // for a notification module, manually run it
+                if (this.filter == "notification") {
                     $("#"+this.id+"_set_"+module_id).unbind().click(function(module_id, module, id) {
                         return function () {
                             var value = $("#"+id+"_set_text_"+module_id).val()
