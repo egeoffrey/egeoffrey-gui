@@ -1,4 +1,4 @@
-// sesnors widget
+// Logs widget
 class Logs extends Widget {
     constructor(id, widget) {
         super(id, widget)

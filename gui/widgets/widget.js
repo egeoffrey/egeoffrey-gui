@@ -41,6 +41,11 @@ class Widget {
         return topic
     }
     
+    // wrap gui.add_broadcast_listener()
+    add_broadcast_listener(from_module, command, args) {
+        return this.add_inspection_listener(from_module, "*/*", command, args)
+    }
+    
     // wrap gui.add_configuration_listener()
     add_configuration_listener(configuration) {
         // if the requested configuration was already received, pass it along to the widget

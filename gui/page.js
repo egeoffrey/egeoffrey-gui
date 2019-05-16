@@ -6,7 +6,20 @@ class Page {
         if (type == "USER") this.draw(page)
         // if it is a system page, build the layout and draw it
         else if (type == "SYSTEM") {
-            if (page == "__modules") {
+            if (page == "__packages") {
+                this.draw([
+                    {
+                        "": [
+                            {
+                                "title": "Packages",
+                                "size": 12,
+                                "type": "packages"
+                            }
+                        ]
+                    }
+                ])
+            }
+            else if (page == "__modules") {
                 this.draw([
                     {
                         "": [
@@ -226,6 +239,7 @@ class Page {
         else if (widget["type"] == "chatbot") widget_object = new Chatbot(id, widget)
         else if (widget["type"] == "configuration") widget_object = new Configuration(id, widget)
         else if (widget["type"] == "icons") widget_object = new Icons(id, widget)
+        else if (widget["type"] == "packages") widget_object = new Packages(id, widget)
         else gui.log_error("unknown widget "+JSON.stringify(widget))
         this.widgets.push(widget_object)
         return widget_object

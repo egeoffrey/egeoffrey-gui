@@ -6,6 +6,24 @@ class Menu {
         var admin = {
             "myHouse Admin": [
                 {
+                    "Packages": {
+                        "page": "__packages",
+                        "icon": "cubes",
+                        "allow": [
+                            "admins"
+                        ]
+                    }
+                },
+                {
+                    "Modules": {
+                        "page": "__modules",
+                        "icon": "server",
+                        "allow": [
+                            "admins"
+                        ]
+                    }
+                },
+                {
                     "Sensors": {
                         "page": "__sensors",
                         "icon": "microchip",
@@ -24,9 +42,9 @@ class Menu {
                     }
                 },
                 {
-                    "Modules": {
-                        "page": "__modules",
-                        "icon": "server",
+                    "Configuration": {
+                        "page": "__configuration",
+                        "icon": "edit",
                         "allow": [
                             "admins"
                         ]
@@ -36,15 +54,6 @@ class Menu {
                     "Logs": {
                         "page": "__logs",
                         "icon": "align-justify",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                },
-                {
-                    "Configuration": {
-                        "page": "__configuration",
-                        "icon": "edit",
                         "allow": [
                             "admins"
                         ]
