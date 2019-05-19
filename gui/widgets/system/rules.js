@@ -121,7 +121,7 @@ class Rules extends Widget {
         var edit_html = '<button type="button" id="'+this.id+'_edit_'+rule_tag+'" class="btn btn-default"><i class="fas fa-edit"></i></button>'
         var delete_html = '<button type="button" id="'+this.id+'_delete_'+rule_tag+'" class="btn btn-default" ><i class="fas fa-trash"></i></button>'
         // add the row
-        table.row.add(this.disabled_item([rule_id, description, rule["severity"] , schedule, conditions, actions, run_html+" "+edit_html+" "+delete_html], disabled)).draw();
+        table.row.add(this.disabled_item([rule_id, format_multiline(description, 50), rule["severity"] , schedule, conditions, actions, run_html+" "+edit_html+" "+delete_html], disabled)).draw(false);
         // run the selected rule
         $("#"+this.id+"_run_"+rule_tag).unbind().click(function(rule_id) {
             return function () {

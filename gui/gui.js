@@ -28,6 +28,28 @@ class Gui extends Module {
         this.add_configuration_listener("users", true)
         this.add_configuration_listener("groups", true)
         this.page = null
+        // send the manifest if any
+        $.get("/manifest.yml", function( data) {
+            try {
+                var manifest = jsyaml.load(data)
+            } catch(e) {
+                gui.log_warning("invalid manifest file: "+get_exception(e))
+            }
+            // clear up previous manifest if any
+            var message = new Message(gui)
+            message.recipient = "*/*"
+            message.command = "MANIFEST"
+            message.set_null()
+            message.retain = true 
+            gui.send(message)
+            // publish the new manifest
+            var message = new Message(gui)
+            message.recipient = "*/*"
+            message.command = "MANIFEST"
+            message.set_data(manifest)
+            message.retain = true
+            gui.send(message)
+        });
     }
     
 	// notify the user about something
@@ -212,9 +234,16 @@ class Gui extends Module {
         else if (message.args == "house") {
             if (! this.is_valid_module_configuration(["timezone", "skin", "name"], message.get_data())) return
             this.house = message.get_data()
-            $("#house_name").html(this.house["name"])
+            // set house name
+            $("#house_name").html(this.house["name"].replaceAll(" ","&nbsp;"))
+            // set house time
             this.date = new DateTimeUtils(message.get("timezone"))
+            $("#house_time").html(gui.date.format_timestamp())
+            setInterval(function() {
+                $("#house_time").html(gui.date.format_timestamp())
+            }, 1000);
             this.load_skin(message.get("skin"))
+            
         }
         else if (message.args == "users") {
             this.users = message.get_data()

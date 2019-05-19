@@ -233,7 +233,7 @@ class Sensors extends Widget {
             set_html+"<br>"+graph_html+" "+edit_html+" "+empty_html+" "+delete_html,
             disabled
         ]
-        table.row.add(row).draw();
+        table.row.add(row).draw(false);
         // request value and timestamp
         this.request_data(sensor_id)
         // enable graph and set button

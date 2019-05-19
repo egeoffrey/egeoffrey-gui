@@ -1,5 +1,5 @@
-// Logs widget
-class Logs extends Widget {
+// Gateway widget
+class Gateway extends Widget {
     constructor(id, widget) {
         super(id, widget)
         this.listener = null
@@ -11,19 +11,24 @@ class Logs extends Widget {
     draw() {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
         // IDs Widget: _table
-        // if refresh requested, we need to unsubscribe from the topics to receive them again
         if (this.listener != null) gui.remove_listener(this.listener)
         var body = "#"+this.id+"_body"
         // add table
+        // 0: timestamp
+        // 1: source
+        // 2: recipient
+        // 3: command
+        // 4: args
+        // 5: retain
+        // 6: content
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>Module</th><th>Severity</th><th>Message</th></tr>\
+                    <tr><th>Time</th><th>Source Module</th><th>Recipient Module</th><th>Command</th><th>Args</th><th>Retain</th><th>Content</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
         $(body).html(table)
-        
         // define datatables options
         var options = {
             "responsive": true,
@@ -34,26 +39,34 @@ class Logs extends Widget {
             "searching": true,
             "ordering": true,
             "info": true,
-            "autoWidth": true,
+            "autoWidth": false,
+            "order": [[ 0, "desc" ]],
+            "columnDefs": [ 
+                {
+                    "className": "dt-center",
+                    "targets": [1, 2, 3, 5]
+                }
+            ]
         };
         // create the table
         $("#"+this.id+"_table").DataTable(options);
-        // subscribe for logs
-        // subscribe for acknoledgments from the database for saved values
-        this.add_inspection_listener("+/+", "controller/logger", "LOG", "#")
+        // subscribe for all topics
+        this.listener = this.add_inspection_listener("+/+", "+/+", "+", "#")
     }
     
         
     // close the widget
     close() {
+        gui.remove_listener(this.listener)
     }    
     
     // receive data and load it into the widget
     on_message(message) {
-        if (message.sender == "controller/logger") {
-            var table = $("#"+this.id+"_table").DataTable()
-            table.row.add([message.sender, message.args, message.get_data()]).draw();
-        }
+        var table = $("#"+this.id+"_table").DataTable()
+        var retain = message.retain ? '<i class="fas fa-check"></i>' : ""
+        var content = truncate(format_multiline(JSON.stringify(message.get_data()), 70),1000)
+        table.row.add([gui.date.format_timestamp(), message.sender, message.recipient, message.command, message.args, retain, content])
+        table.draw(false)
     }
     
     // receive configuration

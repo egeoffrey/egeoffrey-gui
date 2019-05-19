@@ -4,25 +4,7 @@ class Menu {
         gui.log_debug("Received menu")
         // add admin items
         var admin = {
-            "myHouse Admin": [
-                {
-                    "Packages": {
-                        "page": "__packages",
-                        "icon": "cubes",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                },
-                {
-                    "Modules": {
-                        "page": "__modules",
-                        "icon": "server",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                },
+            "House Admin": [
                 {
                     "Sensors": {
                         "page": "__sensors",
@@ -49,11 +31,22 @@ class Menu {
                             "admins"
                         ]
                     }
+                }
+            ],
+            "myHouse Admin": [
+                {
+                    "Packages": {
+                        "page": "__packages",
+                        "icon": "cubes",
+                        "allow": [
+                            "admins"
+                        ]
+                    }
                 },
                 {
-                    "Logs": {
-                        "page": "__logs",
-                        "icon": "align-justify",
+                    "Modules": {
+                        "page": "__modules",
+                        "icon": "server",
                         "allow": [
                             "admins"
                         ]
@@ -63,6 +56,35 @@ class Menu {
                     "Icons": {
                         "page": "__icons",
                         "icon": "palette",
+                        "allow": [
+                            "admins"
+                        ]
+                    }
+                }
+            ],
+            "myHouse Inspector": [
+                {
+                    "Logger": {
+                        "page": "__logger",
+                        "icon": "align-justify",
+                        "allow": [
+                            "admins"
+                        ]
+                    }
+                },
+                {
+                    "Database": {
+                        "page": "__database",
+                        "icon": "database",
+                        "allow": [
+                            "admins"
+                        ]
+                    }
+                },
+                {
+                    "Gateway": {
+                        "page": "__gateway",
+                        "icon": "project-diagram",
                         "allow": [
                             "admins"
                         ]
