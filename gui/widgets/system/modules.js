@@ -48,7 +48,7 @@ class Modules extends Widget {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
         // IDs Widget: _table
         var body = "#"+this.id+"_body"
-        $(body).empty()
+        $(body).html("")
         // add selector
         var selector = '\
             <div class="form-group">\
@@ -93,7 +93,7 @@ class Modules extends Widget {
             "responsive": true,
             "dom": "Zlfrtip",
             "fixedColumns": false,
-            "paging": true,
+            "paging": false,
             "lengthChange": false,
             "searching": true,
             "ordering": true,
@@ -243,6 +243,7 @@ class Modules extends Widget {
                 // set status
                 this.set_status(module["fullname"], module["started"])
                 // ping the module
+                // TODO: ping not working with remote modules
                 this.ping[module["fullname"]] = (new Date()).getTime()
                 var message = new Message(gui)
                 message.recipient = module["fullname"]

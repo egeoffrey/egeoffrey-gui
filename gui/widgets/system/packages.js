@@ -13,8 +13,12 @@ class Packages extends Widget {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
         // IDs Widget: _table
         // if refresh requested, we need to unsubscribe from the topics to receive them again
-        if (this.listener != null) gui.remove_listener(this.listener)
+        if (this.listener != null) {
+            gui.remove_listener(this.listener)
+            this.manifests = {}
+        }
         var body = "#"+this.id+"_body"
+        $(body).html("")
         // add table
         // 0: package
         // 1: modules
@@ -35,7 +39,7 @@ class Packages extends Widget {
             "responsive": true,
             "dom": "Zlfrtip",
             "fixedColumns": false,
-            "paging": true,
+            "paging": false,
             "lengthChange": false,
             "searching": true,
             "ordering": true,
@@ -57,6 +61,9 @@ class Packages extends Widget {
         
     // close the widget
     close() {
+        if (this.listener != null) {
+            gui.remove_listener(this.listener)
+        }
     }    
     
     // receive data and load it into the widget
@@ -72,7 +79,7 @@ class Packages extends Widget {
             var url = "https://raw.githubusercontent.com/"+manifest["git"]+"/"+manifest["version"]+"/manifest.yml"
             $.get(url, function( data) {
                 data = jsyaml.load(data)
-                if (data["revision"] > manifest["revision"]) $("#"+update_id).html('<a href="https://github.com/'+manifest["git"]+'/tree/'+manifest["version"]+'" target="_blank"><i class="fas fa-external-link-alt"></i></a>')
+                if (data["revision"] > manifest["revision"]) $("#"+update_id).html('<a href="https://github.com/'+manifest["git"]+'/tree/'+manifest["version"]+'" target="_blank" ><i class="fas fa-external-link-alt"></i></a>')
                 else $("#"+update_id).html('<i class="fas fa-check">')
             });
             this.manifests[manifest["package"]] = manifest

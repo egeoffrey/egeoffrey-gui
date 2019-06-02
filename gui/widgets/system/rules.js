@@ -18,6 +18,7 @@ class Rules extends Widget {
             this.rules = {}
         }
         var body = "#"+this.id+"_body"
+        $(body).html("")
         // add new rule button
         var button_html = '\
             <div class="form-group">\
@@ -51,7 +52,7 @@ class Rules extends Widget {
             "responsive": true,
             "dom": "Zlfrtip",
             "fixedColumns": false,
-            "paging": true,
+            "paging": false,
             "lengthChange": false,
             "searching": true,
             "ordering": true,
@@ -81,6 +82,9 @@ class Rules extends Widget {
     
     // close the widget
     close() {
+        if (this.listener != null) {
+            gui.remove_listener(this.listener)
+        }
     }
     
     // receive data and load it into the widget

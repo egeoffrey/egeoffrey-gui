@@ -1,5 +1,7 @@
 // sensors widget
 class Sensors extends Widget {
+    // TODO: when refreshing a new table is added
+    // TODO: when searching all the buttons stop working
     constructor(id, widget) {
         super(id, widget)
         this.sensors = {}
@@ -42,6 +44,7 @@ class Sensors extends Widget {
             this.sensors = {}
         }
         var body = "#"+this.id+"_body"
+        $(body).html("")
         // add new sensor button
         var button_html = '\
             <div class="form-group">\
@@ -90,7 +93,7 @@ class Sensors extends Widget {
             "responsive": true,
             "dom": "Zlfrtip",
             "fixedColumns": false,
-            "paging": true,
+            "paging": false,
             "lengthChange": false,
             "searching": true,
             "ordering": true,
@@ -117,7 +120,7 @@ class Sensors extends Widget {
         };
         // create the table
         if (! $.fn.dataTable.isDataTable("#"+this.id+"_table")) {
-            $("#"+this.id+"_table").DataTable(options);
+            $("#"+this.id+"_table").DataTable(options)
         } else {
             var table = $("#"+this.id+"_table").DataTable()
             table.clear()
@@ -130,6 +133,9 @@ class Sensors extends Widget {
     
     // close the widget
     close() {
+        if (this.listener != null) {
+            gui.remove_listener(this.listener)
+        }
     }
     
     // receive data and load it into the widget
@@ -156,9 +162,11 @@ class Sensors extends Widget {
                     else if (row[3] == "image") data = '<img class="img-responsive" width="200" height="100" src="data:image/jpeg;base64,'+data+'"/>'
                     else {
                         var unit = data != "" ? row[4] : ""
-                        data = this_class.disabled_item(data+unit, row[11])
+                        data = data+unit
+                        data = format_multiline(truncate(data.replaceAll("\n", "<br>"), 100), 15)
+                        data = this_class.disabled_item(data, row[11])
                     }
-                    table.cell(row_index, 8).data(data).draw()
+                    table.cell(row_index, 8).data(data).draw(false)
                 });
             }
             // add timestamp
@@ -167,7 +175,7 @@ class Sensors extends Widget {
                     if (data.length != 1) return
                     var row = this.data()
                     if (row[0] != sensor_id) return
-                    table.cell(row_index, 9).data(data[0]).draw()
+                    table.cell(row_index, 9).data(data[0]).draw(false)
                 });
             }
         }
@@ -256,7 +264,8 @@ class Sensors extends Widget {
         // manually set the value to a sensor
         $("#"+this.id+"_set_"+sensor_tag).unbind().click(function(id, sensor_id) {
             return function () {
-                var value = $("#"+id+"_set_text_"+sensor_id).val()
+                var sensor_tag = sensor_id.replaceAll("/","_")
+                var value = $("#"+id+"_set_text_"+sensor_tag).val()
                 var message = new Message(gui)
                 message.recipient = "controller/hub"
                 message.command = "SET"

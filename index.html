@@ -43,6 +43,11 @@
 <script src="lib/icheck/icheck.min.js"></script>
 <link rel="stylesheet" href="lib/icheck/square/blue.css" />
 
+
+<script src="https://maps.google.com/maps/api/js"></script>
+
+
+
 <!--  Datatables -->
 <script src="lib/datatables/datatables.min.js"></script>
 <script src="lib/datatables-plugins/dataTables.responsive.min.js"></script>
@@ -98,6 +103,10 @@
 <script src="gui/widgets/user/calendar.js"></script>
 <script src="gui/widgets/user/value.js"></script>
 <script src="gui/widgets/user/image.js"></script>
+<script src="gui/widgets/user/map.js"></script>
+<script src="gui/widgets/user/text.js"></script>
+<script src="gui/widgets/user/table.js"></script>
+
 <script src="gui/widgets/system/modules.js"></script>
 <script src="gui/widgets/system/sensors.js"></script>
 <script src="gui/widgets/system/logger.js"></script>
@@ -336,7 +345,7 @@ th.dt-center, td.dt-center { text-align: center; }
                                 <div class="col-xs-8">
                                   <div class="checkbox icheck">
                                     <label>
-                                      <input type="checkbox" id="remember_me"> Remember Me
+                                      <input type="checkbox" id="myhouse_remember_me"> Remember Me
                                     </label>
                                   </div>
                                 </div>
@@ -407,6 +416,7 @@ th.dt-center, td.dt-center { text-align: center; }
             window.MYHOUSE_PASSCODE = $("#myhouse_passcode").val()
             window.MYHOUSE_USERNAME = $("#myhouse_username").val()
             window.MYHOUSE_PASSWORD = $("#myhouse_password").val()
+            window.MYHOUSE_REMEMBER_ME = $("#myhouse_remember_me").is(":checked")
             // create a new instance of the gui and run it
             window.gui = new Gui("gui",MYHOUSE_USERNAME+"_"+generate_session_id())
             window.gui.run()
@@ -424,6 +434,7 @@ th.dt-center, td.dt-center { text-align: center; }
         if (localStorage.getItem("MYHOUSE_PASSCODE") != null) window.MYHOUSE_PASSCODE = localStorage.getItem("MYHOUSE_PASSCODE")
         if (localStorage.getItem("MYHOUSE_USERNAME") != null) window.MYHOUSE_USERNAME = localStorage.getItem("MYHOUSE_USERNAME")
         if (localStorage.getItem("MYHOUSE_PASSWORD") != null) window.MYHOUSE_PASSWORD = localStorage.getItem("MYHOUSE_PASSWORD")
+        if (localStorage.getItem("MYHOUSE_REMEMBER_ME") != null) window.MYHOUSE_REMEMBER_ME = Boolean(parseInt(localStorage.getItem("MYHOUSE_REMEMBER_ME")))
         // create a gui and start it
         window.gui = new Gui("gui","guest_"+generate_session_id())
         window.gui.run()
@@ -441,7 +452,7 @@ th.dt-center, td.dt-center { text-align: center; }
                 // connected
                 $("#login_error").html("")
                 // remember user credentials if requested
-                if ($("#remember_me").is(":checked")) {
+                if ($("#myhouse_remember_me").is(":checked")) {
                     localStorage.setItem("MYHOUSE_GATEWAY_HOSTNAME", window.MYHOUSE_GATEWAY_HOSTNAME)
                     localStorage.setItem("MYHOUSE_GATEWAY_PORT", window.MYHOUSE_GATEWAY_PORT)
                     localStorage.setItem("MYHOUSE_GATEWAY_SSL", window.MYHOUSE_GATEWAY_SSL)
@@ -449,6 +460,7 @@ th.dt-center, td.dt-center { text-align: center; }
                     localStorage.setItem("MYHOUSE_PASSCODE", window.MYHOUSE_PASSCODE)
                     localStorage.setItem("MYHOUSE_USERNAME", window.MYHOUSE_USERNAME)
                     localStorage.setItem("MYHOUSE_PASSWORD", window.MYHOUSE_PASSWORD)
+                    localStorage.setItem("MYHOUSE_REMEMBER_ME", window.MYHOUSE_REMEMBER_ME)
                 } else localStorage.clear()
                 $("#login").modal("hide")
                 login_submit = false

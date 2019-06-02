@@ -14,6 +14,7 @@ class Configuration extends Widget {
         this.current_configurations = []
         // add an empty box into the given column
         this.template.add_large_widget(this.id, this.widget["title"])
+        // TODO: delete configuration
     }
     
     // request data from an array of configurations

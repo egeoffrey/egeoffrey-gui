@@ -1,9 +1,14 @@
 package: myhouse-gui
-revision: 2
+revision: 3
 version: development
 git: myhouse-project/myhouse-gui
 modules: []
 default_config:
+  - gui/settings:
+      skin: blue
+      map:
+        type: hybrid
+        api_key: AIzaSyBm9rP3sl1f7M2OIGxek1jtz3Il4iRHMSk
   - gui/menu:
     - Examples:
       - New York weather:
@@ -187,6 +192,12 @@ default_config:
         title: Command Out
         type: button
         icon: play
+    - Earthquake:
+      - sensors: 
+        - examples/services/earthquake/earthquake
+        size: 6
+        title: Earthquake
+        type: map
     - Image:
       - sensor: examples/services/image/image
         size: 6

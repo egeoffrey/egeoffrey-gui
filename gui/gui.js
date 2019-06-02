@@ -15,6 +15,7 @@ class Gui extends Module {
         this.requests = {}
         // other settings
         this.house = {}
+        this.settings = {}
         this.charts = {}
         this.users = {}
         this.groups = {}
@@ -24,6 +25,7 @@ class Gui extends Module {
         this.waiting_for_page = false
         // subscribe to required settings
         this.add_configuration_listener("house", true)
+        this.add_configuration_listener("gui/settings", true)
         this.add_configuration_listener("gui/charts", true)
         this.add_configuration_listener("users", true)
         this.add_configuration_listener("groups", true)
@@ -36,6 +38,7 @@ class Gui extends Module {
                 gui.log_warning("invalid manifest file: "+get_exception(e))
             }
             // clear up previous manifest if any
+            // TODO: move manifest outside the app
             var message = new Message(gui)
             message.recipient = "*/*"
             message.command = "MANIFEST"
@@ -50,6 +53,15 @@ class Gui extends Module {
             message.retain = true
             gui.send(message)
         });
+        // safeguard, if not receiving a configuration file timeline, disconnect
+        setTimeout(function(this_class) {
+            return function() {
+                if (Object.keys(this_class.settings).length === 0) {
+                    this_class.log_error("Timeout in receiving the configuration, disconnecting")
+                    this_class.join()
+                }
+            };
+        }(this), 2000);
     }
     
 	// notify the user about something
@@ -232,7 +244,7 @@ class Gui extends Module {
             }
         }
         else if (message.args == "house") {
-            if (! this.is_valid_module_configuration(["timezone", "skin", "name"], message.get_data())) return
+            if (! this.is_valid_module_configuration(["timezone", "skin", "name"], message.get_data())) return false
             this.house = message.get_data()
             // set house name
             $("#house_name").html(this.house["name"].replaceAll(" ","&nbsp;"))
@@ -244,6 +256,11 @@ class Gui extends Module {
             }, 1000);
             this.load_skin(message.get("skin"))
             
+        }
+        else if (message.args == "gui/settings") {
+            if (! this.is_valid_module_configuration(["skin", "map"], message.get_data())) return false
+            this.settings = message.get_data()
+            this.load_skin(message.get("skin"))
         }
         else if (message.args == "users") {
             this.users = message.get_data()
