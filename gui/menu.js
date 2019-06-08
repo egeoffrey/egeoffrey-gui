@@ -1,129 +1,73 @@
 // handle the left menu
-class Menu {
-    constructor(menu) {
-        gui.log_debug("Received menu")
-        // add admin items
-        var admin = {
-            "House Admin": [
-                {
-                    "Sensors": {
-                        "page": "__sensors",
-                        "icon": "microchip",
-                        "allow": [
-                            "admins"
-                        ]
+
+class Menu extends Widget {
+    constructor(id) {
+        super(id, {})
+        this.sections = []
+        this.entries = {}
+    }
+    
+    // draw the widget's content
+    draw() {
+        this.add_configuration_listener("gui/menu/#")
+    }
+    
+    // close the widget
+    close() {
+    }
+    
+    // receive data and load it into the widget
+    on_message(message) {
+    }
+    
+    // refresh the menu
+    refresh() {
+        $("#"+this.id).empty()
+        for (var section of this.sections) {
+            if (section == null) continue
+            if (! (section["section_id"] in this.entries)) continue
+            $("#"+this.id).append('<li class="header" id="menu_section_'+section["section_id"]+'">'+section["text"].toUpperCase()+'</li>');
+            var items = 0
+            for (var entry of this.entries[section["section_id"]]) {
+                if (entry == null) continue
+                if (entry["section_id"] != section["section_id"]) continue
+                // add the entry to the menu
+                if (! gui.is_authorized(entry)) continue
+                var page_tag = entry["page"].replaceAll("/","_")
+                $("#"+this.id).append('<li id="menu_user_item_'+page_tag+'"><a href="#'+entry["page"]+'"> <i class="fas fa-'+entry["icon"]+'"></i> <span>'+capitalizeFirst(entry["text"])+'</span></a></li>');
+                // open the page on click
+                $("#menu_user_item_"+page_tag).click(function(page){
+                    return function () {
+                        // if clicking on the current page, explicitely reload it since hash will not change
+                        if (location.hash.replace("#","") == page) gui.load_page(page)
+                        if ($("body").hasClass('sidebar-open')) $("body").removeClass('sidebar-open').removeClass('sidebar-collapse').trigger('collapsed.pushMenu')
                     }
-                },
-                {
-                    "Rules": {
-                        "page": "__rules",
-                        "icon": "brain",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                },
-                {
-                    "Configuration": {
-                        "page": "__configuration",
-                        "icon": "edit",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                }
-            ],
-            "myHouse Admin": [
-                {
-                    "Packages": {
-                        "page": "__packages",
-                        "icon": "cubes",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                },
-                {
-                    "Modules": {
-                        "page": "__modules",
-                        "icon": "server",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                },
-                {
-                    "Icons": {
-                        "page": "__icons",
-                        "icon": "palette",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                }
-            ],
-            "myHouse Inspector": [
-                {
-                    "Logger": {
-                        "page": "__logger",
-                        "icon": "align-justify",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                },
-                {
-                    "Database": {
-                        "page": "__database",
-                        "icon": "database",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                },
-                {
-                    "Gateway": {
-                        "page": "__gateway",
-                        "icon": "project-diagram",
-                        "allow": [
-                            "admins"
-                        ]
-                    }
-                }
-            ]
-        }
-        menu.push(admin)
-        // empty the menu
-        $("#menu").empty()
-        // walk through the configured layout
-        for (var i = 0; i < menu.length; i++) {
-            for (var section in menu[i]) {
-                $("#menu").append('<li class="header" id="menu_section_'+i+'">'+section.toUpperCase()+'</li>');
-                var items = 0
-                for (var j = 0; j < menu[i][section].length; j++) {
-                    for (var menu_name in menu[i][section][j]) {
-                        var item = menu[i][section][j][menu_name]
-                        // add the item to the menu
-                        if (! gui.is_authorized(item)) continue
-                        var page_tag = item["page"].replaceAll("/","_")
-                        $("#menu").append('<li id="menu_user_item_'+page_tag+'"><a href="#'+item["page"]+'"> <i class="fas fa-'+item["icon"]+'"></i> <span>'+capitalizeFirst(menu_name)+'</span></a></li>');
-                        // open the page on click
-                        $("#menu_user_item_"+page_tag).click(function(page){
-                            return function () {
-                                // if clicking on the current page, explicitely reload it since hash will not change
-                                if (location.hash.replace("#","") == page) gui.load_page(page)
-                                if ($("body").hasClass('sidebar-open')) $("body").removeClass('sidebar-open').removeClass('sidebar-collapse').trigger('collapsed.pushMenu')
-                            }
-                        }(item["page"]));
-                        items++
-                    }
-                }
-                // hide the section if it has no items
-                if (items == 0) $("#menu_section_"+i).addClass("hidden")
+                }(entry["page"]));
+                items++
             }
+            // hide the section if it has no items
+            if (items == 0) $("#menu_section_"+section["section_id"]).addClass("hidden")
         }
-        $("#menu_admin_item_modules").click(function(){
-            if ($("body").hasClass('sidebar-open')) $("body").removeClass('sidebar-open').removeClass('sidebar-collapse').trigger('collapsed.pushMenu');
-        })     
+    }
+    
+    // receive configuration
+    on_configuration(message) {
+        if (message.args.endsWith("_section")) {
+            var section_id = message.args.replace("gui/menu/","").replace("/_section","")
+            var section = message.get_data()
+            section["section_id"] = section_id
+            this.sections[section["order"]] = section
+        }
+        else {
+            var split = message.args.replace("gui/menu/","").split("/")
+            var section_id = split[0]
+            var entry_id = split[1]
+            var entry = message.get_data()
+            entry["entry_id"] = entry_id
+            entry["section_id"] = section_id
+            if (! (section_id in this.entries)) this.entries[section_id] = []
+            this.entries[section_id][entry["order"]] = entry
+        }
+        this.refresh()
     }
 }

@@ -1,0 +1,6 @@
+icon: server
+order: 2
+page: __modules
+text: Modules
+allow:
+  - admins

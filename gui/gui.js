@@ -30,29 +30,7 @@ class Gui extends Module {
         this.add_configuration_listener("users", true)
         this.add_configuration_listener("groups", true)
         this.page = null
-        // send the manifest if any
-        $.get("/manifest.yml", function( data) {
-            try {
-                var manifest = jsyaml.load(data)
-            } catch(e) {
-                gui.log_warning("invalid manifest file: "+get_exception(e))
-            }
-            // clear up previous manifest if any
-            // TODO: move manifest outside the app
-            var message = new Message(gui)
-            message.recipient = "*/*"
-            message.command = "MANIFEST"
-            message.set_null()
-            message.retain = true 
-            gui.send(message)
-            // publish the new manifest
-            var message = new Message(gui)
-            message.recipient = "*/*"
-            message.command = "MANIFEST"
-            message.set_data(manifest)
-            message.retain = true
-            gui.send(message)
-        });
+        this.menu = new Menu("menu")
         // safeguard, if not receiving a configuration file timeline, disconnect
         setTimeout(function(this_class) {
             return function() {
@@ -176,8 +154,7 @@ class Gui extends Module {
         window.onhashchange = function() {
             if (location.hash) gui.load_page()
         }
-        // ask for the menu
-        this.add_configuration_listener("gui/menu")
+        this.menu.draw()
     }
         
     // What to do when exiting
@@ -222,10 +199,6 @@ class Gui extends Module {
     on_configuration(message) {
         // TODO: how to handle sensors removed from config
         if (message.is_null) return
-        // load the menu
-        if (message.args == "gui/menu") {
-            new Menu(message.get_data())
-        }
         // load the page
         else if (this.waiting_for_page && message.args.startsWith("gui/pages/")) {
             this.log_debug("Received "+message.args)
@@ -244,7 +217,7 @@ class Gui extends Module {
             }
         }
         else if (message.args == "house") {
-            if (! this.is_valid_module_configuration(["timezone", "skin", "name"], message.get_data())) return false
+            if (! this.is_valid_module_configuration(["units", "timezone", "language", "name"], message.get_data())) return false
             this.house = message.get_data()
             // set house name
             $("#house_name").html(this.house["name"].replaceAll(" ","&nbsp;"))

@@ -1,0 +1,6 @@
+icon: microchip
+order: 1
+page: __sensors
+text: Sensors
+allow:
+  - admins

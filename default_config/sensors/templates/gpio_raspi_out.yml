@@ -1,0 +1,10 @@
+calculate: avg_min_max
+description: gpio_raspi_out
+disabled: true
+format: int
+retain: history
+service:
+  configuration:
+    pin: 3
+  mode: actuator
+  name: gpio_raspi_out

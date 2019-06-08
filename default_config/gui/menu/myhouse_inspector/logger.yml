@@ -1,0 +1,6 @@
+icon: align-justify
+order: 1
+page: __logger
+text: Logger
+allow:
+  - admins

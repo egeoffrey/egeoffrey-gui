@@ -1,0 +1,6 @@
+icon: cubes
+order: 1
+page: __packages
+text: Packages
+allow:
+  - admins

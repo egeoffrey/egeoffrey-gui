@@ -1,0 +1,6 @@
+icon: brain
+order: 2
+page: __rules
+text: Rules
+allow:
+  - admins

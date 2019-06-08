@@ -1,0 +1,12 @@
+calculate: avg_min_max
+description: gpio_raspi_in_passive
+disabled: true
+format: int
+retain: history
+service:
+  configuration:
+    edge_detect: both
+    pin: 2
+    pull_up_down: up
+  mode: passive
+  name: gpio_raspi_in_passive

@@ -1,0 +1,6 @@
+icon: database
+order: 2
+page: __database
+text: Database
+allow:
+  - admins

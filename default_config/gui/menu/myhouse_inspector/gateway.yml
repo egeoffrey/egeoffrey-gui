@@ -1,0 +1,6 @@
+icon: project-diagram
+order: 3
+page: __gateway
+text: Gateway
+allow:
+  - admins
