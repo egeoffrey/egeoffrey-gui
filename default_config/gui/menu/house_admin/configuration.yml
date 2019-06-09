@@ -3,4 +3,4 @@ order: 3
 page: __configuration
 text: Configuration
 allow:
-  - admins
+  - house_admins

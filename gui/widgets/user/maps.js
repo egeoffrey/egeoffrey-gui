@@ -1,5 +1,5 @@
 // map widget
-class Map extends Widget {
+class Maps extends Widget {
     constructor(id, widget) {
         super(id, widget)
         // variables
@@ -34,10 +34,6 @@ class Map extends Widget {
         }
     }
     
-    initMap() {
-        console.log("asdasd")
-    }
-    
     // draw the widget's content
     draw() {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
@@ -46,18 +42,6 @@ class Map extends Widget {
         var body = "#"+this.id+"_body"
         $(body).html('<div id="'+this.id+'_map" style="width:100%; height: 640px;"></div>')
         // load google maps api (lazy loading since we need the api_key from the conf)
-        
-
-        /*
-                        this.map = new GMaps({
-                            div: "#"+this.id+"_map",
-                            lat: 0,
-                            lng: 0,
-                            mapType: gui.settings["map"]["type"],
-                            zoom: 2
-                        });
-        */
-        /*
         var script = document.createElement('script')
         script.src = "https://maps.googleapis.com/maps/api/js?key="+gui.settings["map"]["api_key"]
         script.onload = function(this_class) {
@@ -76,7 +60,7 @@ class Map extends Widget {
                             zoom: 2
                         });
                         // request the data
-                        //this_class.request_data()
+                        this_class.request_data()
                     }; // end function ()
                 }(this_class); // onload gmaps.js
                 // append gmaps to head
@@ -85,7 +69,7 @@ class Map extends Widget {
         }(this); // onload google maps
         // append google api to head
         document.head.appendChild(script);
-        */
+        
     }
     
     // close the widget
@@ -100,7 +84,7 @@ class Map extends Widget {
                 if (message.args == sensor) {
                     // TODO: clear the map
                     // request the updated data
-                    //this.request_data()
+                    this.request_data()
                     return
                 }
             }

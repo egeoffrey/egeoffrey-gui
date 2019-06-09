@@ -1,6 +1,6 @@
 icon: palette
-order: 3
+order: 4
 page: __icons
 text: Icons
 allow:
-  - admins
+  - house_admins

@@ -256,8 +256,8 @@ class Page {
         else if (widget["type"] == "input") widget_object = new Value(id, widget)
         else if (widget["type"] == "button") widget_object = new Value(id, widget)
         else if (widget["type"] == "calendar") widget_object = new Calendar(id, widget)
-        else if (widget["type"] == "image") widget_object = new Image(id, widget)
-        else if (widget["type"] == "map") widget_object = new Map(id, widget)
+        else if (widget["type"] == "image") widget_object = new Images(id, widget)
+        else if (widget["type"] == "map") widget_object = new Maps(id, widget)
         else if (widget["type"] == "text") widget_object = new Text(id, widget)
         else if (widget["type"] == "table") widget_object = new Table(id, widget)
         // system widgets

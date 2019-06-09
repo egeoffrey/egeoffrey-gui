@@ -66,6 +66,7 @@ class Menu extends Widget {
             entry["entry_id"] = entry_id
             entry["section_id"] = section_id
             if (! (section_id in this.entries)) this.entries[section_id] = []
+            while (this.entries[section_id][entry["order"]] != null) entry["order"]++
             this.entries[section_id][entry["order"]] = entry
         }
         this.refresh()

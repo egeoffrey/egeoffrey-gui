@@ -1,5 +1,5 @@
 // image widget
-class Image extends Widget {
+class Images extends Widget {
     constructor(id, widget) {
         super(id, widget)
         // add an empty box into the given column

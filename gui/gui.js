@@ -225,7 +225,7 @@ class Gui extends Module {
             this.date = new DateTimeUtils(message.get("timezone"))
             $("#house_time").html(gui.date.format_timestamp())
             setInterval(function() {
-                $("#house_time").html(gui.date.format_timestamp())
+                if (gui.date != null) $("#house_time").html(gui.date.format_timestamp())
             }, 1000);
             this.load_skin(message.get("skin"))
             

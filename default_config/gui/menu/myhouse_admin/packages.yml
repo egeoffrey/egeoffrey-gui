@@ -3,4 +3,4 @@ order: 1
 page: __packages
 text: Packages
 allow:
-  - admins
+  - myhouse_admins
