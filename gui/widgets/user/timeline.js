@@ -92,6 +92,11 @@ class Timeline extends Widget {
         if (message.sender == "controller/db" && message.command == "SAVED") {
             for (var sensor of this.widget["sensors"]) {
                 if (message.args == sensor) {
+                    if ("group_by" in this.widget) {
+                        if (! message.has("group_by") || message.get("group_by") != this.widget["group_by"]) return
+                    } else {
+                        if (message.has("group_by")) return
+                    }
                     // remove all series
                     var chart = $("#"+this.id+"_body").highcharts()
                     while (chart.series.length > 0) chart.series[0].remove(false)

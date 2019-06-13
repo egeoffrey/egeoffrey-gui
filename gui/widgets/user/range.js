@@ -73,6 +73,11 @@ class Range extends Widget {
         // database just saved a value check if our sensor is involved and if so refresh the data
         if (message.sender == "controller/db" && message.command == "SAVED") {
             if (message.args == this.widget["sensor"]) {
+                if ("group_by" in this.widget) {
+                    if (! message.has("group_by") || message.get("group_by") != this.widget["group_by"]) return
+                } else {
+                    if (message.has("group_by")) return
+                }
                 // remove all series
                 var chart = $("#"+this.id+"_body").highcharts();
                 while(chart.series.length > 0) chart.series[0].remove(false)

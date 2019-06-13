@@ -1,5 +1,5 @@
 package: myhouse-gui
-revision: 4
+revision: 5
 version: development
 git: myhouse-project/myhouse-gui
 modules: []

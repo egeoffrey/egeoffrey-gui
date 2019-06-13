@@ -100,7 +100,6 @@ class Maps extends Widget {
             for (var i = 0; i < data.length; i++) {
                 if (data[i][1] == null) continue
                 // normalize and parse position
-                data[i][1] = data[i][1].replaceAll("u'", "'").replaceAll("'", "\"")
                 var position = JSON.parse(data[i][1])
                 // add a marker
                 var options = {

@@ -116,7 +116,13 @@ class Rules extends Widget {
         var schedule = "schedule" in rule ? JSON.stringify(rule["schedule"]) : ""
         schedule = schedule.replaceAll("{","").replaceAll("}","").replaceAll("\"","").replaceAll(":",": ").replaceAll(",",", ")
         var conditions = ""
-        for (var condition of rule["conditions"]) conditions = conditions+condition+"<br>"
+        for (var i = 0; i < rule["conditions"].length; i++) {
+            var or_condition = rule["conditions"][i]
+            for (var and_condition of or_condition) {
+                conditions = conditions+and_condition+"<br>"
+            }
+            if (i != rule["conditions"].length-1) conditions = conditions+"OR<br>"
+        }
         var actions = ""
         if ("actions" in rule) {
             for (var action of rule["actions"]) actions = actions+action+"<br>"

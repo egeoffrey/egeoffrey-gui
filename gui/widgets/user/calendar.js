@@ -15,6 +15,7 @@ class Calendar extends Widget {
         var body = "#"+this.id+"_body"
 		// add the calendar
 		$(body).html('<div class="'+this.id+'_calendar" style="width:100%; height:950px;"></div>')
+        // TODO: how to display with the configured timezone regardless of the browser's time
 		$("."+this.id+"_calendar").dhx_scheduler({
 			xml_date: "%Y-%m-%d %H:%i",
 			mode: "week",
@@ -31,6 +32,7 @@ class Calendar extends Widget {
 			scroll_hour: 6,
 		});
 		// clear previously attached events
+        // TODO: multiple calendars on the same page
 		scheduler.clearAll();
 		if (scheduler_events.length > 0) {
 			for (var i = 0; i < scheduler_events.length; i++) {
@@ -83,6 +85,7 @@ class Calendar extends Widget {
 			if (event.text == "New event") {
 				// newly created event, default to empty string
 				event.text = ""
+                // TODO: default_value
                 /*
 				if ("default_value" in layout) {
 					// default value set
@@ -133,9 +136,8 @@ class Calendar extends Widget {
 			var start = new Date(now.setDate(now.getDate() - 2))
 			var now = new Date()
 			var end = new Date(now.setMonth(now.getMonth() + 2))
-			var events = scheduler.getEvents(start,end)
+			var events = scheduler.getEvents(start, end)
             // save both the events for being displaying and for the analysis
-			//var value = [scheduler.toJSON(), JSON.stringify(events)]
             var value =  JSON.stringify([scheduler.toJSON(), JSON.stringify(events)])
             // ask controller to save the value
             gui.log_debug("saving calendar data: "+value)

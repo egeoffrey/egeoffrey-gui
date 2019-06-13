@@ -55,7 +55,8 @@ class Configuration extends Widget {
         else if (request == "notification") configuration_array = ["notification/#"]
         else if (request == "sensors") configuration_array = ["sensors/#"]
         else if (request == "rules") configuration_array = ["rules/#"]
-        else if (request == "gui") configuration_array = ["gui/menu", "gui/charts"]
+        else if (request == "gui") configuration_array = ["gui/settings", "gui/charts"]
+        else if (request == "menu") configuration_array = ["gui/menu/#"]
         else if (request == "pages") configuration_array = ["gui/pages/#"]
         else return
         this.request_data(configuration_array)
@@ -95,6 +96,7 @@ class Configuration extends Widget {
                         <option value="sensors">sensors</option>\
                         <option value="rules">rules</option>\
                         <option value="gui">gui</option>\
+                        <option value="menu">menu</option>\
                         <option value="pages">pages</option>\
                     </select>\
                 </div>\
