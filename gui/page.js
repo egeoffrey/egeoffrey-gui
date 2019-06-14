@@ -45,14 +45,14 @@ class Page {
                     }
                 ])
             }
-            else if (page == "__logger") {
+            else if (page == "__logs") {
                 this.draw([
                     {
                         "": [
                             {
-                                "title": "Log Inspector",
+                                "title": "Logs Inspector",
                                 "size": 12,
-                                "type": "logger"
+                                "type": "logs"
                             }
                         ]
                     }
@@ -66,6 +66,19 @@ class Page {
                                 "title": "Rules",
                                 "size": 12,
                                 "type": "rules"
+                            }
+                        ]
+                    }
+                ])
+            }
+            else if (page == "__messages") {
+                this.draw([
+                    {
+                        "": [
+                            {
+                                "title": "Messages",
+                                "size": 12,
+                                "type": "messages"
                             }
                         ]
                     }
@@ -264,13 +277,14 @@ class Page {
         else if (widget["type"] == "packages") widget_object = new Packages(id, widget)
         else if (widget["type"] == "modules") widget_object = new Modules(id, widget)
         else if (widget["type"] == "sensors") widget_object = new Sensors(id, widget)
-        else if (widget["type"] == "logger") widget_object = new Logger(id, widget)
+        else if (widget["type"] == "logs") widget_object = new Logs(id, widget)
         else if (widget["type"] == "rules") widget_object = new Rules(id, widget)
         else if (widget["type"] == "chatbot") widget_object = new Chatbot(id, widget)
         else if (widget["type"] == "configuration") widget_object = new Configuration(id, widget)
         else if (widget["type"] == "icons") widget_object = new Icons(id, widget)
         else if (widget["type"] == "database") widget_object = new Database(id, widget)
         else if (widget["type"] == "gateway") widget_object = new Gateway(id, widget)
+        else if (widget["type"] == "messages") widget_object = new Messages(id, widget)
         else gui.log_error("unknown widget "+JSON.stringify(widget))
         this.widgets.push(widget_object)
         return widget_object

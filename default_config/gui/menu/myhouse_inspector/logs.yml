@@ -1,6 +1,6 @@
 icon: align-justify
 order: 1
-page: __logger
-text: Logger
+page: __logs
+text: Logs
 allow:
   - myhouse_admins

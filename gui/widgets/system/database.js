@@ -16,10 +16,11 @@ class Database extends Widget {
         // 1: size
         // 2: start
         // 3: end
+        // 4: value
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>Key</th><th>Size</th><th>Oldest Entry</th><th>Latest Entry</th></tr>\
+                    <tr><th>Key</th><th># Entries</th><th>Oldest</th><th>Newest</th><th>Latest Value</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -39,7 +40,7 @@ class Database extends Widget {
             "searching": true,
             "ordering": true,
             "info": true,
-            "autoWidth": true,
+            "autoWidth": false,
             "columnDefs": [ 
                 {
                     "targets" : [2, 3],
@@ -71,7 +72,7 @@ class Database extends Widget {
             var table = $("#"+this.id+"_table").DataTable()
             var entries = message.get_data()
             for (var entry of entries) {
-                table.row.add(entry)
+                table.row.add([entry[0], entry[1], entry[2], entry[3], format_multiline(truncate(entry[4].replaceAll("\n", "<br>"), 100), 50)])
             }
             table.draw()
         }

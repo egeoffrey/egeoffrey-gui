@@ -1,5 +1,5 @@
-// Logger widget
-class Logger extends Widget {
+// Logs widget
+class Logs extends Widget {
     constructor(id, widget) {
         super(id, widget)
         this.listener = null
@@ -39,13 +39,24 @@ class Logger extends Widget {
             "columnDefs": [ 
                 {
                     "className": "dt-center",
-                    "targets": [0]
+                    "targets": [0, 1]
                 }
             ]
         };
         // create the table
         $("#"+this.id+"_table").DataTable(options);
-        // subscribe for logs
+        // ask for the old logs
+        for (var severity of ["debug", "info", "warning", "error"]) {
+            var message = new Message(gui)
+            message.recipient = "controller/db"
+            message.command = "TAIL_LOGS"
+            message.args = severity
+            message.set_data(5)
+            gui.sessions.register(message, {
+            })
+            this.send(message)
+        }
+        // subscribe for new logs
         this.listener = this.add_inspection_listener("+/+", "controller/logger", "LOG", "#")
     }
     
@@ -55,15 +66,27 @@ class Logger extends Widget {
         gui.remove_listener(this.listener)
     }    
     
+    // format the severity
+    format_severity(severity) {
+        severity = severity.toUpperCase()
+        if (severity == "INFO") return "<b>"+severity+"</b>"
+        else if (severity == "WARNING") return '<p style="color:orange"><b>'+severity+"</b></p>"
+        else if (severity == "ERROR") return '<p style="color:red"><b>'+severity+"</b></p>"
+    }
+    
     // receive data and load it into the widget
     on_message(message) {
+        // realtime logs
         if (message.recipient == "controller/logger") {
             var table = $("#"+this.id+"_table").DataTable()
-            var severity = message.args.toUpperCase()
-            if (severity == "INFO") severity = "<b>"+severity+"</b>"
-            else if (severity == "WARNING") severity = '<p style="color:orange"><b>'+severity+"</b></p>"
-            else if (severity == "ERROR") severity = '<p style="color:red"><b>'+severity+"</b></p>"
-            table.row.add([gui.date.format_timestamp(), severity, message.get_data()]).draw(false);
+            table.row.add([gui.date.format_timestamp(), this.format_severity(message.args), "["+message.sender+"] "+message.get_data()]).draw(false);
+        }
+        else if (message.sender == "controller/db" && message.command == "TAIL_LOGS") {
+            var table = $("#"+this.id+"_table").DataTable()
+            for (var entry of message.get_data()) {
+                table.row.add([gui.date.format_timestamp(entry[0]), this.format_severity(message.args), entry[1]]);
+            }
+            table.draw()
         }
     }
     
