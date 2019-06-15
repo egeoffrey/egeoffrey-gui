@@ -46,7 +46,7 @@ class Modules extends Widget {
     // draw the widget's content
     draw() {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
-        // IDs Widget: _table
+        // IDs Widget: _table, _selector
         var body = "#"+this.id+"_body"
         $(body).html("")
         // add selector

@@ -69,7 +69,7 @@ class Configuration extends Widget {
         var configuration_id = null
         if (location.hash.includes("=")) {
             var request = location.hash.split("=")
-            var configuration_id = request[1]
+            configuration_id = request[1]
         }
         var body = "#"+this.id+"_body"
         if (configuration_id == null) {

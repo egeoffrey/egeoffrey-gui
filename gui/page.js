@@ -71,7 +71,7 @@ class Page {
                     }
                 ])
             }
-            else if (page == "__messages") {
+            else if (page.startsWith("__messages")) {
                 this.draw([
                     {
                         "": [

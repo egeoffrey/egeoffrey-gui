@@ -3,6 +3,7 @@ class Gateway extends Widget {
     constructor(id, widget) {
         super(id, widget)
         this.listener = null
+        this.live = true
         // add an empty box into the given column
         this.template.add_large_widget(this.id, this.widget["title"])
     }
@@ -13,6 +14,32 @@ class Gateway extends Widget {
         // IDs Widget: _table
         if (this.listener != null) gui.remove_listener(this.listener)
         var body = "#"+this.id+"_body"
+        $(body).html("")
+        // add buttons
+        var button_html = '\
+            <div class="form-group pull-right">&nbsp;\
+                <button type="button" id="'+this.id+'_clear" class="btn btn-default btn-sm"><i class="fas fa-eraser"></i> Clear</button>\
+                <input id="'+this.id+'_live" type="checkbox" checked> Live\
+            </div>'
+        $(body).append(button_html)
+        // configure buttons
+        $("#"+this.id+"_clear").unbind().click(function(this_class) {
+            return function () {
+                var table = $("#"+this_class.id+"_table").DataTable()
+                console.log(table)
+                table.clear().draw()
+            };
+        }(this));
+        $("#"+this.id+"_live").iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' 
+        });
+        $("#"+this.id+"_live").unbind().on('ifChanged',function(this_class) {
+            return function () {
+                this_class.live = this.checked
+            };
+        }(this));
         // add table
         // 0: timestamp
         // 1: source
@@ -28,7 +55,7 @@ class Gateway extends Widget {
                 </thead>\
                 <tbody></tbody>\
             </table>'
-        $(body).html(table)
+        $(body).append(table)
         // define datatables options
         var options = {
             "responsive": true,
@@ -62,6 +89,7 @@ class Gateway extends Widget {
     
     // receive data and load it into the widget
     on_message(message) {
+        if (! this.live) return
         var table = $("#"+this.id+"_table").DataTable()
         var retain = message.retain ? '<i class="fas fa-check"></i>' : ""
         var content = truncate(format_multiline(JSON.stringify(message.get_data()), 70),1000)

@@ -3,6 +3,7 @@ class Logs extends Widget {
     constructor(id, widget) {
         super(id, widget)
         this.listener = null
+        this.live = true
         // add an empty box into the given column
         this.template.add_large_widget(this.id, this.widget["title"])
     }
@@ -14,6 +15,52 @@ class Logs extends Widget {
         // if refresh requested, we need to unsubscribe from the topics to receive them again
         if (this.listener != null) gui.remove_listener(this.listener)
         var body = "#"+this.id+"_body"
+        $(body).html("")
+        // add selector
+        var selector = '\
+            <div class="form-group">\
+                <select class="form-control" id="'+this.id+'_selector">\
+                    <option value="">All</option>\
+                    <option value="DEBUG">Debug</option>\
+                    <option value="INFO">Info</option>\
+                    <option value="WARNING">Warning</option>\
+                    <option value="ERROR">Error</option>\
+                </select>\
+            </div>'
+        $(body).append(selector)
+        // configure selector
+        $("#"+this.id+"_selector").unbind().change(function(this_class) {
+            return function () {
+                var request = $("#"+this_class.id+"_selector").val()
+                var table = $("#"+this_class.id+"_table").DataTable()
+                table.column(1).search(request).draw();
+            };
+        }(this));
+        // add buttons
+        var button_html = '\
+            <div class="form-group pull-right">&nbsp;\
+                <button type="button" id="'+this.id+'_clear" class="btn btn-default btn-sm"><i class="fas fa-eraser"></i> Clear</button>\
+                <input id="'+this.id+'_live" type="checkbox" checked> Live\
+            </div>'
+        $(body).append(button_html)
+        // configure buttons
+        $("#"+this.id+"_clear").unbind().click(function(this_class) {
+            return function () {
+                var table = $("#"+this_class.id+"_table").DataTable()
+                console.log(table)
+                table.clear().draw()
+            };
+        }(this));
+        $("#"+this.id+"_live").iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' 
+        });
+        $("#"+this.id+"_live").unbind().on('ifChanged',function(this_class) {
+            return function () {
+                this_class.live = this.checked
+            };
+        }(this));
         // add table
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
@@ -22,8 +69,7 @@ class Logs extends Widget {
                 </thead>\
                 <tbody></tbody>\
             </table>'
-        $(body).html(table)
-        
+        $(body).append(table)
         // define datatables options
         var options = {
             "responsive": true,
@@ -78,6 +124,7 @@ class Logs extends Widget {
     on_message(message) {
         // realtime logs
         if (message.recipient == "controller/logger") {
+            if (! this.live) return
             var table = $("#"+this.id+"_table").DataTable()
             table.row.add([gui.date.format_timestamp(), this.format_severity(message.args), "["+message.sender+"] "+message.get_data()]).draw(false);
         }

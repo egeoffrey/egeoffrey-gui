@@ -31,6 +31,7 @@ class Gui extends Module {
         this.add_configuration_listener("groups", true)
         this.page = null
         this.menu = new Menu("menu")
+        this.notifications = new Notifications("notifications")
         // safeguard, if not receiving a configuration file timeline, disconnect
         setTimeout(function(this_class) {
             return function() {
@@ -50,10 +51,6 @@ class Gui extends Module {
 		var settings = {
 			type: type,
 		}
-		var title = null
-		if (type == "danger") title = "Error"
-		else if (type == "warning") title = "Warning"
-		if (title != null) options["title"] = "<strong>"+title+":</strong> "
 		$.notify(options, settings);
 	}
     
@@ -155,6 +152,7 @@ class Gui extends Module {
             if (location.hash) gui.load_page()
         }
         this.menu.draw()
+        this.notifications.draw()
     }
         
     // What to do when exiting

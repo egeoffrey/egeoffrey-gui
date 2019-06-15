@@ -56,6 +56,13 @@ class Menu extends Widget {
             var section_id = message.args.replace("gui/menu/","").replace("/_section","")
             var section = message.get_data()
             section["section_id"] = section_id
+            // if there is another section with the same name name, skip it
+            for (var existing_section of this.sections) {
+                if (existing_section == null) continue
+                if (existing_section["section_id"] == section["section_id"]) return
+            }
+            // if there is another section in the same position, shift this ahead
+            while (this.sections[section["order"]] != null) section["order"]++
             this.sections[section["order"]] = section
         }
         else {
@@ -65,8 +72,17 @@ class Menu extends Widget {
             var entry = message.get_data()
             entry["entry_id"] = entry_id
             entry["section_id"] = section_id
+            // this is the first entry in the section
             if (! (section_id in this.entries)) this.entries[section_id] = []
-            while (this.entries[section_id][entry["order"]] != null) entry["order"]++
+            else {
+                // if there is another entry in this section with the same name name, skip it
+                for (var existing_entry of this.entries[section_id]) {
+                    if (existing_entry == null) continue
+                    if (existing_entry["entry_id"] == entry["entry_id"]) return
+                }
+                // if there is another entry in the same position, shift this ahead
+                while (this.entries[section_id][entry["order"]] != null) entry["order"]++
+            }
             this.entries[section_id][entry["order"]] = entry
         }
         this.refresh()
