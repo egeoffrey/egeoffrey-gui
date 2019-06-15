@@ -40,6 +40,7 @@ class Menu extends Widget {
                     return function () {
                         // if clicking on the current page, explicitely reload it since hash will not change
                         if (location.hash.replace("#","") == page) gui.load_page(page)
+                        window.scrollTo(0,0)
                         if ($("body").hasClass('sidebar-open')) $("body").removeClass('sidebar-open').removeClass('sidebar-collapse').trigger('collapsed.pushMenu')
                     }
                 }(entry["page"]));

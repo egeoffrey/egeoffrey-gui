@@ -12,7 +12,7 @@ class Timeline extends Widget {
         var timeframe = "last_4_hours"
         if ("group_by" in this.widget) {
             if (this.widget["group_by"] == "hour") timeframe = "last_24_hours"
-            else if (this.widget["group_by"] == "day") timeframe = "last_365_days"
+            else if (this.widget["group_by"] == "day") timeframe = "last_30_days"
         }
 		// for each sensor
         var first_series_id = null
@@ -34,18 +34,22 @@ class Timeline extends Widget {
                 })
                 this.send(message)
             }
+            // custom style
+            var style = "style" in this.widget ? this.widget["style"] : "spline"
+            // custom series style
+            var series = "series" in this.widget ? this.widget["series"] : "avg"
             var message = new Message(gui)
             message.recipient = "controller/db"
             message.command = "GET"
             message.set("timeframe", timeframe)
-            // request calculated average values if group_by specified
-            message.args = "group_by" in this.widget ? sensor_id+"/"+this.widget["group_by"]+"/"+"avg" : sensor_id
+            // request calculated average values if group_by is specified
+            message.args = "group_by" in this.widget ? sensor_id+"/"+this.widget["group_by"]+"/"+series : sensor_id
+            // keep track of the first series so flags will be placed on it
             if (i == 0) first_series_id = message.args
-            // TODO: bar chart?
             gui.sessions.register(message, {
                 "sensor_id": sensor_id,
-                "style": "spline",
-                "label": "avg",
+                "style": style,
+                "label": series,
                 "first_series_id": first_series_id
             })
             this.send(message)

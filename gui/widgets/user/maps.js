@@ -41,34 +41,50 @@ class Maps extends Widget {
         // add the map
         var body = "#"+this.id+"_body"
         $(body).html('<div id="'+this.id+'_map" style="width:100%; height: 640px;"></div>')
-        // load google maps api (lazy loading since we need the api_key from the conf)
-        var script = document.createElement('script')
-        script.src = "https://maps.googleapis.com/maps/api/js?key="+gui.settings["map"]["api_key"]
-        script.onload = function(this_class) {
-            return function () {
-                var script = document.createElement('script');
-                script.src = "lib/gmaps/gmaps.min.js";
-                // load gmaps 
-                script.onload = function(this_class) {
-                    return function () {
-                        //create the map
-                        this_class.map = new GMaps({
-                            div: "#"+this_class.id+"_map",
-                            lat: 0,
-                            lng: 0,
-                            mapType: gui.settings["map"]["type"],
-                            zoom: 2
-                        });
-                        // request the data
-                        this_class.request_data()
-                    }; // end function ()
-                }(this_class); // onload gmaps.js
-                // append gmaps to head
-                document.head.appendChild(script);
-            }; // end function ()
-        }(this); // onload google maps
-        // append google api to head
-        document.head.appendChild(script);
+        if (! gui.maps_loaded) {
+            // load google maps api (lazy loading since we need the api_key from the conf)
+            var script = document.createElement('script')
+            script.src = "https://maps.googleapis.com/maps/api/js?key="+gui.settings["map"]["api_key"]
+            script.onload = function(this_class) {
+                return function () {
+                    var script = document.createElement('script');
+                    script.src = "lib/gmaps/gmaps.min.js";
+                    // load gmaps 
+                    script.onload = function(this_class) {
+                        return function () {
+                            //create the map
+                            this_class.map = new GMaps({
+                                div: "#"+this_class.id+"_map",
+                                lat: 0,
+                                lng: 0,
+                                mapType: gui.settings["map"]["type"],
+                                zoom: 2
+                            });
+                            gui.maps_loaded = true
+                            // request the data
+                            this_class.request_data()
+                        }; // end function ()
+                    }(this_class); // onload gmaps.js
+                    // append gmaps to head
+                    document.head.appendChild(script);
+                }; // end function ()
+            }(this); // onload google maps
+            // append google api to head
+            document.head.appendChild(script);
+        } 
+        // reload the map
+        else {
+            //create the map
+            this.map = new GMaps({
+                div: "#"+this.id+"_map",
+                lat: 0,
+                lng: 0,
+                mapType: gui.settings["map"]["type"],
+                zoom: 2
+            });
+            // request the data
+            this.request_data()
+        }
         
     }
     

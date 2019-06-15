@@ -32,6 +32,8 @@ class Gui extends Module {
         this.page = null
         this.menu = new Menu("menu")
         this.notifications = new Notifications("notifications")
+        // loaded Google Maps
+        this.maps_loaded = false
         // safeguard, if not receiving a configuration file timeline, disconnect
         setTimeout(function(this_class) {
             return function() {

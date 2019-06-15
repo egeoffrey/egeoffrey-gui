@@ -286,7 +286,7 @@ class Page {
         else if (widget["type"] == "gateway") widget_object = new Gateway(id, widget)
         else if (widget["type"] == "messages") widget_object = new Messages(id, widget)
         else gui.log_error("unknown widget "+JSON.stringify(widget))
-        this.widgets.push(widget_object)
+        if (widget_object != null) this.widgets.push(widget_object)
         return widget_object
     }
 }

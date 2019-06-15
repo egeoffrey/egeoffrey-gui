@@ -23,7 +23,7 @@ class Images extends Widget {
         // IDs Widget: _image
         // add the image
         var body = "#"+this.id+"_body"
-        $(body).html('<img class="img-responsive" id="'+this.id+'_image"/>')
+        $(body).html('<div><i class="fas fa-spinner fa-spin fa-6x"></i></div>')
         // request sensors' data
         this.request_data()
         // subscribe for acknoledgments from the database for saved values
@@ -44,7 +44,10 @@ class Images extends Widget {
             var session = gui.sessions.restore(message)
             if (session == null) return
             var data = message.get("data")
-            if (data.length == 1) $("#"+this.id+"_image").attr("src", "data:image/jpeg;base64,"+data[0]);
+            if (data.length == 1) {
+                $("#"+this.id+"_body").html('<img class="img-responsive" id="'+this.id+'_image"/>')
+                $("#"+this.id+"_image").attr("src", "data:image/jpeg;base64,"+data[0]);
+            }
         }
     }
     
