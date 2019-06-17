@@ -216,9 +216,10 @@ class Sensors extends Widget {
         var service = ""
         if ("service" in sensor) {
             service = "<u>"+sensor["service"]["name"]+"</u><br>"+this.format_object(sensor["service"]["configuration"])
-            if ("schedule" in sensor["service"]) {
+            if (sensor["service"]["mode"] == "active") {
                 var poll_html = '<button type="button" id="'+this.id+'_poll_'+sensor_tag+'" class="btn btn-default"><i class="fas fa-play"></i></button>'
-                service = poll_html+" "+service+"<br>"+this.format_object(sensor["service"]["schedule"])
+                var schedule = "schedule" in sensor ? this.format_object(sensor["service"]["schedule"]) : ""
+                service = poll_html+" "+service+"<br>"+schedule
             }
         }
         var set_html = '<div class="input-group margin"><input type="text" id="'+this.id+'_set_text_'+sensor_tag+'" class="form-control"><span class="input-group-btn"><button type="button" id="'+this.id+'_set_'+sensor_tag+'" class="btn btn-default" ><span class="fas fa-sign-out-alt"></span></button></span></div>'

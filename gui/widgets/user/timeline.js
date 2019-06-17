@@ -14,6 +14,7 @@ class Timeline extends Widget {
             if (this.widget["group_by"] == "hour") timeframe = "last_24_hours"
             else if (this.widget["group_by"] == "day") timeframe = "last_30_days"
         }
+        if ("timeframe" in this.widget) timeframe = this.widget["timeframe"]
 		// for each sensor
         var first_series_id = null
         for (var i = 0; i < this.widget["sensors"].length; i++) {
@@ -119,7 +120,6 @@ class Timeline extends Widget {
             if (session == null) return
             var data = message.get("data")
             // TODO: global debug with widget id and shared among all widgets
-            gui.log_debug("received "+data)
             var chart = $("#"+this.id+"_body").highcharts();
             chart.hideLoading()
             var sensor = gui.configurations["sensors/"+session["sensor_id"]]
@@ -134,14 +134,14 @@ class Timeline extends Widget {
             series["dataLabels"]["format"] = "{y}"+series["tooltip"]["valueSuffix"]
             // if the data is a string, add flags
             if (sensor["format"] == "string") {
-                series["type"] = "flags"
                 series["onSeries"] = session["first_series_id"]
+                series["type"] = "flags"
                 var flags = [];
                 for (var i = 0; i < data.length; i++) {
                     if (data[i][1] === null || data[i][1] === "") continue;
                     flags[i] = {'x': data[i][0], 'shape': 'circlepin', 'title': '<i class="fas fa-2x fa-'+data[i][1]+'"></i>'};
                 }
-                series["data"] = flags;
+                series["data"] = flags
             }
             // ensure a series with the same name is not already in the chart
             for (var existing_series of chart.series) {

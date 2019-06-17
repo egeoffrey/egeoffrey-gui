@@ -15,6 +15,7 @@ class Range extends Widget {
             if (this.widget["group_by"] == "hour") timeframe = "last_6_hours"
             else if (this.widget["group_by"] == "day") timeframe = "last_6_days"
         }
+        if ("timeframe" in this.widget) timeframe = this.widget["timeframe"]
         var message = new Message(gui)
         message.recipient = "controller/db"
         message.command = "GET"
