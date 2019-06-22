@@ -2,7 +2,7 @@ package: myhouse-gui
 revision: 10
 version: development
 github: myhouse-project/myhouse-gui
-dockerhub: myhouse-project/myhouse-gui
+dockerhub: myhouseproject/myhouse-gui
 container_config:
   ports:
     - "80:80"
