@@ -1,5 +1,11 @@
 package: myhouse-gui
-revision: 9
+revision: 10
 version: development
-git: myhouse-project/myhouse-gui
+github: myhouse-project/myhouse-gui
+dockerhub: myhouse-project/myhouse-gui
+container_config:
+  ports:
+    - "80:80"
+description: Provides a web user interface for accessing all myHouse's functionalities
+tags: gui
 modules: []

@@ -76,10 +76,10 @@ class Packages extends Widget {
             var update_id = this.id+'_'+manifest["package"]+'_update'
             table.row.add([manifest["package"], manifest["modules"].join("<br>"), manifest["version"], manifest["revision"], '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>']).draw();
             // check for update
-            var url = "https://raw.githubusercontent.com/"+manifest["git"]+"/"+manifest["version"]+"/manifest.yml?timestamp="+new Date().getTime()
+            var url = "https://raw.githubusercontent.com/"+manifest["github"]+"/"+manifest["version"]+"/manifest.yml?timestamp="+new Date().getTime()
             $.get(url, function(data) {
                 data = jsyaml.load(data)
-                if (data["revision"] > manifest["revision"]) $("#"+update_id).html('<a href="https://github.com/'+manifest["git"]+'/tree/'+manifest["version"]+'" target="_blank" ><i class="fas fa-external-link-alt"></i></a>')
+                if (data["revision"] > manifest["revision"]) $("#"+update_id).html('<a href="https://github.com/'+manifest["github"]+'/tree/'+manifest["version"]+'" target="_blank" ><i class="fas fa-external-link-alt"></i></a>')
                 else $("#"+update_id).html('<i class="fas fa-check">')
             });
             this.manifests[manifest["package"]] = manifest
