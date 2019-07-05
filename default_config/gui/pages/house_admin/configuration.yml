@@ -1,4 +1,4 @@
 - "":
   - title: Configuration Editor
     size: 12
-    type: configuration
+    widget: configuration

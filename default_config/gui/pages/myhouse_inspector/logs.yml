@@ -1,4 +1,4 @@
 - "":
   - title: Log Inspector
     size: 12
-    type: logs
+    widget: logs

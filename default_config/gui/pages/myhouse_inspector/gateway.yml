@@ -1,4 +1,4 @@
 - "":
   - title: Gateway Inspector
     size: 12
-    type: gateway
+    widget: gateway

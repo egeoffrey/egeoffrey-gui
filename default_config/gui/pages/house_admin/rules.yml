@@ -1,4 +1,4 @@
 - "":
   - title: Rules
     size: 12
-    type: rules
+    widget: rules

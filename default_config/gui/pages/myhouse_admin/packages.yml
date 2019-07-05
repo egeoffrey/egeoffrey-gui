@@ -1,4 +1,4 @@
 - "":
   - title: Packages
     size: 12
-    type: packages
+    widget: packages

@@ -1,4 +1,4 @@
 - "":
   - title: Database Inspector
     size: 12
-    type: database
+    widget: database

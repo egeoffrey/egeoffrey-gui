@@ -1,6 +1,0 @@
-allow:
-- house_admins
-icon: comments
-order: 3
-page: __messages
-text: Messages

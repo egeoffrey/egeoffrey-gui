@@ -76,7 +76,6 @@ class Packages extends Widget {
             var update_id = this.id+'_'+manifest["package"]+'_update'
             table.row.add([manifest["package"], manifest["modules"].join("<br>"), manifest["version"], manifest["revision"], '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>']).draw();
             // check for update
-            console.log(manifest)
             var url = "https://raw.githubusercontent.com/"+manifest["github"]+"/"+manifest["version"]+"/manifest.yml?timestamp="+new Date().getTime()
             $.get(url, function(data) {
                 data = jsyaml.load(data)
