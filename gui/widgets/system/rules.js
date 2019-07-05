@@ -5,7 +5,7 @@ class Rules extends Widget {
         this.rules = {}
         this.listener = null
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
     }
     
     // draw the widget's content
@@ -27,7 +27,7 @@ class Rules extends Widget {
         $(body).append(button_html)
         $("#"+this.id+"_new").unbind().click(function() {
             return function () {
-                window.location.hash = '#__configuration=rules/__new__'
+                window.location.hash = '#'+gui.settings["configuration_page"]+'=rules/__new__'
             };
         }());
         // add table
@@ -146,7 +146,7 @@ class Rules extends Widget {
         // edit the selected rule
         $("#"+this.id+"_edit_"+rule_tag).unbind().click(function(rule_id) {
             return function () {
-                window.location.hash = '#__configuration=rules/'+rule_id;
+                window.location.hash = '#'+gui.settings["configuration_page"]+'=rules/'+rule_id;
             };
         }(rule_id));
         // delete the rule

@@ -1,6 +1,6 @@
+allow:
+- house_admins
 icon: palette
 order: 99
-page: __icons
+page: house_admin/icons
 text: Icons
-allow:
-  - house_admins

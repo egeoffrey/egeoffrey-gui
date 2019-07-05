@@ -3,18 +3,25 @@ class Text extends Widget {
     constructor(id, widget) {
         super(id, widget)
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
     }
     
     // request the data to the database
     request_data() {
-        var message = new Message(gui)
-        message.recipient = "controller/db"
-        message.command = "GET"
-        message.args = this.widget["sensor"]
-        gui.sessions.register(message, {
-        })
-        this.send(message)
+        // if the text is coming from a sensor, retrieve the latest value
+        if ("sensor" in this.widget) {
+            var message = new Message(gui)
+            message.recipient = "controller/db"
+            message.command = "GET"
+            message.args = this.widget["sensor"]
+            gui.sessions.register(message, {
+            })
+            this.send(message)
+        }
+        // if it is a static text, just add it to the widget
+        else if ("text" in this.widget) {
+            $("#"+this.id+"_text").html(this.widget["text"].replaceAll("\n", "<br>"))
+        }
     }
     
     // draw the widget's content
@@ -27,7 +34,7 @@ class Text extends Widget {
         // request sensors' data
         this.request_data()
         // subscribe for acknoledgments from the database for saved values
-        this.add_inspection_listener("controller/db", "*/*", "SAVED", "#")
+         if ("sensor" in this.widget) this.add_inspection_listener("controller/db", "*/*", "SAVED", "#")
     }
     
     // close the widget

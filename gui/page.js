@@ -6,125 +6,9 @@ class Page {
         if (type == "USER") this.draw(page)
         // if it is a system page, build the layout and draw it
         else if (type == "SYSTEM") {
-            if (page == "__packages") {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Packages",
-                                "size": 12,
-                                "type": "packages"
-                            }
-                        ]
-                    }
-                ])
-            }
-            else if (page == "__modules") {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Modules",
-                                "size": 12,
-                                "type": "modules"
-                            }
-                        ]
-                    }
-                ])
-            }
-            else if (page == "__sensors") {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Registered Sensors",
-                                "size": 12,
-                                "type": "sensors"
-                            }
-                        ]
-                    }
-                ])
-            }
-            else if (page == "__logs") {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Logs Inspector",
-                                "size": 12,
-                                "type": "logs"
-                            }
-                        ]
-                    }
-                ])
-            }
-            else if (page == "__rules") {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Rules",
-                                "size": 12,
-                                "type": "rules"
-                            }
-                        ]
-                    }
-                ])
-            }
-            else if (page.startsWith("__messages")) {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Messages",
-                                "size": 12,
-                                "type": "messages"
-                            }
-                        ]
-                    }
-                ])
-            }
-            else if (page == "__icons") {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Available Icons",
-                                "size": 12,
-                                "type": "icons"
-                            }
-                        ]
-                    }
-                ])
-            }
-            else if (page == "__database") {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Database Inspector",
-                                "size": 12,
-                                "type": "database"
-                            }
-                        ]
-                    }
-                ])
-            }
-            else if (page == "__gateway") {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Gateway Inspector",
-                                "size": 12,
-                                "type": "gateway"
-                            }
-                        ]
-                    }
-                ])
-            }
-            else if (page.startsWith("__sensor=")) {
-                var request = page.split("=")
+            if (page == "__sensor") {
+                if (! location.hash.includes("=")) return
+                var request = location.hash.split("=")
                 var sensor_id = request[1]
                 var page_layout = [
                     {
@@ -132,7 +16,7 @@ class Page {
                             {
                                 "title": "Summary",
                                 "size": 3,
-                                "type": "summary",
+                                "widget": "summary",
                                 "icon": "microchip",
                                 "sensors": [ 
                                   sensor_id
@@ -141,7 +25,7 @@ class Page {
                             {
                                 "title": "Timeline",
                                 "size": 9,
-                                "type": "timeline",
+                                "widget": "timeline",
                                 "sensors": [
                                   sensor_id
                                 ]
@@ -153,7 +37,7 @@ class Page {
                             {
                                 "title": "Hourly Timeline",
                                 "size": 12,
-                                "type": "timeline",
+                                "widget": "timeline",
                                 "group_by": "hour",
                                 "sensors": [ 
                                   sensor_id
@@ -166,7 +50,7 @@ class Page {
                             {
                                 "title": "Daily Timeline",
                                 "size": 12,
-                                "type": "timeline",
+                                "widget": "timeline",
                                 "group_by": "day",
                                 "sensors": [
                                   sensor_id
@@ -179,19 +63,6 @@ class Page {
                 Object.defineProperty(page_layout[0], sensor_id, Object.getOwnPropertyDescriptor(page_layout[0], "sensor_id"));
                 delete page_layout[0]["sensor_id"];
                 this.draw(page_layout)
-            }
-            else if (page.startsWith("__configuration")) {
-                this.draw([
-                    {
-                        "": [
-                            {
-                                "title": "Configuration Editor",
-                                "size": 12,
-                                "type": "configuration",
-                            }
-                        ]
-                    }
-                ])
             }
         }
     }
@@ -207,7 +78,7 @@ class Page {
             // add a row
             for (var section in layout[row]) {
                 // add a subtitle
-                if (section != "") $("#page").append("<h2 class=\"page-header\">"+section+"</h2>")
+                if (section != "") $("#page").append("<center><h2 class=\"page-header\">"+section+"</h2></center>")
                 $("#page").append('<div class="row" id="'+row_id+'">')
                 for (var column = 0; column < layout[row][section].length; column++) {
                     var widget = layout[row][section][column]
@@ -260,31 +131,32 @@ class Page {
     add_widget(id, widget) {
         var widget_object = null
         // user widgets
-        if (widget["type"] == "summary") widget_object = new Summary(id, widget)
-        else if (widget["type"] == "timeline") widget_object = new Timeline(id, widget)
-        else if (widget["type"] == "range") widget_object = new Range(id, widget)
-        else if (widget["type"] == "value") widget_object = new Value(id, widget)
-        else if (widget["type"] == "status") widget_object = new Value(id, widget)
-        else if (widget["type"] == "control") widget_object = new Value(id, widget)
-        else if (widget["type"] == "input") widget_object = new Value(id, widget)
-        else if (widget["type"] == "button") widget_object = new Value(id, widget)
-        else if (widget["type"] == "calendar") widget_object = new Calendar(id, widget)
-        else if (widget["type"] == "image") widget_object = new Images(id, widget)
-        else if (widget["type"] == "map") widget_object = new Maps(id, widget)
-        else if (widget["type"] == "text") widget_object = new Text(id, widget)
-        else if (widget["type"] == "table") widget_object = new Table(id, widget)
+        if (widget["widget"] == "summary") widget_object = new Summary(id, widget)
+        else if (widget["widget"] == "timeline") widget_object = new Timeline(id, widget)
+        else if (widget["widget"] == "range") widget_object = new Range(id, widget)
+        else if (widget["widget"] == "value") widget_object = new Value(id, widget)
+        else if (widget["widget"] == "status") widget_object = new Value(id, widget)
+        else if (widget["widget"] == "control") widget_object = new Value(id, widget)
+        else if (widget["widget"] == "input") widget_object = new Value(id, widget)
+        else if (widget["widget"] == "button") widget_object = new Value(id, widget)
+        else if (widget["widget"] == "calendar") widget_object = new Calendar(id, widget)
+        else if (widget["widget"] == "image") widget_object = new Images(id, widget)
+        else if (widget["widget"] == "map") widget_object = new Maps(id, widget)
+        else if (widget["widget"] == "text") widget_object = new Text(id, widget)
+        else if (widget["widget"] == "table") widget_object = new Table(id, widget)
+        else if (widget["widget"] == "counter") widget_object = new Counter(id, widget)
         // system widgets
-        else if (widget["type"] == "packages") widget_object = new Packages(id, widget)
-        else if (widget["type"] == "modules") widget_object = new Modules(id, widget)
-        else if (widget["type"] == "sensors") widget_object = new Sensors(id, widget)
-        else if (widget["type"] == "logs") widget_object = new Logs(id, widget)
-        else if (widget["type"] == "rules") widget_object = new Rules(id, widget)
-        else if (widget["type"] == "chatbot") widget_object = new Chatbot(id, widget)
-        else if (widget["type"] == "configuration") widget_object = new Configuration(id, widget)
-        else if (widget["type"] == "icons") widget_object = new Icons(id, widget)
-        else if (widget["type"] == "database") widget_object = new Database(id, widget)
-        else if (widget["type"] == "gateway") widget_object = new Gateway(id, widget)
-        else if (widget["type"] == "messages") widget_object = new Messages(id, widget)
+        else if (widget["widget"] == "packages") widget_object = new Packages(id, widget)
+        else if (widget["widget"] == "modules") widget_object = new Modules(id, widget)
+        else if (widget["widget"] == "sensors") widget_object = new Sensors(id, widget)
+        else if (widget["widget"] == "logs") widget_object = new Logs(id, widget)
+        else if (widget["widget"] == "rules") widget_object = new Rules(id, widget)
+        else if (widget["widget"] == "chatbot") widget_object = new Chatbot(id, widget)
+        else if (widget["widget"] == "configuration") widget_object = new Configuration(id, widget)
+        else if (widget["widget"] == "icons") widget_object = new Icons(id, widget)
+        else if (widget["widget"] == "database") widget_object = new Database(id, widget)
+        else if (widget["widget"] == "gateway") widget_object = new Gateway(id, widget)
+        else if (widget["widget"] == "notifications") widget_object = new Notifications(id, widget)
         else gui.log_error("unknown widget "+JSON.stringify(widget))
         if (widget_object != null) this.widgets.push(widget_object)
         return widget_object

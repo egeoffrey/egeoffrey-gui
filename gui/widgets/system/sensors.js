@@ -7,7 +7,7 @@ class Sensors extends Widget {
         this.sensors = {}
         this.listener = null
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
     }
     
     // request the data to the database
@@ -53,7 +53,7 @@ class Sensors extends Widget {
         $(body).append(button_html)
         $("#"+this.id+"_new").unbind().click(function() {
             return function () {
-                window.location.hash = '#__configuration=sensors/__new__'
+                window.location.hash = '#'+gui.settings["configuration_page"]+'=sensors/__new__'
             };
         }());
         // add table
@@ -159,7 +159,7 @@ class Sensors extends Widget {
                     var row = this.data()
                     if (row[0] != sensor_id) return
                     else if (row[3] == "calendar") data = '<i class="fas fa-calendar-alt fa-2x"></i>'
-                    else if (row[3] == "image") data = '<img class="img-responsive" width="200" height="100" src="data:image/jpeg;base64,'+data+'"/>'
+                    else if (row[3] == "image" && data != "") data = '<img class="img-responsive" width="200" height="100" src="data:image/jpeg;base64,'+data+'"/>'
                     else {
                         var unit = data != "" ? row[4] : ""
                         data = data+unit
@@ -285,7 +285,7 @@ class Sensors extends Widget {
         // edit the selected sensor
         $("#"+this.id+"_edit_"+sensor_tag).unbind().click(function(sensor_id) {
             return function () {
-                window.location.hash = '#__configuration=sensors/'+sensor_id;
+                window.location.hash = '#'+gui.settings["configuration_page"]+'=sensors/'+sensor_id;
             };
         }(sensor_id));
         // empty the database entries for this sensor

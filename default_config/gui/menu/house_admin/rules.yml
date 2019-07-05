@@ -1,6 +1,6 @@
+allow:
+- house_admins
 icon: brain
 order: 2
-page: __rules
+page: house_admin/rules
 text: Rules
-allow:
-  - house_admins

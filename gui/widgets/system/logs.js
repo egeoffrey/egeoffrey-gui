@@ -4,8 +4,10 @@ class Logs extends Widget {
         super(id, widget)
         this.listener = null
         this.live = true
+        this.filter_by = null
+        this.show_only = "show_only" in this.widget ? this.widget["show_only"] : null
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
     }
     
     // draw the widget's content
@@ -14,28 +16,35 @@ class Logs extends Widget {
         // IDs Widget: _table
         // if refresh requested, we need to unsubscribe from the topics to receive them again
         if (this.listener != null) gui.remove_listener(this.listener)
+        if (location.hash.includes("=")) {
+            var request = location.hash.split("=")
+            this.filter_by = request[1]
+        }
         var body = "#"+this.id+"_body"
         $(body).html("")
         // add selector
-        var selector = '\
-            <div class="form-group">\
-                <select class="form-control" id="'+this.id+'_selector">\
-                    <option value="">All</option>\
-                    <option value="DEBUG">Debug</option>\
-                    <option value="INFO">Info</option>\
-                    <option value="WARNING">Warning</option>\
-                    <option value="ERROR">Error</option>\
-                </select>\
-            </div>'
-        $(body).append(selector)
-        // configure selector
-        $("#"+this.id+"_selector").unbind().change(function(this_class) {
-            return function () {
-                var request = $("#"+this_class.id+"_selector").val()
-                var table = $("#"+this_class.id+"_table").DataTable()
-                table.column(1).search(request).draw();
-            };
-        }(this));
+        if (this.show_only == null) {
+            var selector = '\
+                <div class="form-group">\
+                    <select class="form-control" id="'+this.id+'_selector">\
+                        <option value="">All</option>\
+                        <option value="DEBUG">Debug</option>\
+                        <option value="INFO">Info</option>\
+                        <option value="WARNING">Warning</option>\
+                        <option value="ERROR">Error</option>\
+                        <option value="VALUE">Values</option>\
+                    </select>\
+                </div>'
+            $(body).append(selector)
+            // configure selector
+            $("#"+this.id+"_selector").unbind().change(function(this_class) {
+                return function () {
+                    var request = $("#"+this_class.id+"_selector").val()
+                    var table = $("#"+this_class.id+"_table").DataTable()
+                    table.column(1).search(request).draw();
+                };
+            }(this));
+        }
         // add buttons
         var button_html = '\
             <div class="form-group pull-right">&nbsp;\
@@ -89,15 +98,22 @@ class Logs extends Widget {
                 }
             ]
         };
+        if (this.show_only != null) options["columnDefs"].push({
+                    "targets" : [1],
+                    "visible": false,
+        })
         // create the table
         $("#"+this.id+"_table").DataTable(options);
         // ask for the old logs
-        for (var severity of ["debug", "info", "warning", "error"]) {
+        var levels = this.show_only != null ? [this.show_only] : ["debug", "info", "warning", "error", "value"]
+        for (var severity of levels) {
             var message = new Message(gui)
             message.recipient = "controller/db"
-            message.command = "TAIL_LOGS"
+            message.command = "GET"
             message.args = severity
-            message.set_data(5)
+            message.set("timeframe", "last_5_days")
+            message.set("scope", "logs")
+            message.set("max_items", 500)
             gui.sessions.register(message, {
             })
             this.send(message)
@@ -118,6 +134,8 @@ class Logs extends Widget {
         if (severity == "INFO") return "<b>"+severity+"</b>"
         else if (severity == "WARNING") return '<p style="color:orange"><b>'+severity+"</b></p>"
         else if (severity == "ERROR") return '<p style="color:red"><b>'+severity+"</b></p>"
+        else if (severity == "VALUE") return '<p style="color:green"><b>'+severity+"</b></p>"
+        return severity
     }
     
     // receive data and load it into the widget
@@ -125,15 +143,32 @@ class Logs extends Widget {
         // realtime logs
         if (message.recipient == "controller/logger") {
             if (! this.live) return
+            if (this.filter_by != null && message.args != this.filter_by) return
+            if (this.show_only != null && message.args != this.show_only) return
             var table = $("#"+this.id+"_table").DataTable()
             table.row.add([gui.date.format_timestamp(), this.format_severity(message.args), "["+message.sender+"] "+message.get_data()]).draw(false);
         }
-        else if (message.sender == "controller/db" && message.command == "TAIL_LOGS") {
+        else if (message.sender == "controller/db" && message.command == "GET") {
             var table = $("#"+this.id+"_table").DataTable()
-            for (var entry of message.get_data()) {
-                table.row.add([gui.date.format_timestamp(entry[0]), this.format_severity(message.args), entry[1]]);
+            var session = gui.sessions.restore(message)
+            if (session == null) return
+            var data = message.get("data")
+            for (var entry of data) {
+                var timestamp = entry[0]
+                var text = entry[1]
+                if (message.args == "value") {
+                    // clean up the log text
+                    var match = text.match(/"(.+)": (.+)$/)
+                    if (match == null) continue
+                    text = match[1]+": "+match[2]
+                }
+                table.row.add([gui.date.format_timestamp(timestamp/1000), this.format_severity(message.args), text]);
             }
             table.draw()
+        }
+        if (this.filter_by != null) {
+            $("#"+this.id+"_selector").val(this.filter_by)
+            table.column(1).search(this.filter_by).draw();
         }
     }
     

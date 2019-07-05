@@ -5,7 +5,7 @@ class Maps extends Widget {
         // variables
         this.map = null
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
     }
     
     // request the data to the database

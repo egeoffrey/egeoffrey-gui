@@ -1,6 +1,6 @@
+allow:
+- myhouse_admins
 icon: cubes
 order: 1
-page: __packages
+page: myhouse_admin/packages
 text: Packages
-allow:
-  - myhouse_admins

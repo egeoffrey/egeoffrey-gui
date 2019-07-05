@@ -1,6 +1,6 @@
+allow:
+- myhouse_admins
 icon: server
 order: 2
-page: __modules
+page: myhouse_admin/modules
 text: Modules
-allow:
-  - myhouse_admins

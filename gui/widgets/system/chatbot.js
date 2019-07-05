@@ -5,7 +5,7 @@ class Chatbot extends Widget {
         this.listener = null
         this.answer_count = 0
         // add an empty box into the given column
-        this.template.add_chat_widget(this.id, this.widget["title"])
+        this.add_chat_box(this.id, this.widget["title"])
     }
     
     // draw the widget's content

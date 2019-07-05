@@ -5,7 +5,7 @@ class Packages extends Widget {
         this.listener = null
         this.manifests = {}
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
     }
     
     // draw the widget's content
@@ -76,6 +76,7 @@ class Packages extends Widget {
             var update_id = this.id+'_'+manifest["package"]+'_update'
             table.row.add([manifest["package"], manifest["modules"].join("<br>"), manifest["version"], manifest["revision"], '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>']).draw();
             // check for update
+            console.log(manifest)
             var url = "https://raw.githubusercontent.com/"+manifest["github"]+"/"+manifest["version"]+"/manifest.yml?timestamp="+new Date().getTime()
             $.get(url, function(data) {
                 data = jsyaml.load(data)

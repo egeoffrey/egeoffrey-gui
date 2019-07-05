@@ -1,6 +1,6 @@
+allow:
+- myhouse_admins
 icon: database
 order: 2
-page: __database
+page: myhouse_inspector/database
 text: Database
-allow:
-  - myhouse_admins

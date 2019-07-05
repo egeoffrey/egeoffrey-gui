@@ -1,6 +1,6 @@
+allow:
+- myhouse_admins
 icon: align-justify
 order: 1
-page: __logs
+page: myhouse_inspector/logs
 text: Logs
-allow:
-  - myhouse_admins

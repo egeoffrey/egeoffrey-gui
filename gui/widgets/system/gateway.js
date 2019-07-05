@@ -5,7 +5,7 @@ class Gateway extends Widget {
         this.listener = null
         this.live = true
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
     }
     
     // draw the widget's content

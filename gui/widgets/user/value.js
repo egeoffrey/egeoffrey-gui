@@ -7,7 +7,9 @@ class Value extends Widget {
         // add an empty box into the given column
         var icon = "icon" in this.widget ? this.widget["icon"] : "question"
         var color = "color" in this.widget ? this.widget["color"] : "blue"
-        this.template.add_small_widget(this.id, this.widget["title"], icon, color)
+        var link = "link" in this.widget ? this.widget["link"] : null
+        if ("variant" in this.widget && this.widget["variant"] == 2) this.add_small_box_2(this.id, this.widget["title"], icon, color, link)
+        else this.add_small_box(this.id, this.widget["title"], icon, color)
     }
     
     // request the data to the database
@@ -21,10 +23,10 @@ class Value extends Widget {
         gui.sessions.register(message, {
             "component": "value",
             "sensor_id": sensor_id,
-            "type": this.widget["type"]
+            "widget": this.widget["widget"]
         })
         this.send(message)
-        // ask for the timestamp
+        // ask for the timestamp of the latest value
         var message = new Message(gui)
         message.recipient = "controller/db"
         message.command = "GET_TIMESTAMP"
@@ -34,7 +36,7 @@ class Value extends Widget {
             "sensor_id": sensor_id
         })
         this.send(message)
-        // ask for the icon
+        // ask for the icon (if the icon points to a sensor)
         if ("icon_sensor" in this.widget) {
             var message = new Message(gui)
             message.recipient = "controller/db"
@@ -60,8 +62,8 @@ class Value extends Widget {
         // IDs Template: _color, _icon, _value, _value_suffix, _timestamp
         // IDs Widget: 
         // TODO: change column attributes to col-md-3 col-sm-6 col-xs-12
-        // request the sensor's configuration
-        if (this.widget["type"] == "button") {
+        // for button widgets, just add the button and configure the action(s)
+        if (this.widget["widget"] == "button") {
             var tag = "#"+this.id+"_value"
             $(tag.replace("_value","_timestamp")).addClass("hidden")
             var html = '\
@@ -99,6 +101,7 @@ class Value extends Widget {
                 };
             }(this.widget["actions"]));
         }
+        // otherwise request the data for this sensor
         else {
             var sensor_id = this.widget["sensor"]
             this.add_configuration_listener("sensors/"+sensor_id)
@@ -120,6 +123,7 @@ class Value extends Widget {
             if (message.args == this.widget["sensor"]) this.request_data()
             if ("icon_sensor" in this.widget && message.args == this.widget["icon_sensor"]) this.request_data()
         }
+        // database returned a requested value
         else if (message.sender == "controller/db" && message.command.startsWith("GET")) {
             var session = gui.sessions.restore(message)
             if (session == null) return
@@ -128,30 +132,32 @@ class Value extends Widget {
             // add value
             if (session["component"] == "value") {
                 var tag = "#"+this.id+"_value"
-                if (session["type"] == "value") {
+                if (session["widget"] == "value") {
                     // add value and suffix
                     $(tag).html(data.length == 1 ? data[0] : "N/A");
                     if ("unit" in sensor) $(tag+"_suffix").html(sensor["unit"]);
                 }
-                else if (session["type"] == "status") {
+                // this is a status box, set the status
+                else if (session["widget"] == "status") {
                     tag = tag.replace("_value","")
                     if (data.length == 1) {
                         if (data[0] == 0) {
                             $(tag+"_icon").removeClass().addClass("fa fa-power-off")
-                            $(tag+"_color").removeClass().addClass("info-box-icon bg-red")
+                            if ($(tag+"_color").hasClass("info-box-icon")) $(tag+"_color").removeClass().addClass("info-box-icon bg-red")
                             // TODO: localize
                             $(tag+"_value").html("OFF")
                         }
                         else if (data[0] == 1) {
                             $(tag+"_icon").removeClass().addClass("fa fa-plug")
-                            $(tag+"_color").removeClass().addClass("info-box-icon bg-green")
+                            if ($(tag+"_color").hasClass("info-box-icon")) $(tag+"_color").removeClass().addClass("info-box-icon bg-green")
                             $(tag+"_value").html("ON")
                         }
                     } else {
                         $(tag+"_value").html("N/A")
                     }
                 }
-                else if (session["type"] == "control") {
+                // this is a control box, configure the checkbox
+                else if (session["widget"] == "control") {
                     var id = tag.replace("#","")
                     $(tag.replace("_value","_timestamp")).addClass("hidden")
                     var html = '\
@@ -209,7 +215,8 @@ class Value extends Widget {
                         };
                     }(tag+"_toggle", session["sensor_id"], actions));
                 }
-                else if (session["type"] == "input") {
+                // this is an input box, populate the input
+                else if (session["widget"] == "input") {
                     var id = tag.replace("#","")
                     $(tag.replace("_value","_timestamp")).addClass("hidden")
                     var html = '\

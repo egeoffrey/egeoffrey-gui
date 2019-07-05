@@ -31,7 +31,7 @@ class Gui extends Module {
         this.add_configuration_listener("groups", true)
         this.page = null
         this.menu = new Menu("menu")
-        this.notifications = new Notifications("notifications")
+        this.toolbar = new Toolbar("toolbar")
         // loaded Google Maps
         this.maps_loaded = false
         // safeguard, if not receiving a configuration file timeline, disconnect
@@ -91,10 +91,17 @@ class Gui extends Module {
             if (topic != null) this.remove_listener(topic)
         }
         this.topics = []
-        // load the page
-        var page_id = location.hash.replace('#','')
         // close the old page
         if (this.page != null) this.page.close()
+        // load the page
+        var page_id = location.hash.replace('#','')
+        // remove arguments from the page_id
+        if (page_id.includes("=")) {
+            var split = page_id.split("=")
+            page_id = split[0]
+        }
+        // if no page is provided, load the dashboard
+        if (page_id == "") page_id = gui.settings["default_page"]
         // load system pages
         if (page_id.startsWith("__")) {
             this.page = new Page("SYSTEM", page_id)
@@ -148,13 +155,13 @@ class Gui extends Module {
         // ensure the user is authenticated
         this.is_authenticated()
         // if a page is requested, load it
-        if (location.hash) this.load_page()
+        this.load_page()
         // whenever the hash changes, load the requested page
         window.onhashchange = function() {
-            if (location.hash) gui.load_page()
+            gui.load_page()
         }
         this.menu.draw()
-        this.notifications.draw()
+        this.toolbar.draw()
     }
         
     // What to do when exiting
@@ -197,7 +204,7 @@ class Gui extends Module {
     
     // What to do when receiving a new/updated configuration for this module
     on_configuration(message) {
-        // TODO: how to handle sensors removed from config
+        // TODO: how to handle sensors/pages/menu removed from config
         if (message.is_null) return
         // load the page
         else if (this.waiting_for_page && message.args.startsWith("gui/pages/")) {
@@ -231,7 +238,7 @@ class Gui extends Module {
             
         }
         else if (message.args == "gui/settings") {
-            if (! this.is_valid_module_configuration(["skin", "map"], message.get_data())) return false
+            if (! this.is_valid_module_configuration(["skin", "map", "default_page", "configuration_page", "notification_page", "log_page"], message.get_data())) return false
             this.settings = message.get_data()
             this.load_skin(message.get("skin"))
         }

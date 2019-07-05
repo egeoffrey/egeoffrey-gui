@@ -1,6 +1,6 @@
+allow:
+- house_admins
 icon: edit
 order: 98
-page: __configuration
+page: house_admin/configuration
 text: Configuration
-allow:
-  - house_admins

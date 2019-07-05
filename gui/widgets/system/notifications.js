@@ -1,11 +1,11 @@
-// Messages widget
-class Messages extends Widget {
+// Notification widget
+class Notifications extends Widget {
     constructor(id, widget) {
         super(id, widget)
         this.listener = null
         this.filter_by = null
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
     }
     
     // draw the widget's content
@@ -36,7 +36,7 @@ class Messages extends Widget {
             return function () {
                 var request = $("#"+this_class.id+"_selector").val()
                 var table = $("#"+this_class.id+"_table").DataTable()
-                table.column(1).search(request).draw();
+                table.column(1).search(request).draw()
             };
         }(this));
         // add table
@@ -73,9 +73,11 @@ class Messages extends Widget {
         for (var severity of ["info", "warning", "alert"]) {
             var message = new Message(gui)
             message.recipient = "controller/db"
-            message.command = "TAIL_ALERTS"
+            message.command = "GET"
             message.args = severity
-            message.set_data(5)
+            message.set("timeframe", "last_5_days")
+            message.set("scope", "alerts")
+            message.set("max_items", 500)
             gui.sessions.register(message, {
             })
             this.send(message)
@@ -106,9 +108,12 @@ class Messages extends Widget {
             var args = message.args.split("/")
             table.row.add([gui.date.format_timestamp(), this.format_severity(args[0]), message.get_data()]).draw(false);
         }
-        else if (message.sender == "controller/db" && message.command == "TAIL_ALERTS") {
-            for (var entry of message.get_data()) {
-                table.row.add([gui.date.format_timestamp(entry[0]), this.format_severity(message.args), entry[1]]);
+        else if (message.sender == "controller/db" && message.command == "GET") {
+            var session = gui.sessions.restore(message)
+            if (session == null) return
+            var data = message.get("data")
+            for (var entry of data) {
+                table.row.add([gui.date.format_timestamp(entry[0]/1000), this.format_severity(message.args), entry[1]]);
             }
             table.draw()
         }

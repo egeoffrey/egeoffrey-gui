@@ -1,6 +1,6 @@
+allow:
+- myhouse_admins
 icon: project-diagram
 order: 3
-page: __gateway
+page: myhouse_inspector/gateway
 text: Gateway
-allow:
-  - myhouse_admins

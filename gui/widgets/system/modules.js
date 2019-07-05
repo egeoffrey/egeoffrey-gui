@@ -6,7 +6,7 @@ class Modules extends Widget {
         this.modules = []
         this.filter = null
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
     }
     
     // set the status to given module_id
@@ -192,7 +192,7 @@ class Modules extends Widget {
                 // edit the module's configuration
                 $("#"+this.id+"_edit_"+module_id).unbind().click(function(scope, name) {
                     return function () {
-                        window.location.hash = '#__configuration='+scope+'/'+name;
+                        window.location.hash = '#'+gui.settings["configuration_page"]+'='+scope+'/'+name;
                     };
                 }(module["scope"], module["name"]));
                 // start the module

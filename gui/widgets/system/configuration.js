@@ -13,7 +13,7 @@ class Configuration extends Widget {
         // keep track of the current configuration (array of configurations subscribed)
         this.current_configurations = []
         // add an empty box into the given column
-        this.template.add_large_widget(this.id, this.widget["title"])
+        this.add_large_box(this.id, this.widget["title"])
         // TODO: delete configuration
     }
     
@@ -81,7 +81,7 @@ class Configuration extends Widget {
             $(body).append(button_html)
             $("#"+this.id+"_new").unbind().click(function(this_class) {
                 return function () {
-                    window.location.hash = '#__configuration='+this_class.prefix+'__new__'
+                    window.location.hash = '#'+gui.settings["configuration_page"]+'='+this_class.prefix+'__new__'
                 };
             }(this));
             // add selector

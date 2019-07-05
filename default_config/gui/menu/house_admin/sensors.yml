@@ -1,6 +1,6 @@
+allow:
+- house_admins
 icon: microchip
 order: 1
-page: __sensors
+page: house_admin/sensors
 text: Sensors
-allow:
-  - house_admins

@@ -87,11 +87,10 @@
 <script src="sdk/javascript/module/module.js"></script>
 
 <script src="gui/gui.js"></script>
-<script src="gui/widgets/widget.js"></script>
+<script src="gui/widget.js"></script>
 <script src="gui/menu.js"></script>
-<script src="gui/notifications.js"></script>
+<script src="gui/toolbar.js"></script>
 <script src="gui/page.js"></script>
-<script src="gui/widgets/templates.js"></script>
 
 <script src="gui/widgets/user/summary.js"></script>
 <script src="gui/widgets/user/timeline.js"></script>
@@ -102,6 +101,7 @@
 <script src="gui/widgets/user/maps.js"></script>
 <script src="gui/widgets/user/text.js"></script>
 <script src="gui/widgets/user/table.js"></script>
+<script src="gui/widgets/user/counter.js"></script>
 
 <script src="gui/widgets/system/modules.js"></script>
 <script src="gui/widgets/system/sensors.js"></script>
@@ -113,7 +113,7 @@
 <script src="gui/widgets/system/packages.js"></script>
 <script src="gui/widgets/system/database.js"></script>
 <script src="gui/widgets/system/gateway.js"></script>
-<script src="gui/widgets/system/messages.js"></script>
+<script src="gui/widgets/system/notifications.js"></script>
 
 <!-- IE8 Respond -->
 <!--[if lt IE 9]>
@@ -152,7 +152,7 @@ th.dt-center, td.dt-center { text-align: center; }
 
 		<!-- =============================================== -->
 		<header class="main-header">
-			<a href="/" class="logo"> 
+			<a href="#" class="logo"> 
 				<span class="logo-mini"><b>my</b>H</span> 
 				<span class="logo-lg"><b><i class="fa fa-home"></i>
 						my</b>House</span>
@@ -185,7 +185,7 @@ th.dt-center, td.dt-center { text-align: center; }
 								<li>
 									<ul class="menu" id="notification_alert"></ul>
 								</li>
-								<li class="footer"><a href="#__messages=ALERT">View all</a></li>
+								<li class="footer"><a id="notification_alert_link">View all</a></li>
 							</ul>
 						</li>
 						<li class="dropdown notifications-menu">
@@ -197,20 +197,38 @@ th.dt-center, td.dt-center { text-align: center; }
 								<li>
 									<ul class="menu" id="notification_warning"></ul>
 								</li>
-								<li class="footer"><a href="#__messages=WARNING">View all</a></li>
+								<li class="footer"><a id="notification_warning_link">View all</a></li>
 							</ul>
 						</li>
 						<li class="dropdown notifications-menu">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 								<i class="fa fa-info"></i>
-								<span class="label label-success" id="notification_info_count"></span>
+								<span class="label label-info" id="notification_info_count"></span>
 							</a>
 							<ul class="dropdown-menu">
 								<li>
 									<ul class="menu" id="notification_info"></ul>
 								</li>
-								<li class="footer"><a href="#__messages=INFO">View all</a></li>
+								<li class="footer"><a id="notification_info_link">View all</a></li>
 							</ul>
+						</li>
+						<li class="dropdown notifications-menu">
+							<a></a>
+						</li>
+						<li class="dropdown notifications-menu">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								<i class="fa fa-microchip"></i>
+								<span class="label label-success" id="notification_value_count"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<ul class="menu" id="notification_value"></ul>
+								</li>
+								<li class="footer"><a id="notification_value_link">View all</a></li>
+							</ul>
+						</li>
+						<li class="dropdown notifications-menu">
+							<a></a>
 						</li>
 					</ul>
 				</div>
