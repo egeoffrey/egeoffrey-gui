@@ -48,6 +48,11 @@ class Notifications extends Widget {
                 <tbody></tbody>\
             </table>'
         $(body).append(table)
+        // how to render the timestamp
+        function render_timestamp(data, type, row, meta) {
+            if (type == "display") return gui.date.format_timestamp(data)
+            else return data
+        };
         // define datatables options
         var options = {
             "responsive": true,
@@ -60,7 +65,11 @@ class Notifications extends Widget {
             "info": true,
             "autoWidth": false,
             "order": [[ 0, "desc" ]],
-            "columnDefs": [ 
+            "columnDefs": [
+                {
+                    "targets" : 0,
+                    "render": render_timestamp,
+                },
                 {
                     "className": "dt-center",
                     "targets": [0, 1]
@@ -113,7 +122,7 @@ class Notifications extends Widget {
             if (session == null) return
             var data = message.get("data")
             for (var entry of data) {
-                table.row.add([gui.date.format_timestamp(entry[0]/1000), this.format_severity(message.args), entry[1]]);
+                table.row.add([entry[0]/1000, this.format_severity(message.args), entry[1]]);
             }
             table.draw()
         }

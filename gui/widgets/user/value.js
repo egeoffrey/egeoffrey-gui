@@ -68,7 +68,7 @@ class Value extends Widget {
             $(tag.replace("_value","_timestamp")).addClass("hidden")
             var html = '\
             <center><div class="input-group">\
-                <button type="button" id="'+this.id+'_button" class="btn btn-default">'+this.widget["text"]+'</button>\
+                <button type="button" id="'+this.id+'_button" class="btn btn-primary btn-lg">'+this.widget["text"]+'</button>\
             </div></center>'
             $(tag).html(html)
             // listen for click
@@ -159,18 +159,16 @@ class Value extends Widget {
                 // this is a control box, configure the checkbox
                 else if (session["widget"] == "control") {
                     var id = tag.replace("#","")
-                    $(tag.replace("_value","_timestamp")).addClass("hidden")
                     var html = '\
-                    <center><div class="input-group">\
-                        <div class="checkbox checkbox-slider--a checkbox-slider-md">\
-                            <label>\
-                                <input type="checkbox" id="'+id+'_toggle"><span></span>\
-                            </label>\
+                    <center>\
+                        <div class="input-group">\
+                            <input type="checkbox" id="'+id+'_toggle" data-width="100">\
                         </div>\
-                    </div></center>'
+                    </center>'
                     $(tag).html(html)
+                    $(tag+"_toggle").bootstrapToggle()
                     // TODO: if not defined, set 0 to the db as well
-                    if (data.length == 1) $(tag+"_toggle").prop("checked", data[0])
+                    if (data.length == 1) $(tag+"_toggle").prop("checked", data[0]).change()
                     else $(tag+"_toggle").prop("checked", false)
                     // listen for changes
                     var actions = "actions" in this.widget ? this.widget["actions"] : null

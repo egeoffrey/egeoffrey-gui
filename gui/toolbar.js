@@ -40,9 +40,9 @@ class Toolbar extends Widget {
             this.send(message)
         }
         // subscribe for new alert
-        this.listener = this.add_broadcast_listener("controller/alerter", "NOTIFY", "#")
+        this.add_broadcast_listener("controller/alerter", "NOTIFY", "#")
         // subscribe for new logs
-        this.listener = this.add_inspection_listener("+/+", "controller/logger", "LOG", "value")
+        this.add_inspection_listener("+/+", "controller/logger", "LOG", "value")
     }
     
     // close the widget
@@ -104,9 +104,9 @@ class Toolbar extends Widget {
                 var text = entry[1]
                 if (severity == "value") {
                     // clean up the log text
-                    var match = text.match(/"(.+)": (.+)$/)
+                    var match = text.match(/\[([^\]]+)\] "(.*)": (.+)$/)
                     if (match == null) continue
-                    text = match[1]+": "+match[2]
+                    text = match[2] == "" ? match[1]+": "+match[3] : text = match[2]+": "+match[3]
                 }
                 $(widget).prepend('<li><a title="'+text+'">'+text+'</a></li>')
             }

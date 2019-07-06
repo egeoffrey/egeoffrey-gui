@@ -80,8 +80,6 @@ timeseries_timeline:
   chart:
     type: spline
     zoomType: x
-  rangeSelector:
-    enabled: false
   template: master
   xAxis:
     gridLineWidth: 0

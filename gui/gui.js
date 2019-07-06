@@ -100,7 +100,7 @@ class Gui extends Module {
             var split = page_id.split("=")
             page_id = split[0]
         }
-        // if no page is provided, load the dashboard
+        // if no page is provided, load the default_page
         if (page_id == "") page_id = gui.settings["default_page"]
         // load system pages
         if (page_id.startsWith("__")) {

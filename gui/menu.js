@@ -10,6 +10,8 @@ class Menu extends Widget {
     // draw the widget's content
     draw() {
         this.add_configuration_listener("gui/menu/#")
+        console.log(gui.listeners)
+        console.log(gui.topics)
     }
     
     // close the widget

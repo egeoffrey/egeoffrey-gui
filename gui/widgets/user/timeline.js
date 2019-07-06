@@ -12,7 +12,7 @@ class Timeline extends Widget {
         var timeframe = "last_4_hours"
         if ("group_by" in this.widget) {
             if (this.widget["group_by"] == "hour") timeframe = "last_24_hours"
-            else if (this.widget["group_by"] == "day") timeframe = "last_30_days"
+            else if (this.widget["group_by"] == "day") timeframe = "last_365_days"
         }
         if ("timeframe" in this.widget) timeframe = this.widget["timeframe"]
 		// for each sensor

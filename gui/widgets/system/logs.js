@@ -79,6 +79,11 @@ class Logs extends Widget {
                 <tbody></tbody>\
             </table>'
         $(body).append(table)
+        // how to render the timestamp
+        function render_timestamp(data, type, row, meta) {
+            if (type == "display") return gui.date.format_timestamp(data)
+            else return data
+        };
         // define datatables options
         var options = {
             "responsive": true,
@@ -92,6 +97,10 @@ class Logs extends Widget {
             "autoWidth": false,
             "order": [[ 0, "desc" ]],
             "columnDefs": [ 
+                {
+                    "targets" : 0,
+                    "render": render_timestamp,
+                },
                 {
                     "className": "dt-center",
                     "targets": [0, 1]
@@ -158,11 +167,11 @@ class Logs extends Widget {
                 var text = entry[1]
                 if (message.args == "value") {
                     // clean up the log text
-                    var match = text.match(/"(.+)": (.+)$/)
+                    var match = text.match(/\[([^\]]+)\] "(.*)": (.+)$/)
                     if (match == null) continue
-                    text = match[1]+": "+match[2]
+                    text = match[2] == "" ? match[1]+": "+match[3] : text = match[2]+": "+match[3]
                 }
-                table.row.add([gui.date.format_timestamp(timestamp/1000), this.format_severity(message.args), text]);
+                table.row.add([timestamp/1000, this.format_severity(message.args), text]);
             }
             table.draw()
         }

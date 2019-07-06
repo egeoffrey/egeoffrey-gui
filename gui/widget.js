@@ -6,6 +6,8 @@ class Widget {
         // keep track html id and widget content
         this.id = id.replaceAll("/","_")
         this.widget = widget
+        // persistent widget survives when a page is changed (e.g. menu)
+        this.persistent_widget = false
     }
     
     // draw the widget (subclass has to implement)
@@ -56,7 +58,6 @@ class Widget {
                 this.on_configuration(message)
             }
         }
-        // TODO: this is in common with the previous
         // add this widget to the array of requests or create the array if needed
         if (configuration in gui.listeners && ! gui.listeners[configuration].includes(this)) gui.listeners[configuration].push(this)
         else gui.listeners[configuration] = [this]
