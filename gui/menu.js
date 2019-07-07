@@ -5,17 +5,12 @@ class Menu extends Widget {
         super(id, {})
         this.sections = []
         this.entries = {}
+        this.persistent = true
     }
     
     // draw the widget's content
     draw() {
         this.add_configuration_listener("gui/menu/#")
-        console.log(gui.listeners)
-        console.log(gui.topics)
-    }
-    
-    // close the widget
-    close() {
     }
     
     // receive data and load it into the widget
@@ -24,11 +19,27 @@ class Menu extends Widget {
     
     // refresh the menu
     refresh() {
+        var selected = null
+        // check if the user selected already a page
+        if (location.hash != null) selected = location.hash.replace('#','')
         $("#"+this.id).empty()
         for (var section of this.sections) {
             if (section == null) continue
             if (! (section["section_id"] in this.entries)) continue
-            $("#"+this.id).append('<li class="header" id="menu_section_'+section["section_id"]+'">'+section["text"].toUpperCase()+'</li>');
+            var section_icon = "icon" in section ? section["icon"] : "angle-right"
+            var section_html = '\
+                <li class="treeview" id="menu_section_'+section["section_id"]+'_tree">\
+                    <a href="#">\
+                        <i class="fas fa-'+section_icon+'"></i>\
+                        <span>'+section["text"]+'</span>\
+                        <span class="pull-right-container">\
+                            <i class="fa fa-angle-left pull-right"></i>\
+                        </span>\
+                    </a>\
+                    <ul class="treeview-menu" id="menu_section_'+section["section_id"]+'">\
+                    </ul>\
+                </li>'
+            $("#"+this.id).append(section_html)
             var items = 0
             for (var entry of this.entries[section["section_id"]]) {
                 if (entry == null) continue
@@ -36,7 +47,7 @@ class Menu extends Widget {
                 // add the entry to the menu
                 if (! gui.is_authorized(entry)) continue
                 var page_tag = entry["page"].replaceAll("/","_")
-                $("#"+this.id).append('<li id="menu_user_item_'+page_tag+'"><a href="#'+entry["page"]+'"> <i class="fas fa-'+entry["icon"]+'"></i> <span>'+capitalizeFirst(entry["text"])+'</span></a></li>');
+                $("#menu_section_"+section["section_id"]).append('<li id="menu_user_item_'+page_tag+'"><a href="#'+entry["page"]+'"> <i class="fas fa-'+entry["icon"]+'"></i> '+capitalizeFirst(entry["text"])+'</a></li>');
                 // open the page on click
                 $("#menu_user_item_"+page_tag).click(function(page){
                     return function () {
@@ -47,6 +58,10 @@ class Menu extends Widget {
                     }
                 }(entry["page"]));
                 items++
+                // open up the section containing the selected menu item
+                if (selected != null && selected == entry["page"]) {
+                    $("#menu_section_"+section["section_id"]+"_tree").addClass("active menu-open")
+                }
             }
             // hide the section if it has no items
             if (items == 0) $("#menu_section_"+section["section_id"]).addClass("hidden")

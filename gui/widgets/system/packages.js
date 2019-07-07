@@ -14,7 +14,7 @@ class Packages extends Widget {
         // IDs Widget: _table
         // if refresh requested, we need to unsubscribe from the topics to receive them again
         if (this.listener != null) {
-            gui.remove_listener(this.listener)
+            this.remove_listener(this.listener)
             this.manifests = {}
         }
         var body = "#"+this.id+"_body"
@@ -50,21 +50,17 @@ class Packages extends Widget {
                     "className": "dt-center",
                     "targets": [2, 3, 4]
                 }
-            ]
+            ],
+            "language": {
+                "emptyTable": '<span id="'+this.id+'_table_text"></span>'
+            }
         };
         // create the table
         $("#"+this.id+"_table").DataTable(options);
+        $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // ask for manifest files
         this.listener = this.add_broadcast_listener("+/+", "MANIFEST", "#")
     }
-    
-        
-    // close the widget
-    close() {
-        if (this.listener != null) {
-            gui.remove_listener(this.listener)
-        }
-    }    
     
     // receive data and load it into the widget
     on_message(message) {
@@ -75,6 +71,7 @@ class Packages extends Widget {
             // add a new row for this package
             var update_id = this.id+'_'+manifest["package"]+'_update'
             table.row.add([manifest["package"], manifest["modules"].join("<br>"), manifest["version"], manifest["revision"], '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>']).draw();
+            if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
             // check for update
             var url = "https://raw.githubusercontent.com/"+manifest["github"]+"/"+manifest["version"]+"/manifest.yml?timestamp="+new Date().getTime()
             $.get(url, function(data) {

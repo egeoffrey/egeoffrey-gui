@@ -2,7 +2,6 @@
 class Chatbot extends Widget {
     constructor(id, widget) {
         super(id, widget)
-        this.listener = null
         this.answer_count = 0
         // add an empty box into the given column
         this.add_chat_box(this.id, this.widget["title"])
@@ -48,7 +47,7 @@ class Chatbot extends Widget {
         this.add_answer_box()
         this.add_answer({content: "Feel free to ask me anything!", type: "text"})
         // capture all alerter notifications, they will become chat messages
-        this.listener = this.add_inspection_listener("controller/alerter", "*/*", "NOTIFY", "#")
+        this.add_inspection_listener("controller/alerter", "*/*", "NOTIFY", "#")
     }
     
     // add a question to the chat box
@@ -105,11 +104,6 @@ class Chatbot extends Widget {
         $("#"+this.id+"_answer_"+this.answer_count).html(message)
         this.scroll_messages()
         this.answer_count++
-    }
-    
-    // close the widget
-    close() {
-        if (this.listener != null) gui.remove_listener(this.listener)
     }
     
     // receive data and load it into the widget

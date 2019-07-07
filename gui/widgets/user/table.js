@@ -44,7 +44,10 @@ class Table extends Widget {
             "searching": true,
             "ordering": true,
             "info": true,
-            "autoWidth": false
+            "autoWidth": false,
+            "language": {
+                "emptyTable": '<span id="'+this.id+'_table_text"></span>'
+            }
         };
         // create the table
         if (! $.fn.dataTable.isDataTable("#"+this.id+"_table")) {
@@ -53,14 +56,11 @@ class Table extends Widget {
             var table = $("#"+this.id+"_table").DataTable()
             table.clear()
         }
+        $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // request sensors' data
         this.request_data()
         // subscribe for acknoledgments from the database for saved values
         this.add_inspection_listener("controller/db", "*/*", "SAVED", "#")
-    }
-    
-    // close the widget
-    close() {
     }
     
     // receive data and load it into the widget
@@ -80,6 +80,7 @@ class Table extends Widget {
                 if (entry == "") continue
                 table.row.add([entry]).draw(false);
             }
+            if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         }
     }
     

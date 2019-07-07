@@ -155,10 +155,6 @@ class Calendar extends Widget {
 		scheduler_events.push(scheduler.attachEvent("onEventDeleted",onChange));
     }
     
-    // close the widget
-    close() {
-    }
-    
     // receive data and load it into the widget
     on_message(message) {
         if (message.sender == "controller/db" && message.command.startsWith("GET")) {

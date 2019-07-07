@@ -14,7 +14,7 @@ class Rules extends Widget {
         // IDs Widget: _table
         // if refresh requested, we need to unsubscribe from the topics to receive them again
         if (this.listener != null) {
-            gui.remove_listener(this.listener)
+            this.remove_listener(this.listener)
             this.rules = {}
         }
         var body = "#"+this.id+"_body"
@@ -35,13 +35,14 @@ class Rules extends Widget {
         // 1: rule
         // 2: severity
         // 3: schedule
-        // 4: conditions
-        // 5: trigger
+        // 4: schedule
+        // 5: conditions
         // 6: actions
+        // 7: control
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>_rule_id_</th><th>Rule</th><th>Severity</th><th>Schedule</th><th>Conditions</th><th>Triggers</th><th>Actions</th></tr>\
+                    <tr><th>_rule_id_</th><th>Rule</th><th>Severity</th><th>Schedule</th><th>For</th><th>Conditions</th><th>Actions</th><th>Control</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -65,9 +66,12 @@ class Rules extends Widget {
                 },
                 {
                     "className": "dt-center", 
-                    "targets": [2, 6]
+                    "targets": [2, 7]
                 }
-            ]
+            ],
+            "language": {
+                "emptyTable": '<span id="'+this.id+'_table_text"></span>'
+            }
         };
         // create the table
         if (! $.fn.dataTable.isDataTable("#"+this.id+"_table")) {
@@ -76,15 +80,9 @@ class Rules extends Widget {
             var table = $("#"+this.id+"_table").DataTable()
             table.clear()
         }
+        $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // discover registered rules
         this.listener = this.add_configuration_listener("rules/#")
-    }
-    
-    // close the widget
-    close() {
-        if (this.listener != null) {
-            gui.remove_listener(this.listener)
-        }
     }
     
     // receive data and load it into the widget
@@ -127,11 +125,16 @@ class Rules extends Widget {
         if ("actions" in rule) {
             for (var action of rule["actions"]) actions = actions+action+"<br>"
         }
+        var for_i = ""
+        if ("for" in rule) {
+            for (var i of rule["for"]) for_i = for_i+i+"<br>"
+        }
         var run_html = '<button type="button" id="'+this.id+'_run_'+rule_tag+'" class="btn btn-default"><i class="fas fa-play"></i></button>'
         var edit_html = '<button type="button" id="'+this.id+'_edit_'+rule_tag+'" class="btn btn-default"><i class="fas fa-edit"></i></button>'
         var delete_html = '<button type="button" id="'+this.id+'_delete_'+rule_tag+'" class="btn btn-default" ><i class="fas fa-trash"></i></button>'
         // add the row
-        table.row.add(this.disabled_item([rule_id, format_multiline(description, 50), rule["severity"] , schedule, conditions, actions, run_html+" "+edit_html+" "+delete_html], disabled)).draw(false);
+        table.row.add(this.disabled_item([rule_id, format_multiline(description, 50), rule["severity"] , schedule, for_i, conditions, format_multiline(actions, 30), run_html+" "+edit_html+" "+delete_html], disabled)).draw(false);
+        if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         // run the selected rule
         $("#"+this.id+"_run_"+rule_tag).unbind().click(function(rule_id) {
             return function () {

@@ -3,6 +3,7 @@
 class Toolbar extends Widget {
     constructor(id) {
         super(id, {})
+        this.persistent = true
     }
     
     // draw the widget's content
@@ -45,10 +46,6 @@ class Toolbar extends Widget {
         this.add_inspection_listener("+/+", "controller/logger", "LOG", "value")
     }
     
-    // close the widget
-    close() {
-    }
-    
     // receive data and load it into the widget
     on_message(message) {
         // realtime alerts
@@ -66,7 +63,7 @@ class Toolbar extends Widget {
             // notify the user
             var color = severity
             if (severity == "alert") color = "danger"
-            if (severity == "info") color = "info"
+            if (severity == "info") color = "success"
             gui.notify(color, alert_text)
         }
         // realtime logs
@@ -85,7 +82,7 @@ class Toolbar extends Widget {
             // add the line to the list
             $(widget).prepend('<li><a title="'+text+'">'+text+'</a></li>')
             // notify the user
-            gui.notify("success", text)
+            gui.notify("info", text)
         }
         else if (message.sender == "controller/db" && message.command == "GET") {
             var session = gui.sessions.restore(message)

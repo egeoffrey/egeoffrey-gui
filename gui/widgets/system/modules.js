@@ -108,7 +108,10 @@ class Modules extends Widget {
                     "targets" : [1],
                     "visible": false,
                 }
-            ]
+            ],
+            "language": {
+                "emptyTable": '<span id="'+this.id+'_table_text"></span>'
+            }
         };
         // create the table
         if (! $.fn.dataTable.isDataTable("#"+this.id+"_table")) {
@@ -117,12 +120,9 @@ class Modules extends Widget {
             var table = $("#"+this.id+"_table").DataTable()
             table.clear()
         }
+        $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         if (this.filter == null) this.filter = "controller"
         this.request_data()
-    }
-    
-    // close the widget
-    close() {
     }
     
     // receive data and load it into the widget
@@ -169,6 +169,7 @@ class Modules extends Widget {
                     set_html+edit_html+ " "+start_html+" "+stop_html+" "+restart_html 
                 ]
                 table.row.add(table_options).draw();
+                if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
                 // set the debug checkbox
                 $("#"+this.id+"_debug_"+module_id).prop('checked', module["debug"])
                 // set configured checkbox

@@ -123,6 +123,7 @@ class Page {
     close() {
         // close all the widget of the page
         for (var widget_object of this.widgets) {
+            if(typeof widget_object.close === 'function')
             widget_object.close()
         }
     }

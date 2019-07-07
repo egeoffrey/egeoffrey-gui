@@ -40,7 +40,7 @@ class Sensors extends Widget {
         // IDs Widget: _table
         // if refresh requested, we need to unsubscribe from the topics to receive them again
         if (this.listener != null) {
-            gui.remove_listener(this.listener)
+            this.remove_listener(this.listener)
             this.sensors = {}
         }
         var body = "#"+this.id+"_body"
@@ -116,7 +116,10 @@ class Sensors extends Widget {
                     "className": "dt-center", 
                     "targets": [1, 8, 9, 10]
                 }
-            ]
+            ],
+            "language": {
+                "emptyTable": '<span id="'+this.id+'_table_text"></span>'
+            }
         };
         // create the table
         if (! $.fn.dataTable.isDataTable("#"+this.id+"_table")) {
@@ -125,23 +128,18 @@ class Sensors extends Widget {
             var table = $("#"+this.id+"_table").DataTable()
             table.clear()
         }
+        $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // discover registered sensors
         this.listener = this.add_configuration_listener("sensors/#")
         // subscribe for acknoledgments from the database for saved values
         this.add_inspection_listener("controller/db", "*/*", "SAVED", "#")
     }
     
-    // close the widget
-    close() {
-        if (this.listener != null) {
-            gui.remove_listener(this.listener)
-        }
-    }
-    
     // receive data and load it into the widget
     on_message(message) {
         // database just saved a value check if our sensor is involved and if so refresh the data
         if (message.sender == "controller/db" && message.command == "SAVED") {
+            if (message.has("group_by")) return
             var sensor_id = message.args
             if (sensor_id in this.sensors) this.request_data(sensor_id)
         }
@@ -183,7 +181,7 @@ class Sensors extends Widget {
     
     // format an object for displaying
     format_object(object) {
-        return JSON.stringify(object).replaceAll("{","").replaceAll("}","").replaceAll("\"","").replaceAll(":",": ").replaceAll(",","<br>")
+        return "- "+JSON.stringify(object).replaceAll("{","").replaceAll("}","").replaceAll("\"","").replaceAll(":",": ").replaceAll(",","<br>- ")
     }
     
     // if the item is disabled, gray out the text
@@ -215,12 +213,21 @@ class Sensors extends Widget {
         var retain = "retain" in sensor ? sensor["retain"] : ""
         var service = ""
         if ("service" in sensor) {
-            service = "<u>"+sensor["service"]["name"]+"</u><br>"+this.format_object(sensor["service"]["configuration"])
-            if (sensor["service"]["mode"] == "active") {
-                var poll_html = '<button type="button" id="'+this.id+'_poll_'+sensor_tag+'" class="btn btn-default"><i class="fas fa-play"></i></button>'
-                var schedule = "schedule" in sensor ? this.format_object(sensor["service"]["schedule"]) : ""
-                service = poll_html+" "+service+"<br>"+schedule
+            var service_name = "<u>"+sensor["service"]["name"]+"</u>"
+            var service_mode = '<span class="hidden">'+"mode: "+sensor["service"]["mode"]+"</span>"
+            var service_configuration = "configuration:<br>&nbsp;&nbsp;"+this.format_object(sensor["service"]["configuration"]).replaceAll("<br>", "<br>&nbsp;&nbsp;")
+            var service_icon = ""
+            service = "<u>"+sensor["service"]["name"]+"</u><br>mode: "+sensor["service"]["mode"]+"<br>configuration:<br>&nbsp;&nbsp;"+this.format_object(sensor["service"]["configuration"]).replaceAll("<br>", "<br>&nbsp;&nbsp;")
+            if (sensor["service"]["mode"] == "actuator") service_icon = '<i class="fas fa-cogs fa-2x"></i>'
+            else if (sensor["service"]["mode"] == "passive") service_icon = '<i class="fas fa-satellite-dish fa-2x"></i>'
+            else if (sensor["service"]["mode"] == "active") {
+                var service_icon = '<button type="button" id="'+this.id+'_poll_'+sensor_tag+'" class="btn btn-default"><i class="fas fa-play"></i></button>'
             }
+            var service_schedule = ""
+            if ("schedule" in sensor["service"]) {
+                service_schedule = "schedule:<br>&nbsp;&nbsp;"+this.format_object(sensor["service"]["schedule"]).replaceAll("<br>", "<br>&nbsp;&nbsp;")
+            }
+            service = service_icon+"&nbsp;&nbsp;"+service_name+service_mode+"<br>"+service_configuration+"<br>"+service_schedule
         }
         var set_html = '<div class="input-group margin"><input type="text" id="'+this.id+'_set_text_'+sensor_tag+'" class="form-control"><span class="input-group-btn"><button type="button" id="'+this.id+'_set_'+sensor_tag+'" class="btn btn-default" ><span class="fas fa-sign-out-alt"></span></button></span></div>'
         var graph_html = '<button type="button" id="'+this.id+'_graph_'+sensor_tag+'" class="btn btn-default" ><i class="fas fa-chart-bar"></i></button>'
@@ -243,8 +250,9 @@ class Sensors extends Widget {
             disabled
         ]
         table.row.add(row).draw(false);
+        if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         // request value and timestamp
-        this.request_data(sensor_id)
+        //this.request_data(sensor_id)
         // enable graph and set button
         if (sensor["format"] != "float_1" && sensor["format"] != "float_2" && sensor["format"] != "string" && sensor["format"] != "int") {
             $("#"+this.id+"_graph_"+sensor_tag).addClass("hidden");

@@ -13,7 +13,7 @@ class Notifications extends Widget {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
         // IDs Widget: _table, _selector
         // if refresh requested, we need to unsubscribe from the topics to receive them again
-        if (this.listener != null) gui.remove_listener(this.listener)
+        if (this.listener != null) this.remove_listener(this.listener)
         if (location.hash.includes("=")) {
             var request = location.hash.split("=")
             this.filter_by = request[1]
@@ -74,10 +74,14 @@ class Notifications extends Widget {
                     "className": "dt-center",
                     "targets": [0, 1]
                 }
-            ]
+            ],
+            "language": {
+                "emptyTable": '<span id="'+this.id+'_table_text"></span>'
+            }
         };
         // create the table
         $("#"+this.id+"_table").DataTable(options);
+        $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // ask for the old alerts
         for (var severity of ["info", "warning", "alert"]) {
             var message = new Message(gui)
@@ -95,12 +99,6 @@ class Notifications extends Widget {
         this.listener = this.add_broadcast_listener("controller/alerter", "NOTIFY", "#")
     }
     
-        
-    // close the widget
-    close() {
-        gui.remove_listener(this.listener)
-    }    
-    
     // format the severity
     format_severity(severity) {
         severity = severity.toUpperCase()
@@ -115,7 +113,7 @@ class Notifications extends Widget {
         // realtime alerts
         if (message.sender == "controller/alerter" && message.command == "NOTIFY") {
             var args = message.args.split("/")
-            table.row.add([gui.date.format_timestamp(), this.format_severity(args[0]), message.get_data()]).draw(false);
+            table.row.add([gui.date.now(), this.format_severity(args[0]), message.get_data()]).draw(false);
         }
         else if (message.sender == "controller/db" && message.command == "GET") {
             var session = gui.sessions.restore(message)
@@ -125,6 +123,7 @@ class Notifications extends Widget {
                 table.row.add([entry[0]/1000, this.format_severity(message.args), entry[1]]);
             }
             table.draw()
+            if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         }
         if (this.filter_by != null) {
             $("#"+this.id+"_selector").val(this.filter_by)

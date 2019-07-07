@@ -15,7 +15,7 @@ class Logs extends Widget {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
         // IDs Widget: _table
         // if refresh requested, we need to unsubscribe from the topics to receive them again
-        if (this.listener != null) gui.remove_listener(this.listener)
+        if (this.listener != null) this.remove_listener(this.listener)
         if (location.hash.includes("=")) {
             var request = location.hash.split("=")
             this.filter_by = request[1]
@@ -105,14 +105,18 @@ class Logs extends Widget {
                     "className": "dt-center",
                     "targets": [0, 1]
                 }
-            ]
+            ],
+            "language": {
+                "emptyTable": '<span id="'+this.id+'_table_text"></span>'
+            }
         };
         if (this.show_only != null) options["columnDefs"].push({
                     "targets" : [1],
                     "visible": false,
         })
         // create the table
-        $("#"+this.id+"_table").DataTable(options);
+        $("#"+this.id+"_table").DataTable(options)
+        $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // ask for the old logs
         var levels = this.show_only != null ? [this.show_only] : ["debug", "info", "warning", "error", "value"]
         for (var severity of levels) {
@@ -130,13 +134,7 @@ class Logs extends Widget {
         // subscribe for new logs
         this.listener = this.add_inspection_listener("+/+", "controller/logger", "LOG", "#")
     }
-    
-        
-    // close the widget
-    close() {
-        gui.remove_listener(this.listener)
-    }    
-    
+
     // format the severity
     format_severity(severity) {
         severity = severity.toUpperCase()
@@ -155,7 +153,7 @@ class Logs extends Widget {
             if (this.filter_by != null && message.args != this.filter_by) return
             if (this.show_only != null && message.args != this.show_only) return
             var table = $("#"+this.id+"_table").DataTable()
-            table.row.add([gui.date.format_timestamp(), this.format_severity(message.args), "["+message.sender+"] "+message.get_data()]).draw(false);
+            table.row.add([gui.date.now(), this.format_severity(message.args), "["+message.sender+"] "+message.get_data()]).draw(false);
         }
         else if (message.sender == "controller/db" && message.command == "GET") {
             var table = $("#"+this.id+"_table").DataTable()
@@ -171,9 +169,10 @@ class Logs extends Widget {
                     if (match == null) continue
                     text = match[2] == "" ? match[1]+": "+match[3] : text = match[2]+": "+match[3]
                 }
-                table.row.add([timestamp/1000, this.format_severity(message.args), text]);
+                table.row.add([timestamp/1000, this.format_severity(message.args), text])
             }
             table.draw()
+            if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         }
         if (this.filter_by != null) {
             $("#"+this.id+"_selector").val(this.filter_by)

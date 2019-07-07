@@ -4,14 +4,14 @@ class Configuration extends Widget {
         super(id, widget)
         // map configuration filename with tab_id
         this.tabs = {}
-        // array of configuration listeners
-        this.listeners = []
+        // array of configuration topics
+        this.topics = []
         // tab count
         this.tabs_count = 1
         // common prefix to all the tabs
         this.prefix = ""
-        // keep track of the current configuration (array of configurations subscribed)
-        this.current_configurations = []
+        // set if the user select a specific file (e.g. edit)
+        this.configuration_id = null
         // add an empty box into the given column
         this.add_large_box(this.id, this.widget["title"])
         // TODO: delete configuration
@@ -23,14 +23,12 @@ class Configuration extends Widget {
         $("#"+this.id+"_tab_index").empty()
         $("#"+this.id+"_tab_content").empty()
         // unsubscribe from previously subscribed topics
-        for (var configuration of this.current_configurations) {
-            // TODO: this will unsubscribe from topics interested by other widgets
-            this.remove_configuration_listener(configuration)
+        for (var topic of this.topics) {
+            this.remove_listener(topic)
         }
-        this.listeners = []
+        this.topics = []
         this.tabs = {}
         this.tabs_count = 1
-        this.current_configurations = configuration_array
         // request configurations to display
         for (var configuration of configuration_array) {
             if (configuration.endsWith("/#")) {
@@ -40,7 +38,7 @@ class Configuration extends Widget {
                 var match = configuration.match('^(.+\/)[^\/]+$')
                 this.prefix = match[1]
             }
-            this.listeners.push(this.add_configuration_listener(configuration))
+            this.topics.push(this.add_configuration_listener(configuration))
         }
     }
     
@@ -66,13 +64,12 @@ class Configuration extends Widget {
     draw() {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
         // IDs Widget:
-        var configuration_id = null
         if (location.hash.includes("=")) {
             var request = location.hash.split("=")
-            configuration_id = request[1]
+            this.configuration_id = request[1]
         }
         var body = "#"+this.id+"_body"
-        if (configuration_id == null) {
+        if (this.configuration_id == null) {
             // add new file button
             var button_html = '\
                 <div class="form-group">\
@@ -122,28 +119,23 @@ class Configuration extends Widget {
         </div>'
         $(body).append(panel)
         // select first group
-        if (configuration_id == null) {
+        if (this.configuration_id == null) {
             $("#"+this.id+"_selector").val("house")
             this.request_template("house")
         // load the data of the given configuration
         } 
         else {
-            if (configuration_id.endsWith("__new__")) {
-                if (configuration_id.includes("/")) {
+            if (this.configuration_id.endsWith("__new__")) {
+                if (this.configuration_id.includes("/")) {
                     var match = configuration_id.match('^(.+\/)[^\/]+$')
                     this.prefix = match[1]
                 }
                 var message = new Message(gui)
-                message.args = configuration_id
+                message.args = this.configuration_id
                 this.on_configuration(message)
             }
-            else this.request_data([configuration_id])
+            else this.request_data([this.configuration_id])
         }
-    }
-    
-    // close the widget
-    close() {
-        // TODO: unsubscribe?
     }
     
     // receive data and load it into the widget
@@ -161,6 +153,8 @@ class Configuration extends Widget {
         }
         // new configuration file, add a new tab
         else {
+            // show only requested file
+            if (this.configuration_id != null && message.args != this.configuration_id) return
             this.tabs[message.args] = tab_id
             // remove the prefix (e.g. sensors/) from the title
             var tab_title = message.args.replace(this.prefix, "")

@@ -87,10 +87,6 @@ class Timeline extends Widget {
         this.add_inspection_listener("controller/db", "*/*", "SAVED", "#")
     }
     
-    // close the widget
-    close() {
-    }
-    
     // receive data and load it into the widget
     on_message(message) {
         // database just saved a value check if our sensor is involved and if so refresh the data

@@ -7,17 +7,12 @@ class Widget {
         this.id = id.replaceAll("/","_")
         this.widget = widget
         // persistent widget survives when a page is changed (e.g. menu)
-        this.persistent_widget = false
+        this.persistent = false
     }
     
     // draw the widget (subclass has to implement)
     draw() {
         throw new Error('draw() not implemented')
-    }
-    
-    // close the widget (subclass has to implement)
-    close() {
-        throw new Error('close() not implemented')
     }
     
     // load data into the widget (subclass has to implement)
@@ -32,13 +27,11 @@ class Widget {
     
     // wrap gui.add_inspection_listener()
     add_inspection_listener(from_module, to_module, command, args) {
-        var request = command+"/"+args
-        // whenever there will be a message matching this request, the widget will be notified
-        if (request in gui.listeners && ! gui.listeners[request].includes(this)) gui.listeners[request].push(this)
-        else gui.listeners[request] = [this]
+        // add the listener
         var topic = gui.add_inspection_listener(from_module, to_module, command, args)
-        // keep track of the topic subscribed
-        gui.topics.push(topic)
+        // whenever there will be a message matching this request, the widget will be notified
+        if (topic in gui.listeners && ! gui.listeners[topic].includes(this)) gui.listeners[topic].push(this)
+        else gui.listeners[topic] = [this]
         return topic
     }
     
@@ -58,20 +51,19 @@ class Widget {
                 this.on_configuration(message)
             }
         }
-        // add this widget to the array of requests or create the array if needed
-        if (configuration in gui.listeners && ! gui.listeners[configuration].includes(this)) gui.listeners[configuration].push(this)
-        else gui.listeners[configuration] = [this]
-        // subscribe to the requested configuration
+        // add the listener
         var topic = gui.add_configuration_listener(configuration)
-        gui.topics.push(topic)
+        // whenever there will be a configuration matching this request, the widget will be notified
+        if (topic in gui.listeners && ! gui.listeners[topic].includes(this)) gui.listeners[topic].push(this)
+        else gui.listeners[topic] = [this]
         return topic
     }
     
     // remove this object from the queue of listeners for the given configuration without unsubscribing the topic
-    remove_configuration_listener(configuration) {
-        if (! (configuration in gui.listeners)) return
-        var index = gui.listeners[configuration].indexOf(this)
-        if (index > -1) gui.listeners[configuration].splice(index, 1)
+    remove_listener(topic) {
+        if (! (topic in gui.listeners)) return
+        var index = gui.listeners[topic].indexOf(this)
+        if (index > -1) gui.listeners[topic].splice(index, 1)
     }
     
     // wrap gui.send() keeping track of the requesting widget

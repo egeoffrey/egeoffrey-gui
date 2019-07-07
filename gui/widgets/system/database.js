@@ -50,21 +50,20 @@ class Database extends Widget {
                     "className": "dt-center",
                     "targets": [1, 2, 3]
                 }
-            ]
+            ],
+            "language": {
+                "emptyTable": '<span id="'+this.id+'_table_text"></span>'
+            }
         };
         // create the table
         $("#"+this.id+"_table").DataTable(options);
+        $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // ask the database for statistics
         var message = new Message(gui)
         message.recipient = "controller/db"
         message.command = "STATS"
         this.send(message)
     }
-    
-        
-    // close the widget
-    close() {
-    }    
     
     // receive data and load it into the widget
     on_message(message) {
@@ -75,6 +74,7 @@ class Database extends Widget {
                 table.row.add([entry[0], entry[1], entry[2], entry[3], format_multiline(truncate(entry[4].replaceAll("\n", "<br>"), 100), 50)])
             }
             table.draw()
+            if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         }
     }
     

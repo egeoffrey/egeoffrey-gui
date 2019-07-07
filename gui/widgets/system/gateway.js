@@ -12,7 +12,7 @@ class Gateway extends Widget {
     draw() {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
         // IDs Widget: _table
-        if (this.listener != null) gui.remove_listener(this.listener)
+        if (this.listener != null) this.remove_listener(this.listener)
         var body = "#"+this.id+"_body"
         $(body).html("")
         // add buttons
@@ -56,6 +56,11 @@ class Gateway extends Widget {
                 <tbody></tbody>\
             </table>'
         $(body).append(table)
+        // how to render the timestamp
+        function render_timestamp(data, type, row, meta) {
+            if (type == "display") return gui.date.format_timestamp(data)
+            else return data
+        };
         // define datatables options
         var options = {
             "responsive": true,
@@ -72,20 +77,22 @@ class Gateway extends Widget {
                 {
                     "className": "dt-center",
                     "targets": [1, 2, 3, 5]
-                }
-            ]
+                },
+                {
+                    "targets" : [0],
+                    "render": render_timestamp,
+                },
+            ],
+            "language": {
+                "emptyTable": '<span id="'+this.id+'_table_text"></span>'
+            }
         };
         // create the table
         $("#"+this.id+"_table").DataTable(options);
+        $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // subscribe for all topics
         this.listener = this.add_inspection_listener("+/+", "+/+", "+", "#")
     }
-    
-        
-    // close the widget
-    close() {
-        gui.remove_listener(this.listener)
-    }    
     
     // receive data and load it into the widget
     on_message(message) {
@@ -93,8 +100,9 @@ class Gateway extends Widget {
         var table = $("#"+this.id+"_table").DataTable()
         var retain = message.retain ? '<i class="fas fa-check"></i>' : ""
         var content = truncate(format_multiline(JSON.stringify(message.get_data()), 70),1000)
-        table.row.add([gui.date.format_timestamp(), message.sender, message.recipient, message.command, message.args, retain, content])
+        table.row.add([gui.date.now(), message.sender, message.recipient, message.command, message.args, retain, content])
         table.draw(false)
+        if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
     }
     
     // receive configuration

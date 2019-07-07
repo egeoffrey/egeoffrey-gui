@@ -5,8 +5,6 @@ class Gui extends Module {
     on_init() {
         this.username = "MYHOUSE_USERNAME" in window ? window.MYHOUSE_USERNAME : "guest"
         this.password = "MYHOUSE_PASSWORD" in window ? window.MYHOUSE_PASSWORD : ""
-        // array of all the topics subscribed
-        this.topics = []
         // map a subscribed topic with an array of widgets
         this.listeners = {}
         // map a requested configuration with its content
@@ -21,20 +19,22 @@ class Gui extends Module {
         this.groups = {}
         // date/time helper
         this.date = null
-        // set to true when waiting for a page
-        this.waiting_for_page = false
         // subscribe to required settings
         this.add_configuration_listener("house", true)
         this.add_configuration_listener("gui/settings", true)
         this.add_configuration_listener("gui/charts", true)
         this.add_configuration_listener("users", true)
         this.add_configuration_listener("groups", true)
+        // objects of the current page
         this.page = null
+        this.page_listener = null
         this.menu = new Menu("menu")
         this.toolbar = new Toolbar("toolbar")
+        // set to true when waiting for a page
+        this.waiting_for_page = false
         // loaded Google Maps
         this.maps_loaded = false
-        // safeguard, if not receiving a configuration file timeline, disconnect
+        // safeguard, if not receiving a configuration file timely, disconnect
         setTimeout(function(this_class) {
             return function() {
                 if (Object.keys(this_class.settings).length === 0) {
@@ -85,15 +85,23 @@ class Gui extends Module {
         // clear all previously cached settings
         //this.configurations = {}
         this.requests = {}
-        this.listeners = {}
         // unsubscribe from all previously subscribed objects
-        for (var topic of this.topics) {
-            if (topic != null) this.remove_listener(topic)
+        for (var topic in this.listeners) {
+            for (var widget in this.listeners[topic]) {
+                // if the widget is not persistent remove it from the listeners
+                if (! widget.persistent) this.listeners[topic].remove(widget)
+            }
+            // if there are no more widgets listening for that topic, remove the listener
+            if (this.listeners[topic].length == 0) {
+                // TODO: do not remove mandatory topics
+                this.remove_listener(topic)
+                delete this.listeners[topic]
+            }
         }
-        this.topics = []
         // close the old page
         if (this.page != null) this.page.close()
         // load the page
+        window.scrollTo(0,0)
         var page_id = location.hash.replace('#','')
         // remove arguments from the page_id
         if (page_id.includes("=")) {
@@ -109,7 +117,8 @@ class Gui extends Module {
         // load user's page
         else {
             this.waiting_for_page = true
-            this.topics.push(this.add_configuration_listener("gui/pages/"+page_id))
+            if (this.page_listener != null) this.remove_listener(this.page_listener)
+            this.page_listener = this.add_configuration_listener("gui/pages/"+page_id)
         }
     }
 
@@ -191,7 +200,8 @@ class Gui extends Module {
         // deliver the message to any widget waiting for a message on that topic
         if (delivered == 0) {
             for (var topic in this.listeners) {
-                if (topic_matches_sub(topic, message.command+"/"+message.args)) {
+                // deliver the message to all the listeners
+                if (topic_matches_sub(topic, message.topic)) {
                     for (var widget of this.listeners[topic]) {
                         widget.on_message(message)
                         delivered++
@@ -255,7 +265,8 @@ class Gui extends Module {
         this.configurations[message.args] = message.get_data()
         // deliver the configuration to any widget waiting for it
         for (var topic in this.listeners) {
-            if (topic_matches_sub(topic, message.args)) {
+            // deliver the message to all the listeners
+            if (topic_matches_sub(topic, message.topic)) {
                 for (var widget of this.listeners[topic]) {
                     widget.on_configuration(message)
                 }
