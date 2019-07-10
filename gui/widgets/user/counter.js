@@ -35,7 +35,7 @@ class Counter extends Widget {
         this.request_data()
         if ("scope" in this.widget && this.widget["scope"] == "alerts") {
             // subscribe for new alert
-            this.listener = this.add_broadcast_listener("controller/alerter", "NOTIFY", "#")
+            this.listener = this.add_broadcast_listener("+/+", "NOTIFY", "#")
         } else {
             // subscribe for acknoledgments from the database for saved values
             this.add_inspection_listener("controller/db", "*/*", "SAVED", "#")
@@ -55,7 +55,7 @@ class Counter extends Widget {
             if (data.length == 1) $("#"+this.id+"_value").html(data[0])
         }
         // realtime alerts
-        else if (message.sender == "controller/alerter" && message.command == "NOTIFY") {
+        else if (message.recipient == "*/*" && message.command == "NOTIFY") {
             var args = message.args.split("/")
             if (args[0] == this.widget["sensor"]) this.request_data()
         }

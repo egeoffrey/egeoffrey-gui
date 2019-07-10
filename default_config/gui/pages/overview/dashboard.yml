@@ -37,7 +37,7 @@
   - title: Latest Data
     size: 6
     show_only: value
-    widget: logs
+    widget: notifications
   - title: Your Personal Housebot
     size: 6
     widget: chatbot

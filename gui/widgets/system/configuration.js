@@ -176,12 +176,13 @@ class Configuration extends Widget {
                     </div>\
                     <div class="form-group">\
                         <button type="button"  onclick="window.history.go(-1); return false;" class="btn btn-default">Back</button> \
-                        <button type="button" id="'+tab_id+'_button" class="btn btn-primary">Save</button>\
+                        <button type="button" id="'+tab_id+'_save" class="btn btn-primary">Save</button>\
+                        <button type="button" id="'+tab_id+'_delete" class="pull-right btn btn-default text-red">Delete</button>\
                     </div>\
                 </div>'
             $("#"+this.id+"_tab_content").append(tab_content_html)
             // configure the save button
-            $("#"+tab_id+"_button").unbind().click(function(args, tab_id, is_new_item) {
+            $("#"+tab_id+"_save").unbind().click(function(args, tab_id, is_new_item) {
                 return function () {
                     // ask the config module to save the new configuration
                     if ($("#"+tab_id+"_title").val() == "") {
@@ -203,6 +204,19 @@ class Configuration extends Widget {
                     }
                 };
             }(message.args, tab_id, is_new_item))
+            // configure the delete button
+            $("#"+tab_id+"_delete").unbind().click(function(args) {
+                return function () {
+                    gui.confirm("Do you really want to delete configuration file "+args+"?", function(result){ 
+                        if (! result) return
+                        var message = new Message(gui)
+                        message.recipient = "controller/config"
+                        message.command = "DELETE"
+                        message.args = args
+                        gui.notify("info","Requesting to delete configuration file: "+args)
+                    });
+                };
+            }(message.args))
             // increment tab counter
             this.tabs_count++
         }

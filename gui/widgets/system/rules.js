@@ -34,15 +34,15 @@ class Rules extends Widget {
         // 0: rule_id (hidden)
         // 1: rule
         // 2: severity
-        // 3: schedule
-        // 4: schedule
+        // 3: type
+        // 4: for
         // 5: conditions
         // 6: actions
         // 7: control
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>_rule_id_</th><th>Rule</th><th>Severity</th><th>Schedule</th><th>For</th><th>Conditions</th><th>Actions</th><th>Control</th></tr>\
+                    <tr><th>_rule_id_</th><th>Rule</th><th>Severity</th><th>Type</th><th>For</th><th>Conditions</th><th>Actions</th><th>Control</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -63,6 +63,10 @@ class Rules extends Widget {
                 {
                     "targets" : [0],
                     "visible": false,
+                },
+                {
+                    "targets" : [7],
+                    "width": 110,
                 },
                 {
                     "className": "dt-center", 
@@ -99,6 +103,11 @@ class Rules extends Widget {
         else return '<p class="text-muted">'+item+'</p>'
     }
     
+    // format an object for displaying
+    format_object(object) {
+        return "- "+JSON.stringify(object).replaceAll("{","").replaceAll("}","").replaceAll("\"","").replaceAll(":",": ").replaceAll(",","<br>- ")
+    }
+    
     // receive configuration
     on_configuration(message) {
         var rule_id = message.args.replace("rules/","")
@@ -111,8 +120,10 @@ class Rules extends Widget {
         var table = $("#"+this.id+"_table").DataTable()
         var disabled = "disabled" in rule && rule["disabled"]
         var description = "<b>"+rule["text"]+"</b><br>("+rule_id+")"
-        var schedule = "schedule" in rule ? JSON.stringify(rule["schedule"]) : ""
-        schedule = schedule.replaceAll("{","").replaceAll("}","").replaceAll("\"","").replaceAll(":",": ").replaceAll(",",", ")
+        var type = ""
+        if (rule["type"] == "recurrent") type = '<i class="fas fa-calendar-alt fa-2x"></i><br>'+this.format_object(rule["schedule"])
+        else if (rule["type"] == "on_demand") type = '<i class="fas fa-sliders-h fa-2x"></i>'
+        else if (rule["type"] == "realtime") type = '<i class="fas fa-magic fa-2x"></i>'
         var conditions = ""
         for (var i = 0; i < rule["conditions"].length; i++) {
             var or_condition = rule["conditions"][i]
@@ -133,7 +144,7 @@ class Rules extends Widget {
         var edit_html = '<button type="button" id="'+this.id+'_edit_'+rule_tag+'" class="btn btn-default"><i class="fas fa-edit"></i></button>'
         var delete_html = '<button type="button" id="'+this.id+'_delete_'+rule_tag+'" class="btn btn-default" ><i class="fas fa-trash"></i></button>'
         // add the row
-        table.row.add(this.disabled_item([rule_id, format_multiline(description, 50), rule["severity"] , schedule, for_i, conditions, format_multiline(actions, 30), run_html+" "+edit_html+" "+delete_html], disabled)).draw(false);
+        table.row.add(this.disabled_item([rule_id, format_multiline(description, 50), rule["severity"] , type, for_i, conditions, format_multiline(actions, 30), run_html+" "+edit_html+" "+delete_html], disabled)).draw(false);
         if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         // run the selected rule
         $("#"+this.id+"_run_"+rule_tag).unbind().click(function(rule_id) {
@@ -155,13 +166,16 @@ class Rules extends Widget {
         // delete the rule
         $("#"+this.id+"_delete_"+rule_tag).unbind().click(function(rule_id) {
             return function () {
-                // delete the rule configuration file
-                var message = new Message(gui)
-                message.recipient = "controller/config"
-                message.command = "DELETE"
-                message.args = "rules/"+rule_id
-                gui.send(message)
-                gui.notify("info", "Requesting to delete rule "+rule_id)
+                gui.confirm("Do you really want to delete rule "+rule_id+"?", function(result){ 
+                    if (! result) return
+                    // delete the rule configuration file
+                    var message = new Message(gui)
+                    message.recipient = "controller/config"
+                    message.command = "DELETE"
+                    message.args = "rules/"+rule_id
+                    gui.send(message)
+                    gui.notify("info", "Requesting to delete rule "+rule_id)
+                });
             };
         }(rule_id));
         // disable run if rule is disabled

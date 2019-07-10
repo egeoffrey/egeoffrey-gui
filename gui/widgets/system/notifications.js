@@ -4,6 +4,7 @@ class Notifications extends Widget {
         super(id, widget)
         this.listener = null
         this.filter_by = null
+        this.show_only = "show_only" in this.widget ? this.widget["show_only"] : null
         // add an empty box into the given column
         this.add_large_box(this.id, this.widget["title"])
     }
@@ -21,24 +22,27 @@ class Notifications extends Widget {
         var body = "#"+this.id+"_body"
         $(body).html("")
         // add selector
-        var selector = '\
-            <div class="form-group">\
-                <select class="form-control" id="'+this.id+'_selector">\
-                    <option value="">All</option>\
-                    <option value="INFO">Info</option>\
-                    <option value="WARNING">Warning</option>\
-                    <option value="ALERT">Alert</option>\
-                </select>\
-            </div>'
-        $(body).append(selector)
-        // configure selector
-        $("#"+this.id+"_selector").unbind().change(function(this_class) {
-            return function () {
-                var request = $("#"+this_class.id+"_selector").val()
-                var table = $("#"+this_class.id+"_table").DataTable()
-                table.column(1).search(request).draw()
-            };
-        }(this));
+        if (this.show_only == null) {
+            var selector = '\
+                <div class="form-group">\
+                    <select class="form-control" id="'+this.id+'_selector">\
+                        <option value="">All</option>\
+                        <option value="INFO">Info</option>\
+                        <option value="WARNING">Warning</option>\
+                        <option value="ALERT">Alert</option>\
+                        <option value="VALUE">Values</option>\
+                    </select>\
+                </div>'
+            $(body).append(selector)
+            // configure selector
+            $("#"+this.id+"_selector").unbind().change(function(this_class) {
+                return function () {
+                    var request = $("#"+this_class.id+"_selector").val()
+                    var table = $("#"+this_class.id+"_table").DataTable()
+                    table.column(1).search(request).draw()
+                };
+            }(this));
+        }
         // add table
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
@@ -79,11 +83,16 @@ class Notifications extends Widget {
                 "emptyTable": '<span id="'+this.id+'_table_text"></span>'
             }
         };
+        if (this.show_only != null) options["columnDefs"].push({
+                    "targets" : [1],
+                    "visible": false,
+        })
         // create the table
         $("#"+this.id+"_table").DataTable(options);
         $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // ask for the old alerts
-        for (var severity of ["info", "warning", "alert"]) {
+        var levels = this.show_only != null ? [this.show_only] : ["info", "warning", "alert", "value"]
+        for (var severity of levels) {
             var message = new Message(gui)
             message.recipient = "controller/db"
             message.command = "GET"
@@ -96,7 +105,7 @@ class Notifications extends Widget {
             this.send(message)
         }
         // subscribe for new alert
-        this.listener = this.add_broadcast_listener("controller/alerter", "NOTIFY", "#")
+        this.listener = this.add_broadcast_listener("*/*", "NOTIFY", "#")
     }
     
     // format the severity
@@ -105,15 +114,18 @@ class Notifications extends Widget {
         if (severity == "INFO") return "<b>"+severity+"</b>"
         else if (severity == "WARNING") return '<p style="color:orange"><b>'+severity+"</b></p>"
         else if (severity == "ALERT") return '<p style="color:red"><b>'+severity+"</b></p>"
+        else if (severity == "VALUE") return '<p style="color:green"><b>'+severity+"</b></p>"
     }
     
     // receive data and load it into the widget
     on_message(message) {
         var table = $("#"+this.id+"_table").DataTable()
         // realtime alerts
-        if (message.sender == "controller/alerter" && message.command == "NOTIFY") {
+        if (message.recipient == "*/*" && message.command == "NOTIFY") {
             var args = message.args.split("/")
-            table.row.add([gui.date.now(), this.format_severity(args[0]), message.get_data()]).draw(false);
+            var severity = args[0]
+            if (this.show_only != null && severity != this.show_only) return
+            table.row.add([gui.date.now(), this.format_severity(severity), message.get_data()]).draw(false);
         }
         else if (message.sender == "controller/db" && message.command == "GET") {
             var session = gui.sessions.restore(message)

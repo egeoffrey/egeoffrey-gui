@@ -4,12 +4,13 @@ class Toolbar extends Widget {
     constructor(id) {
         super(id, {})
         this.persistent = true
+        this.notification_value_enabled = true
     }
     
     // draw the widget's content
     draw() {
         // ask for the old alerts
-        for (var severity of ["info", "warning", "alert"]) {
+        for (var severity of ["info", "warning", "alert", "value"]) {
             // set the link to the widget
             $("#notification_"+severity+"_link").attr("href", "#"+gui.settings["notification_page"]+"="+severity.toUpperCase())
             // retrieve the data from the database
@@ -17,40 +18,29 @@ class Toolbar extends Widget {
             message.recipient = "controller/db"
             message.command = "GET"
             message.args = severity
-            message.set("timeframe", "last_5_days")
+            message.set("timeframe", "last_24_hours")
             message.set("scope", "alerts")
             message.set("max_items", 500)
             gui.sessions.register(message, {
             })
             this.send(message)
         }
-        // ask for old logs
-        for (var severity of ["value"]) {
-            // set the link to the widget
-            $("#notification_"+severity+"_link").attr("href", "#"+gui.settings["log_page"]+"="+severity.toUpperCase())
-            // retrieve the data from the database
-            var message = new Message(gui)
-            message.recipient = "controller/db"
-            message.command = "GET"
-            message.args = severity
-            message.set("timeframe", "last_5_days")
-            message.set("scope", "logs")
-            message.set("max_items", 500)
-            gui.sessions.register(message, {
-            })
-            this.send(message)
-        }
+        $("#notification_value_enabled").iCheck('check')
+        $("#notification_value_enabled").unbind().on('ifChanged',function(this_class) {
+            return function () {
+                this_class.notification_value_enabled = this.checked
+            };
+        }(this));
         // subscribe for new alert
-        this.add_broadcast_listener("controller/alerter", "NOTIFY", "#")
-        // subscribe for new logs
-        this.add_inspection_listener("+/+", "controller/logger", "LOG", "value")
+        this.add_broadcast_listener("+/+", "NOTIFY", "#")
     }
-    
+        
     // receive data and load it into the widget
     on_message(message) {
         // realtime alerts
-        if (message.sender == "controller/alerter" && message.command == "NOTIFY") {
+        if (message.recipient == "*/*" && message.command == "NOTIFY") {
             var severity = message.args.split("/")[0]
+            if (severity == "value" && ! this.notification_value_enabled) return
             var alert_text = message.get_data()
             var widget = "#notification_"+severity;
             var widget_counter = "#notification_"+severity+"_count"
@@ -64,25 +54,8 @@ class Toolbar extends Widget {
             var color = severity
             if (severity == "alert") color = "danger"
             if (severity == "info") color = "success"
+            if (severity == "value") color = "info"
             gui.notify(color, alert_text)
-        }
-        // realtime logs
-        if (message.recipient == "controller/logger" && message.command == "LOG") {
-            var text = message.get_data()
-            // clean up the log text
-            var match = text.match(/"(.+)": (.+)$/)
-            if (match == null) return
-            text = match[1]+": "+match[2]
-            var widget = "#notification_"+severity;
-            var widget_counter = "#notification_"+severity+"_count"
-            // increase the counter
-            var counter = $(widget_counter).html()
-            counter++
-            $(widget_counter).html(counter)
-            // add the line to the list
-            $(widget).prepend('<li><a title="'+text+'">'+text+'</a></li>')
-            // notify the user
-            gui.notify("info", text)
         }
         else if (message.sender == "controller/db" && message.command == "GET") {
             var session = gui.sessions.restore(message)
@@ -99,12 +72,6 @@ class Toolbar extends Widget {
             // for each alert, add it to the list
             for (var entry of data) {
                 var text = entry[1]
-                if (severity == "value") {
-                    // clean up the log text
-                    var match = text.match(/\[([^\]]+)\] "(.*)": (.+)$/)
-                    if (match == null) continue
-                    text = match[2] == "" ? match[1]+": "+match[3] : text = match[2]+": "+match[3]
-                }
                 $(widget).prepend('<li><a title="'+text+'">'+text+'</a></li>')
             }
         }

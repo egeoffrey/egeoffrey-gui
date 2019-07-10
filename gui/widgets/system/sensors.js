@@ -252,7 +252,7 @@ class Sensors extends Widget {
         table.row.add(row).draw(false);
         if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         // request value and timestamp
-        //this.request_data(sensor_id)
+        this.request_data(sensor_id)
         // enable graph and set button
         if (sensor["format"] != "float_1" && sensor["format"] != "float_2" && sensor["format"] != "string" && sensor["format"] != "int") {
             $("#"+this.id+"_graph_"+sensor_tag).addClass("hidden");
@@ -299,30 +299,36 @@ class Sensors extends Widget {
         // empty the database entries for this sensor
         $("#"+this.id+"_empty_"+sensor_tag).unbind().click(function(sensor_id) {
             return function () {
-                var message = new Message(gui)
-                message.recipient = "controller/db"
-                message.command = "DELETE_SENSOR"
-                message.args = sensor_id
-                gui.send(message)
-                gui.notify("info", "Requesting to database to delete all the entries associated to sensor "+sensor_id)
+                gui.confirm("Do you really want to delete all database entries of sensor "+sensor_id+"?", function(result){ 
+                    if (! result) return
+                    var message = new Message(gui)
+                    message.recipient = "controller/db"
+                    message.command = "DELETE_SENSOR"
+                    message.args = sensor_id
+                    gui.send(message)
+                    gui.notify("info", "Requesting to database to delete all the entries associated to sensor "+sensor_id)
+                });
             };
         }(sensor_id));
         // delete the sensor and empty the database 
         $("#"+this.id+"_delete_"+sensor_tag).unbind().click(function(sensor_id) {
             return function () {
-                // delete the sensor configuration file
-                var message = new Message(gui)
-                message.recipient = "controller/config"
-                message.command = "DELETE"
-                message.args = "sensors/"+sensor_id
-                gui.send(message)
-                // delete the sensor from the database
-                var message = new Message(gui)
-                message.recipient = "controller/db"
-                message.command = "DELETE_SENSOR"
-                message.args = sensor_id
-                gui.send(message)
-                gui.notify("info", "Requesting to delete the sensor "+sensor_id)
+                gui.confirm("Do you really want to delete sensor "+sensor_id+" and all its associated data?", function(result){ 
+                    if (! result) return
+                    // delete the sensor configuration file
+                    var message = new Message(gui)
+                    message.recipient = "controller/config"
+                    message.command = "DELETE"
+                    message.args = "sensors/"+sensor_id
+                    gui.send(message)
+                    // delete the sensor from the database
+                    var message = new Message(gui)
+                    message.recipient = "controller/db"
+                    message.command = "DELETE_SENSOR"
+                    message.args = sensor_id
+                    gui.send(message)
+                    gui.notify("info", "Requesting to delete the sensor "+sensor_id)
+                });
             };
         }(sensor_id));
         // disable buttons if sensor is disabled

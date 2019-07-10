@@ -72,6 +72,7 @@ class Chatbot extends Widget {
     
     // scroll at the bottom of the chat box
     scroll_messages() {
+        if ($("#"+this.id+"_messages").get(0) == null) return
         $("#"+this.id+"_messages").animate({
             scrollTop: $("#"+this.id+"_messages").get(0).scrollHeight
         }, 1000);

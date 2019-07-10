@@ -32,7 +32,6 @@ class Logs extends Widget {
                         <option value="INFO">Info</option>\
                         <option value="WARNING">Warning</option>\
                         <option value="ERROR">Error</option>\
-                        <option value="VALUE">Values</option>\
                     </select>\
                 </div>'
             $(body).append(selector)
@@ -118,7 +117,7 @@ class Logs extends Widget {
         $("#"+this.id+"_table").DataTable(options)
         $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // ask for the old logs
-        var levels = this.show_only != null ? [this.show_only] : ["debug", "info", "warning", "error", "value"]
+        var levels = this.show_only != null ? [this.show_only] : ["debug", "info", "warning", "error"]
         for (var severity of levels) {
             var message = new Message(gui)
             message.recipient = "controller/db"
@@ -141,7 +140,6 @@ class Logs extends Widget {
         if (severity == "INFO") return "<b>"+severity+"</b>"
         else if (severity == "WARNING") return '<p style="color:orange"><b>'+severity+"</b></p>"
         else if (severity == "ERROR") return '<p style="color:red"><b>'+severity+"</b></p>"
-        else if (severity == "VALUE") return '<p style="color:green"><b>'+severity+"</b></p>"
         return severity
     }
     
@@ -163,12 +161,6 @@ class Logs extends Widget {
             for (var entry of data) {
                 var timestamp = entry[0]
                 var text = entry[1]
-                if (message.args == "value") {
-                    // clean up the log text
-                    var match = text.match(/\[([^\]]+)\] "(.*)": (.+)$/)
-                    if (match == null) continue
-                    text = match[2] == "" ? match[1]+": "+match[3] : text = match[2]+": "+match[3]
-                }
                 table.row.add([timestamp/1000, this.format_severity(message.args), text])
             }
             table.draw()

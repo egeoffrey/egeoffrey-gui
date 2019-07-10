@@ -56,6 +56,22 @@ class Gui extends Module {
 		$.notify(options, settings);
 	}
     
+	// ask the user confirmation about something
+	confirm(message, func) {
+        bootbox.confirm({
+            "message": message,
+            "buttons": {
+                "cancel": {
+                    "label": '<i class="fas fa-times"></i> Cancel'
+                },
+                "confirm": {
+                    "label": '<i class="fas fa-check"></i> Confirm'
+                }
+            },
+            "callback": func
+        });
+	}
+    
     // set the sking to the GUI
     load_skin(skin) {
         var skins = [
@@ -87,10 +103,13 @@ class Gui extends Module {
         this.requests = {}
         // unsubscribe from all previously subscribed objects
         for (var topic in this.listeners) {
-            for (var widget in this.listeners[topic]) {
-                // if the widget is not persistent remove it from the listeners
-                if (! widget.persistent) this.listeners[topic].remove(widget)
+            // rebuild the array of registered widgets
+            var new_listener = []
+            for (var widget of this.listeners[topic]) {
+                // keep only persistent widgets
+                if (widget.persistent) new_listener.push(widget)
             }
+            this.listeners[topic] = new_listener
             // if there are no more widgets listening for that topic, remove the listener
             if (this.listeners[topic].length == 0) {
                 // TODO: do not remove mandatory topics
