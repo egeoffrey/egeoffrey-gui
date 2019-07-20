@@ -13,14 +13,13 @@ class Toolbar extends Widget {
         for (var severity of ["info", "warning", "alert", "value"]) {
             // set the link to the widget
             $("#notification_"+severity+"_link").attr("href", "#"+gui.settings["notification_page"]+"="+severity.toUpperCase())
-            // retrieve the data from the database
+            // retrieve the counter from the database
             var message = new Message(gui)
             message.recipient = "controller/db"
-            message.command = "GET"
+            message.command = "GET_COUNT"
             message.args = severity
             message.set("timeframe", "last_24_hours")
             message.set("scope", "alerts")
-            message.set("max_items", 500)
             gui.sessions.register(message, {
             })
             this.send(message)
@@ -46,10 +45,10 @@ class Toolbar extends Widget {
             var widget_counter = "#notification_"+severity+"_count"
             // increase the counter
             var counter = $(widget_counter).html()
-            counter++
-            $(widget_counter).html(counter)
             // add the alert to the list
             $(widget).prepend('<li><a title="'+alert_text+'">'+alert_text+'</a></li>')
+            // remove the oldest one
+            $(widget+" li:last").remove()
             // notify the user
             var color = severity
             if (severity == "alert") color = "danger"
@@ -57,22 +56,37 @@ class Toolbar extends Widget {
             if (severity == "value") color = "info"
             gui.notify(color, alert_text)
         }
+        // last 24 hours counter
+        else if (message.sender == "controller/db" && message.command == "GET_COUNT") {
+            var session = gui.sessions.restore(message)
+            if (session == null) return
+            var data = message.get("data")
+            var severity = message.args
+            var widget_counter = "#notification_"+severity+"_count"
+            var count = data[0]
+            // set the counter
+            $(widget_counter).html(data[0])
+            // retrieve the most recent items from the database
+            var message = new Message(gui)
+            message.recipient = "controller/db"
+            message.command = "GET"
+            message.args = severity
+            message.set("start", -count)
+            message.set("end", -1)
+            message.set("scope", "alerts")
+            gui.sessions.register(message, {
+            })
+            this.send(message)
+        }
+        // latest notifications
         else if (message.sender == "controller/db" && message.command == "GET") {
             var session = gui.sessions.restore(message)
             if (session == null) return
             var data = message.get("data")
             var severity = message.args
-            var widget = "#notification_"+severity;
-            var widget_counter = "#notification_"+severity+"_count"
-            // empty the widget
-            $(widget).empty()
-            $(widget_counter).html("")
-            // set the counter
-            if (data.length > 0) $(widget_counter).html(data.length)
-            // for each alert, add it to the list
+            var widget = "#notification_"+severity
             for (var entry of data) {
-                var text = entry[1]
-                $(widget).prepend('<li><a title="'+text+'">'+text+'</a></li>')
+                $(widget).prepend('<li><a title="'+entry+'">'+entry+'</a></li>')
             }
         }
     }
