@@ -1,8 +1,0 @@
-map:
-  api_key: null
-  type: hybrid
-skin: blue
-default_page: overview/dashboard
-configuration_page: house_admin/configuration
-notification_page: overview/notifications
-log_page: myhouse_inspector/logs

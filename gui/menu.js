@@ -10,7 +10,7 @@ class Menu extends Widget {
     
     // draw the widget's content
     draw() {
-        this.add_configuration_listener("gui/menu/#")
+        this.add_configuration_listener("gui/menu/#", "+")
     }
     
     // receive data and load it into the widget
@@ -70,6 +70,9 @@ class Menu extends Widget {
     
     // receive configuration
     on_configuration(message) {
+        if (message.config_schema != gui.menu_config_schema) {
+            return false
+        }
         if (message.args.endsWith("_section")) {
             var section_id = message.args.replace("gui/menu/","").replace("/_section","")
             var section = message.get_data()

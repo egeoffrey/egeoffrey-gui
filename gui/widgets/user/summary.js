@@ -25,7 +25,7 @@ class Summary extends Widget {
         for (var i = 0; i < this.widget["sensors"].length; i++) {
             var sensor_id = this.widget["sensors"][i]
             // request sensor's configuration
-            this.add_configuration_listener("sensors/"+sensor_id)
+            this.add_configuration_listener("sensors/"+sensor_id, gui.supported_sensors_config_schema)
             // for the first sensor in the list ask for current measures to populate the header
             if (i == 0) {
                 // ask for the current measure
@@ -146,7 +146,7 @@ class Summary extends Widget {
             var data = message.get("data")
             // add last value
             if (session["component"] == "value") {
-                var sensor = gui.configurations["sensors/"+session["sensor_id"]]
+                var sensor = gui.configurations["sensors/"+session["sensor_id"]].get_data()
                 var tag = "#"+this.id+"_value"
                 // add value and suffix
                 $(tag).html(data.length == 1 ? data[0] : "N/A");
@@ -169,7 +169,7 @@ class Summary extends Widget {
                 var tag = "#"+this.id+"_chart"
                 var chart = $(tag).highcharts();
                 chart.hideLoading()
-                var sensor = gui.configurations["sensors/"+session["sensor_id"]]
+                var sensor = gui.configurations["sensors/"+session["sensor_id"]].get_data()
                 // add the sensor to the xAxis of the chart
                 chart['xAxis'][0]['categories'][session["index"]] = sensor["description"];
                 // apply the suffix to the today's series

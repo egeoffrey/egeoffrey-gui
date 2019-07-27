@@ -29,8 +29,8 @@
 <!--  Bootstrap-notify -->
 <script src="lib/bootstrap-notify/bootstrap-notify.min.js"></script>
 
-<!--  JsonEditor -->
-<script src="lib/jsoneditor/jsoneditor.min.js"></script>
+<!--  Validator -->
+<script src="lib/validator/validator.min.js"></script>
 
 <!--  Touchspin -->
 <script src="lib/touchspin/touchspin.min.js"></script>
@@ -118,6 +118,7 @@
 <script src="gui/widgets/system/database.js"></script>
 <script src="gui/widgets/system/gateway.js"></script>
 <script src="gui/widgets/system/notifications.js"></script>
+<script src="gui/widgets/system/sensor_wizard.js"></script>
 
 <!-- IE8 Respond -->
 <!--[if lt IE 9]>
@@ -281,6 +282,27 @@ th.dt-center, td.dt-center { text-align: center; }
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary pull-rigth" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+        
+		<!-- =============================================== -->
+
+		<div class="modal fade" id="wizard">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                      <h4 class="modal-title" id="wizard_title"></h4>
+                    </div>
+					<div class="modal-body">
+						<div class="row"><div class="col-lg-12 center-block" id="wizard_body"></div></div>
+					</div>
+					<div class="modal-footer">
+                        <button type="button" class="btn btn-primary pull-rigth" id="wizard_button">Save</button>
+						<button type="button" class="btn btn-default pull-rigth" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>

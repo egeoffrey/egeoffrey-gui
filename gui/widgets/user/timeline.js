@@ -19,7 +19,7 @@ class Timeline extends Widget {
         var first_series_id = null
         for (var i = 0; i < this.widget["sensors"].length; i++) {
             var sensor_id = this.widget["sensors"][i]
-            this.add_configuration_listener("sensors/"+sensor_id)
+            this.add_configuration_listener("sensors/"+sensor_id, gui.supported_sensors_config_schema)
             // if it is the first sensor, request also range
             // TODO: option to disable range
             if (i == 0 && "group_by" in this.widget) {
@@ -118,7 +118,7 @@ class Timeline extends Widget {
             // TODO: global debug with widget id and shared among all widgets
             var chart = $("#"+this.id+"_body").highcharts();
             chart.hideLoading()
-            var sensor = gui.configurations["sensors/"+session["sensor_id"]]
+            var sensor = gui.configurations["sensors/"+session["sensor_id"]].get_data()
             var series = {}
             series["name"] = sensor["description"]+" "+session["label"]
             series["type"] = session["style"]

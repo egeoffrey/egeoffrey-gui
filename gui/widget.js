@@ -41,18 +41,19 @@ class Widget {
     }
     
     // wrap gui.add_configuration_listener()
-    add_configuration_listener(configuration) {
+    add_configuration_listener(configuration, version) {
         // if the requested configuration was already received, pass it along to the widget
         for (var item in gui.configurations) {
             if (topic_matches_sub(configuration, item)) {
-                var message = new Message(gui)
-                message.args = item
-                message.set_data(gui.configurations[item])
-                this.on_configuration(message)
+                //var message = new Message(gui)
+                //message.args = item
+                //message.set_data(gui.configurations[item])
+                //this.on_configuration(message)
+                this.on_configuration(gui.configurations[item])
             }
         }
         // add the listener
-        var topic = gui.add_configuration_listener(configuration)
+        var topic = gui.add_configuration_listener(configuration, version)
         // whenever there will be a configuration matching this request, the widget will be notified
         if (topic in gui.listeners && ! gui.listeners[topic].includes(this)) gui.listeners[topic].push(this)
         else gui.listeners[topic] = [this]

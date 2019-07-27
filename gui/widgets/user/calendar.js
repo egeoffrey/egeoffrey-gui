@@ -120,7 +120,7 @@ class Calendar extends Widget {
 		}*/
 		// load the events
         var sensor_id = this.widget["sensor"]
-        this.add_configuration_listener("sensors/"+sensor_id)
+        this.add_configuration_listener("sensors/"+sensor_id, gui.supported_sensors_config_schema)
         var message = new Message(gui)
         message.recipient = "controller/db"
         message.command = "GET"

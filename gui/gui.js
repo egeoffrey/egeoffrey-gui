@@ -20,11 +20,18 @@ class Gui extends Module {
         // date/time helper
         this.date = null
         // subscribe to required settings
-        this.add_configuration_listener("house", true)
-        this.add_configuration_listener("gui/settings", true)
-        this.add_configuration_listener("gui/charts", true)
-        this.add_configuration_listener("users", true)
-        this.add_configuration_listener("groups", true)
+        this.page_config_schema = 1
+        this.chart_config_schema = 1
+        this.settings_config_schema = 1
+        this.menu_config_schema = 1
+        this.add_configuration_listener("house", 1, true)
+        this.add_configuration_listener("gui/settings", "+", true)
+        this.add_configuration_listener("gui/charts", "+", true)
+        this.add_configuration_listener("users", 1, true)
+        this.add_configuration_listener("groups", 1, true)
+        this.supported_sensors_config_schema = 1
+        this.supported_rules_config_schema = 1
+        this.supported_manifest_schema = 1
         // objects of the current page
         this.page = null
         this.page_listener = null
@@ -97,7 +104,7 @@ class Gui extends Module {
         $("body").addClass("skin-"+skin);
     }
     
-    load_page() {
+    unload_page() {
         // clear all previously cached settings
         //this.configurations = {}
         this.requests = {}
@@ -119,6 +126,10 @@ class Gui extends Module {
         }
         // close the old page
         if (this.page != null) this.page.close()
+    }
+    
+    load_page() {
+        this.unload_page()
         // load the page
         window.scrollTo(0,0)
         var page_id = location.hash.replace('#','')
@@ -137,7 +148,7 @@ class Gui extends Module {
         else {
             this.waiting_for_page = true
             if (this.page_listener != null) this.remove_listener(this.page_listener)
-            this.page_listener = this.add_configuration_listener("gui/pages/"+page_id)
+            this.page_listener = this.add_configuration_listener("gui/pages/"+page_id, "+")
         }
     }
 
@@ -237,12 +248,18 @@ class Gui extends Module {
         if (message.is_null) return
         // load the page
         else if (this.waiting_for_page && message.args.startsWith("gui/pages/")) {
+            if (message.config_schema != this.page_config_schema) {
+                return false
+            }
             this.log_debug("Received "+message.args)
             this.page = new Page("USER", message.get_data())
             this.waiting_for_page = false
         }
         // load charts
         else if (message.args == "gui/charts") {
+            if (message.config_schema != this.chart_config_schema) {
+                return false
+            }
             for (var chart_name in message.get_data()) {
                 var chart = message.get(chart_name)
                 // if a template is defined, merge the template configuration with the chart configuration
@@ -253,7 +270,7 @@ class Gui extends Module {
             }
         }
         else if (message.args == "house") {
-            if (! this.is_valid_module_configuration(["units", "timezone", "language", "name"], message.get_data())) return false
+            if (! this.is_valid_configuration(["units", "timezone", "language", "name"], message.get_data())) return false
             this.house = message.get_data()
             // set house name
             $("#house_name").html(this.house["name"].replaceAll(" ","&nbsp;"))
@@ -267,7 +284,10 @@ class Gui extends Module {
             
         }
         else if (message.args == "gui/settings") {
-            if (! this.is_valid_module_configuration(["skin", "map", "default_page", "configuration_page", "notification_page", "log_page"], message.get_data())) return false
+            if (message.config_schema != this.settings_config_schema) {
+                return false
+            }
+            if (! this.is_valid_configuration(["skin", "map", "default_page"], message.get_data())) return false
             this.settings = message.get_data()
             this.load_skin(message.get("skin"))
         }
@@ -281,7 +301,7 @@ class Gui extends Module {
         }
         this.log_debug("Received configuration "+message.args)
         // keep track of the configuration file
-        this.configurations[message.args] = message.get_data()
+        this.configurations[message.args] = message
         // deliver the configuration to any widget waiting for it
         for (var topic in this.listeners) {
             // deliver the message to all the listeners

@@ -4,7 +4,7 @@ class Toolbar extends Widget {
     constructor(id) {
         super(id, {})
         this.persistent = true
-        this.notification_value_enabled = true
+        this.notification_value_enabled = false
     }
     
     // draw the widget's content
@@ -12,7 +12,7 @@ class Toolbar extends Widget {
         // ask for the old alerts
         for (var severity of ["info", "warning", "alert", "value"]) {
             // set the link to the widget
-            $("#notification_"+severity+"_link").attr("href", "#"+gui.settings["notification_page"]+"="+severity.toUpperCase())
+            $("#notification_"+severity+"_link").attr("href", "#__notifications"+"="+severity.toUpperCase())
             // retrieve the counter from the database
             var message = new Message(gui)
             message.recipient = "controller/db"
@@ -24,7 +24,7 @@ class Toolbar extends Widget {
             })
             this.send(message)
         }
-        $("#notification_value_enabled").iCheck('check')
+        if (this.notification_value_enabled) $("#notification_value_enabled").iCheck('check')
         $("#notification_value_enabled").unbind().on('ifChanged',function(this_class) {
             return function () {
                 this_class.notification_value_enabled = this.checked

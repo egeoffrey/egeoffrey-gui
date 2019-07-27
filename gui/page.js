@@ -64,6 +64,38 @@ class Page {
                 delete page_layout[0]["sensor_id"];
                 this.draw(page_layout)
             }
+            else if (page == "__sensor_wizard") {
+                var widget_object = new Sensor_wizard("wizard", {})
+                widget_object.draw()
+            }
+            else if (page == "__notifications") {
+                var page_layout = [
+                    {
+                        "": [
+                            {
+                                "title": "Notifications",
+                                "size": 12,
+                                "widget": "notifications"
+                            }
+                        ]
+                    }
+                ]
+                this.draw(page_layout)
+            }
+            else if (page == "__configuration") {
+                var page_layout = [
+                    {
+                        "": [
+                            {
+                                "title": "Configuration Editor",
+                                "size": 12,
+                                "widget": "configuration"
+                            }
+                        ]
+                    }
+                ]
+                this.draw(page_layout)
+            }
         }
     }
     

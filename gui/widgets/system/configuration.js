@@ -38,7 +38,7 @@ class Configuration extends Widget {
                 var match = configuration.match('^(.+\/)[^\/]+$')
                 this.prefix = match[1]
             }
-            this.topics.push(this.add_configuration_listener(configuration))
+            this.topics.push(this.add_configuration_listener(configuration, "+"))
         }
     }
     
@@ -78,7 +78,7 @@ class Configuration extends Widget {
             $(body).append(button_html)
             $("#"+this.id+"_new").unbind().click(function(this_class) {
                 return function () {
-                    window.location.hash = '#'+gui.settings["configuration_page"]+'='+this_class.prefix+'__new__'
+                    window.location.hash = window.location.hash+'='+this_class.prefix+'__new__'
                 };
             }(this));
             // add selector
@@ -127,7 +127,7 @@ class Configuration extends Widget {
         else {
             if (this.configuration_id.endsWith("__new__")) {
                 if (this.configuration_id.includes("/")) {
-                    var match = configuration_id.match('^(.+\/)[^\/]+$')
+                    var match = this.configuration_id.match('^(.+\/)[^\/]+$')
                     this.prefix = match[1]
                 }
                 var message = new Message(gui)
@@ -182,7 +182,7 @@ class Configuration extends Widget {
                 </div>'
             $("#"+this.id+"_tab_content").append(tab_content_html)
             // configure the save button
-            $("#"+tab_id+"_save").unbind().click(function(args, tab_id, is_new_item) {
+            $("#"+tab_id+"_save").unbind().click(function(args, version, tab_id, is_new_item) {
                 return function () {
                     // ask the config module to save the new configuration
                     if ($("#"+tab_id+"_title").val() == "") {
@@ -193,6 +193,7 @@ class Configuration extends Widget {
                     message.recipient = "controller/config"
                     message.command = "SAVE"
                     message.args = is_new_item ? args.replace("__new__", $("#"+tab_id+"_title").val()) : args
+                    message.config_schema = version
                     try {
                         var yaml = jsyaml.load($("#"+tab_id+"_text").val())
                         message.set_data(yaml)
@@ -203,9 +204,9 @@ class Configuration extends Widget {
                         gui.notify("error","Invalid configuration file: "+e.message)
                     }
                 };
-            }(message.args, tab_id, is_new_item))
+            }(message.args, message.config_schema, tab_id, is_new_item))
             // configure the delete button
-            $("#"+tab_id+"_delete").unbind().click(function(args) {
+            $("#"+tab_id+"_delete").unbind().click(function(args, version) {
                 return function () {
                     gui.confirm("Do you really want to delete configuration file "+args+"?", function(result){ 
                         if (! result) return
@@ -213,10 +214,12 @@ class Configuration extends Widget {
                         message.recipient = "controller/config"
                         message.command = "DELETE"
                         message.args = args
+                        message.config_schema = version
+                        gui.send(message)
                         gui.notify("info","Requesting to delete configuration file: "+args)
                     });
                 };
-            }(message.args))
+            }(message.args, message.config_schema))
             // increment tab counter
             this.tabs_count++
         }

@@ -104,7 +104,7 @@ class Value extends Widget {
         // otherwise request the data for this sensor
         else {
             var sensor_id = this.widget["sensor"]
-            this.add_configuration_listener("sensors/"+sensor_id)
+            this.add_configuration_listener("sensors/"+sensor_id, gui.supported_sensors_config_schema)
             this.request_data()
         }
         // subscribe for acknoledgments from the database for saved values
@@ -128,7 +128,7 @@ class Value extends Widget {
             var session = gui.sessions.restore(message)
             if (session == null) return
             var data = message.get("data")
-            var sensor = gui.configurations["sensors/"+session["sensor_id"]]
+            var sensor = gui.configurations["sensors/"+session["sensor_id"]].get_data()
             // add value
             if (session["component"] == "value") {
                 var tag = "#"+this.id+"_value"

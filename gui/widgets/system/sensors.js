@@ -51,11 +51,11 @@ class Sensors extends Widget {
                 <button type="button" id="'+this.id+'_new" class="btn btn-block btn-primary btn-lg"><i class="fas fa-plus"></i> Register a new sensor</button>\
             </div>'
         $(body).append(button_html)
-        $("#"+this.id+"_new").unbind().click(function() {
+        $("#"+this.id+"_new").unbind().click(function(this_class) {
             return function () {
-                window.location.hash = '#'+gui.settings["configuration_page"]+'=sensors/__new__'
+                window.location.hash = '#__sensor_wizard'
             };
-        }());
+        }(this));
         // add table
         // 0: sensor_id (hidden)
         // 1: Icon
@@ -130,7 +130,7 @@ class Sensors extends Widget {
         }
         $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // discover registered sensors
-        this.listener = this.add_configuration_listener("sensors/#")
+        this.listener = this.add_configuration_listener("sensors/#", gui.supported_sensors_config_schema)
         // subscribe for acknoledgments from the database for saved values
         this.add_inspection_listener("controller/db", "*/*", "SAVED", "#")
     }
@@ -148,7 +148,7 @@ class Sensors extends Widget {
             if (session == null) return
             var data = message.get("data")
             var sensor_id = session["sensor_id"]
-            var sensor = gui.configurations["sensors/"+sensor_id]
+            var sensor = gui.configurations["sensors/"+sensor_id].get_data()
             var table = $("#"+this.id+"_table").DataTable()
             // add value
             var this_class = this
@@ -293,7 +293,7 @@ class Sensors extends Widget {
         // edit the selected sensor
         $("#"+this.id+"_edit_"+sensor_tag).unbind().click(function(sensor_id) {
             return function () {
-                window.location.hash = '#'+gui.settings["configuration_page"]+'=sensors/'+sensor_id;
+                window.location.hash = '#__sensor_wizard='+sensor_id;
             };
         }(sensor_id));
         // empty the database entries for this sensor
@@ -311,26 +311,27 @@ class Sensors extends Widget {
             };
         }(sensor_id));
         // delete the sensor and empty the database 
-        $("#"+this.id+"_delete_"+sensor_tag).unbind().click(function(sensor_id) {
+        $("#"+this.id+"_delete_"+sensor_tag).unbind().click(function(sensor_id, version) {
             return function () {
                 gui.confirm("Do you really want to delete sensor "+sensor_id+" and all its associated data?", function(result){ 
                     if (! result) return
-                    // delete the sensor configuration file
-                    var message = new Message(gui)
-                    message.recipient = "controller/config"
-                    message.command = "DELETE"
-                    message.args = "sensors/"+sensor_id
-                    gui.send(message)
                     // delete the sensor from the database
                     var message = new Message(gui)
                     message.recipient = "controller/db"
                     message.command = "DELETE_SENSOR"
                     message.args = sensor_id
                     gui.send(message)
+                    // delete the sensor configuration file
+                    var message = new Message(gui)
+                    message.recipient = "controller/config"
+                    message.command = "DELETE"
+                    message.args = "sensors/"+sensor_id
+                    message.config_schema = version
+                    gui.send(message)
                     gui.notify("info", "Requesting to delete the sensor "+sensor_id)
                 });
             };
-        }(sensor_id));
+        }(sensor_id, message.config_schema));
         // disable buttons if sensor is disabled
         if (disabled) {
             $("#"+this.id+"_poll_"+sensor_tag).prop('disabled', true);

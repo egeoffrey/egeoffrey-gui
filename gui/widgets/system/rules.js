@@ -27,7 +27,7 @@ class Rules extends Widget {
         $(body).append(button_html)
         $("#"+this.id+"_new").unbind().click(function() {
             return function () {
-                window.location.hash = '#'+gui.settings["configuration_page"]+'=rules/__new__'
+                window.location.hash = '#__configuration=rules/__new__'
             };
         }());
         // add table
@@ -86,7 +86,7 @@ class Rules extends Widget {
         }
         $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         // discover registered rules
-        this.listener = this.add_configuration_listener("rules/#")
+        this.listener = this.add_configuration_listener("rules/#", gui.supported_rules_config_schema)
     }
     
     // receive data and load it into the widget
@@ -160,7 +160,7 @@ class Rules extends Widget {
         // edit the selected rule
         $("#"+this.id+"_edit_"+rule_tag).unbind().click(function(rule_id) {
             return function () {
-                window.location.hash = '#'+gui.settings["configuration_page"]+'=rules/'+rule_id;
+                window.location.hash = '#__configuration=rules/'+rule_id;
             };
         }(rule_id));
         // delete the rule

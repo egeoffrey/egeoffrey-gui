@@ -1,3 +1,4 @@
+manifest_schema: 1
 package: myhouse-gui
 revision: 15
 version: development

@@ -21,14 +21,15 @@ class Packages extends Widget {
         $(body).html("")
         // add table
         // 0: package
-        // 1: modules
-        // 2: branch
-        // 3: version
-        // 4: up to date
+        // 1: description
+        // 2: modules
+        // 3: branch
+        // 4: version
+        // 5: up to date
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>Package</th><th>Modules</th><th>Version</th><th>Revision</th><th>Up to Date</th></tr>\
+                    <tr><th>Package</th><th>Description</th><th>Modules</th><th>Version</th><th>Revision</th><th>Up to Date</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -48,7 +49,7 @@ class Packages extends Widget {
             "columnDefs": [ 
                 {
                     "className": "dt-center",
-                    "targets": [2, 3, 4]
+                    "targets": [3, 4, 5]
                 }
             ],
             "language": {
@@ -68,9 +69,14 @@ class Packages extends Widget {
             var table = $("#"+this.id+"_table").DataTable()
             var manifest = message.get_data()
             if (manifest["package"] in this.manifests) return
+            if (manifest["manifest_schema"] != gui.supported_manifest_schema) return
             // add a new row for this package
             var update_id = this.id+'_'+manifest["package"]+'_update'
-            table.row.add([manifest["package"], manifest["modules"].join("<br>"), manifest["version"], manifest["revision"], '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>']).draw();
+            var modules = ""
+            for (var module_object of manifest["modules"]) {
+                for (var module in module_object) modules = modules+module+"<br>"
+            }
+            table.row.add([manifest["package"], format_multiline(manifest["description"], 50), modules, manifest["version"], manifest["revision"], '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>']).draw();
             if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
             // check for update
             var url = "https://raw.githubusercontent.com/"+manifest["github"]+"/"+manifest["version"]+"/manifest.yml?timestamp="+new Date().getTime()

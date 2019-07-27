@@ -49,7 +49,7 @@ class Range extends Widget {
         // TODO: if (sensor["format"] == "percentage") options["yAxis"]["max"] = 100;
         chart.showLoading()
         // request the sensor's configuration
-        this.add_configuration_listener("sensors/"+this.widget["sensor"])
+        this.add_configuration_listener("sensors/"+this.widget["sensor"], gui.supported_sensors_config_schema)
         // request the values of the sensor
         this.request_data()
 		// make the chart adapting to the modal
@@ -90,7 +90,7 @@ class Range extends Widget {
             var data = message.get("data")
             var chart = $("#"+this.id+"_body").highcharts();
             chart.hideLoading()
-            var sensor = gui.configurations["sensors/"+session["sensor_id"]]
+            var sensor = gui.configurations["sensors/"+session["sensor_id"]].get_data()
             var series = {}
             series["name"] = sensor["description"]+" "+session["label"]
             series["type"] = session["style"]

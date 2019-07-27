@@ -193,7 +193,7 @@ class Modules extends Widget {
                 // edit the module's configuration
                 $("#"+this.id+"_edit_"+module_id).unbind().click(function(scope, name) {
                     return function () {
-                        window.location.hash = '#'+gui.settings["configuration_page"]+'='+scope+'/'+name;
+                        window.location.hash = '#__configuration='+scope+'/'+name;
                     };
                 }(module["scope"], module["name"]));
                 // start the module
