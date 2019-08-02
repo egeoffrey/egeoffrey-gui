@@ -21,8 +21,9 @@ class Timeline extends Widget {
             var sensor_id = this.widget["sensors"][i]
             this.add_configuration_listener("sensors/"+sensor_id, gui.supported_sensors_config_schema)
             // if it is the first sensor, request also range
-            // TODO: option to disable range
-            if (i == 0 && "group_by" in this.widget) {
+            var add_range = true
+            if ("add_range" in this.widget && ! this.widget["add_range"]) add_range = false
+            if (add_range && i == 0 && "group_by" in this.widget) {
                 var message = new Message(gui)
                 message.recipient = "controller/db"
                 message.command = "GET"

@@ -39,7 +39,7 @@ class Toolbar extends Widget {
         // realtime alerts
         if (message.recipient == "*/*" && message.command == "NOTIFY") {
             var severity = message.args.split("/")[0]
-            if (severity == "value" && ! this.notification_value_enabled) return
+            if (severity == "value" && ! $("#notification_value_enabled").prop('checked')) return
             var alert_text = message.get_data()
             var widget = "#notification_"+severity;
             var widget_counter = "#notification_"+severity+"_count"

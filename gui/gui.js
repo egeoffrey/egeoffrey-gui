@@ -31,7 +31,7 @@ class Gui extends Module {
         this.add_configuration_listener("groups", 1, true)
         this.supported_sensors_config_schema = 1
         this.supported_rules_config_schema = 1
-        this.supported_manifest_schema = 1
+        this.supported_manifest_schema = 2
         // objects of the current page
         this.page = null
         this.page_listener = null

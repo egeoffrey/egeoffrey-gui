@@ -149,7 +149,7 @@ class Modules extends Widget {
                 // add a row to the table with the discovered module
                 var table = $("#"+this.id+"_table").DataTable()
                 var module_id = module["scope"]+'_'+module["name"]
-                var version = module["version"]+" (build "+module["build"]+")"
+                var version = manifest["version"]+"-"+manifest["revision"]+" ("+manifest["branch"]+") build "+module["build"]
                 var running_icon = '<i id="'+this.id+'_running_'+module_id+'" class="" style="color: green;"></i>'
                 var configured_icon = '<i id="'+this.id+'_configured_'+module_id+'" class="" style="color: green;"></i>'
                 var debug_html = '<input id="'+this.id+'_debug_'+module_id+'" type="checkbox">'

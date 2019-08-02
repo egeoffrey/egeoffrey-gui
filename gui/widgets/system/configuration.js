@@ -19,6 +19,7 @@ class Configuration extends Widget {
     
     // request data from an array of configurations
     request_data(configuration_array) {
+        // TODO: use window.hash to open the requested section
         // empty existing contents
         $("#"+this.id+"_tab_index").empty()
         $("#"+this.id+"_tab_content").empty()
@@ -160,7 +161,7 @@ class Configuration extends Widget {
             var tab_title = message.args.replace(this.prefix, "")
             var is_new_item = tab_title == "__new__" ? true : false
             // if this is for a new item, shows up a text input instead
-            var tab_title_html = is_new_item ? '<input type=text id="'+tab_id+'_title" placeholder="give it a name"></input>' : tab_title
+            var tab_title_html = is_new_item ? '<input type=text id="'+tab_id+'_title" placeholder="give it a name"></input> <input size=10 type=text id="'+tab_id+'_config_schema" placeholder="schema"></input><br>' : tab_title
             // add the tab 
             var tab_index_html = '\
                 <li class="'+active+'">\
@@ -193,12 +194,12 @@ class Configuration extends Widget {
                     message.recipient = "controller/config"
                     message.command = "SAVE"
                     message.args = is_new_item ? args.replace("__new__", $("#"+tab_id+"_title").val()) : args
-                    message.config_schema = version
+                    message.config_schema = is_new_item ? parseInt($("#"+tab_id+"_config_schema").val()) : version
                     try {
                         var yaml = jsyaml.load($("#"+tab_id+"_text").val())
                         message.set_data(yaml)
                         gui.send(message)
-                        gui.notify("success","Configuration "+message.args+" saved successfully")
+                        gui.notify("success","Configuration "+message.args+" saved successfully. Please manually restart any impacted module")
                         if (location.hash.includes("=")) window.history.back()
                     } catch(e) {
                         gui.notify("error","Invalid configuration file: "+e.message)
