@@ -145,11 +145,10 @@ class Modules extends Widget {
                 if (this.modules.includes(module["fullname"])) continue
                 if (this.filter != null && (! module["fullname"].startsWith(this.filter))) continue
                 this.modules.push(module["fullname"])
-                // TODO: refresh, table size, ping from UI, auto-refresh, gray start/stop
                 // add a row to the table with the discovered module
                 var table = $("#"+this.id+"_table").DataTable()
                 var module_id = module["scope"]+'_'+module["name"]
-                var version = manifest["version"]+"-"+manifest["revision"]+" ("+manifest["branch"]+") build "+module["build"]
+                var version = module["version"]
                 var running_icon = '<i id="'+this.id+'_running_'+module_id+'" class="" style="color: green;"></i>'
                 var configured_icon = '<i id="'+this.id+'_configured_'+module_id+'" class="" style="color: green;"></i>'
                 var debug_html = '<input id="'+this.id+'_debug_'+module_id+'" type="checkbox">'

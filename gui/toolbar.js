@@ -32,6 +32,8 @@ class Toolbar extends Widget {
         }(this));
         // subscribe for new alert
         this.add_broadcast_listener("+/+", "NOTIFY", "#")
+        // ask for manifest files needed for notifying about available updates
+        this.listener = this.add_broadcast_listener("+/+", "MANIFEST", "#")
     }
         
     // receive data and load it into the widget
@@ -88,6 +90,20 @@ class Toolbar extends Widget {
             for (var entry of data) {
                 $(widget).prepend('<li><a title="'+entry+'">'+entry+'</a></li>')
             }
+        }
+        // manifest file - check for updates
+        else if (message.command == "MANIFEST") {
+            var manifest = message.get_data()
+            if (manifest["manifest_schema"] != gui.supported_manifest_schema) return
+            // set gui version
+            if (manifest["package"] == "myhouse-gui") $("#version").html(manifest["version"].toFixed(1)+"-"+manifest["revision"]+" ("+manifest["branch"]+")")
+            // check for update
+            var url = "https://raw.githubusercontent.com/"+manifest["github"]+"/"+manifest["branch"]+"/manifest.yml?timestamp="+new Date().getTime()
+            $.get(url, function(data) {
+                var remote_manifest = jsyaml.load(data)
+                if (remote_manifest["manifest_schema"] != gui.supported_manifest_schema) return
+                if (remote_manifest["version"] > manifest["version"] || (remote_manifest["version"] == manifest["version"] && remote_manifest["revision"] > manifest["revision"])) gui.notify("info", "A new version of "+manifest["package"]+" is available")
+            });
         }
     }
     
