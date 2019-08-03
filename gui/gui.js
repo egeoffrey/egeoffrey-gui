@@ -7,8 +7,10 @@ class Gui extends Module {
         this.password = "MYHOUSE_PASSWORD" in window ? window.MYHOUSE_PASSWORD : ""
         // map a subscribed topic with an array of widgets
         this.listeners = {}
-        // map a requested configuration with its content
+        // map a requested configuration with its content (since a retained message, we need to keep track)
         this.configurations = {}
+        // map a manifest with its content (since a retained message, we need to keep track)
+        this.manifests = {}
         // map request_id with an array of the requesting widgets
         this.requests = {}
         // other settings
@@ -106,7 +108,6 @@ class Gui extends Module {
     
     unload_page() {
         // clear all previously cached settings
-        //this.configurations = {}
         this.requests = {}
         // unsubscribe from all previously subscribed objects
         for (var topic in this.listeners) {
@@ -239,6 +240,8 @@ class Gui extends Module {
                 }
             }
         }
+        // keep track of received manifest files
+        if (message.command == "MANIFEST") this.manifests[message.args] = message
         if (delivered == 0) this.log_debug("undelivered message: "+message.dump())
     }
     

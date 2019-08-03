@@ -296,18 +296,21 @@ class Sensor_wizard extends Widget {
                 // close the modal
                 $("#wizard").modal("hide")
                 gui.notify("success","Sensor "+sensor_id+" saved successfully")
-                gui.unload_page()
-                window.history.back()
                 return false
             }
         })
         // configure submit button
-        $('#wizard_button').unbind().click(function(this_class) {
+        $('#wizard_save').unbind().click(function(this_class) {
             return function () {
                 $("#"+this_class.id+"_form").validator("update")
                 $("#"+this_class.id+"_form").submit()
             };
         }(this))
+        // what to do when the modal is closed
+        $('#wizard').one('hidden.bs.modal', function () {
+            gui.unload_page()
+            window.history.back()
+        })
         // ask for controller/hub configuration
         this.add_configuration_listener("controller/hub", 1)
         // request manifests for all the services

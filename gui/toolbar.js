@@ -33,7 +33,7 @@ class Toolbar extends Widget {
         // subscribe for new alert
         this.add_broadcast_listener("+/+", "NOTIFY", "#")
         // ask for manifest files needed for notifying about available updates
-        this.listener = this.add_broadcast_listener("+/+", "MANIFEST", "#")
+        this.add_broadcast_listener("+/+", "MANIFEST", "#")
     }
         
     // receive data and load it into the widget
@@ -46,7 +46,8 @@ class Toolbar extends Widget {
             var widget = "#notification_"+severity;
             var widget_counter = "#notification_"+severity+"_count"
             // increase the counter
-            var counter = $(widget_counter).html()
+            var counter = parseInt($(widget_counter).html())+1
+            $(widget_counter).html(counter)
             // add the alert to the list
             $(widget).prepend('<li><a title="'+alert_text+'">'+alert_text+'</a></li>')
             // remove the oldest one

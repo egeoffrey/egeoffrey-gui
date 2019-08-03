@@ -28,6 +28,14 @@ class Widget {
     // wrap gui.add_inspection_listener()
     add_inspection_listener(from_module, to_module, command, args) {
         // add the listener
+        if (command == "MANIFEST") {
+            // if the manifest was already received, pass it along to the widget
+            for (var item in gui.manifests) {
+                if (topic_matches_sub(args, item)) {
+                    this.on_message(gui.manifests[item])
+                }
+            }
+        }
         var topic = gui.add_inspection_listener(from_module, to_module, command, args)
         // whenever there will be a message matching this request, the widget will be notified
         if (topic in gui.listeners && ! gui.listeners[topic].includes(this)) gui.listeners[topic].push(this)
@@ -45,10 +53,6 @@ class Widget {
         // if the requested configuration was already received, pass it along to the widget
         for (var item in gui.configurations) {
             if (topic_matches_sub(configuration, item)) {
-                //var message = new Message(gui)
-                //message.args = item
-                //message.set_data(gui.configurations[item])
-                //this.on_configuration(message)
                 this.on_configuration(gui.configurations[item])
             }
         }
