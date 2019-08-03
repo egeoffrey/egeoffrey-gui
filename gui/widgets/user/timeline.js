@@ -116,6 +116,7 @@ class Timeline extends Widget {
             var session = gui.sessions.restore(message)
             if (session == null) return
             var data = message.get("data")
+            if (data.length == 0) return
             // TODO: global debug with widget id and shared among all widgets
             var chart = $("#"+this.id+"_body").highcharts();
             chart.hideLoading()
