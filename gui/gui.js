@@ -43,6 +43,8 @@ class Gui extends Module {
         this.waiting_for_page = false
         // loaded Google Maps
         this.maps_loaded = false
+        // scheduler's events
+        this.scheduler_events = []
         // safeguard, if not receiving a configuration file timely, disconnect
         setTimeout(function(this_class) {
             return function() {

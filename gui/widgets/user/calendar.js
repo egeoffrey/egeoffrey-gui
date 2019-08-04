@@ -10,8 +10,6 @@ class Calendar extends Widget {
     draw() {
         // IDs Template: _box, _title, _refresh, _popup, _body, _loading
         // IDs Widget: _calendar
-        // scheduler's events
-        var scheduler_events = [];
         var body = "#"+this.id+"_body"
 		// add the calendar
 		$(body).html('<div class="'+this.id+'_calendar" style="width:100%; height:950px;"></div>')
@@ -34,18 +32,18 @@ class Calendar extends Widget {
 		// clear previously attached events
         // TODO: multiple calendars on the same page
 		scheduler.clearAll();
-		if (scheduler_events.length > 0) {
-			for (var i = 0; i < scheduler_events.length; i++) {
-				scheduler.detachEvent(scheduler_events[i]);
+		if (gui.scheduler_events.length > 0) {
+			for (var i = 0; i < gui.scheduler_events.length; i++) {
+				scheduler.detachEvent(gui.scheduler_events[i]);
 			}
-			scheduler_events = [];
+			gui.scheduler_events = [];
 		}
  		// init responsive
 		initResponsive(scheduler);
-		// TODO: configure the time step
-		//if ("time_step" in layout) scheduler.config.time_step = layout["time_step"];
+		// configure the time step
+		if ("time_step" in this.widget) scheduler.config.time_step = this.widget["time_step"];
 		// configure the mini-calendars
-		scheduler_events.push(scheduler.attachEvent("onLightbox", function(){
+		gui.scheduler_events.push(scheduler.attachEvent("onLightbox", function(){
 			var lightbox_form = scheduler.getLightbox();
 			var inputs = lightbox_form.getElementsByTagName('input');
 			var date_of_end = null;
@@ -78,46 +76,26 @@ class Calendar extends Widget {
 			{ name:"recurring", type:"recurring", map_to:"rec_type", button:"recurring" },
 			{ name:"time", height:72, type:"calendar_time", map_to:"auto" }
 		];
-		// TODO: configure default value
-		scheduler_events.push(scheduler.attachEvent("onBeforeLightbox", function (id){
+        var this_class = this
+		gui.scheduler_events.push(scheduler.attachEvent("onBeforeLightbox", function (id){
 			scheduler.resetLightbox();
 			var event = scheduler.getEvent(id);
 			if (event.text == "New event") {
 				// newly created event, default to empty string
 				event.text = ""
-                // TODO: default_value
-                /*
-				if ("default_value" in layout) {
-					// default value set
-					if (is_sensor(layout["default_value"])) {
-						// default value is a sensor, retrieve the current measure
-						sensor = get_sensor_string(layout["default_value"])
-						if (sensor == null) return;
-						var sensor_url = sensor["module_id"]+"/"+sensor["group_id"]+"/"+sensor["sensor_id"];
-						$.getJSON(sensor_url+"/current",function(id) {
-							return function (data) {
-								if (data.length == 0) return
-								// set the default value
-								scheduler.formSection('description').setValue(data[0]);
-							};
-						}(id));
-					}
-					else {
-						// set the static value
-						event.text = layout["default_value"]
-					}
-				}*/
+				if ("default_value" in this_class.widget) {
+                    event.text = ""+this_class.widget["default_value"]
+				}
 			}
 			return true;
 		}));       
-		// TODO: configure the event template
-        /*
-		if ("event_template" in layout) {
-			scheduler.templates.event_text=function(start,end,event){
-				text = layout["event_template"].replace("%value%",event.text);
+		// configure the event template
+		if ("event_template" in this.widget) {
+			scheduler.templates.event_text=function(start, end, event){
+				var text = this_class.widget["event_template"].replace("%value%", event.text);
 				return text;
 			}
-		}*/
+		}
 		// load the events
         var sensor_id = this.widget["sensor"]
         this.add_configuration_listener("sensors/"+sensor_id, gui.supported_sensors_config_schema)
@@ -149,10 +127,10 @@ class Calendar extends Widget {
             gui.send(message)
 		};
 		// on any change, save the calendar
-		scheduler_events.push(scheduler.attachEvent("onEventAdded",onChange));
-		scheduler_events.push(scheduler.attachEvent("onEventChanged",onChange));
-		scheduler_events.push(scheduler.attachEvent("onEventCopied",onChange));
-		scheduler_events.push(scheduler.attachEvent("onEventDeleted",onChange));
+		gui.scheduler_events.push(scheduler.attachEvent("onEventAdded",onChange));
+		gui.scheduler_events.push(scheduler.attachEvent("onEventChanged",onChange));
+		gui.scheduler_events.push(scheduler.attachEvent("onEventCopied",onChange));
+		gui.scheduler_events.push(scheduler.attachEvent("onEventDeleted",onChange));
     }
     
     // receive data and load it into the widget

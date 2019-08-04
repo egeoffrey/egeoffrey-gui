@@ -110,13 +110,11 @@ class Configuration extends Widget {
         }
         // add panel
         var panel = '\
-          <div class="nav-tabs-custom">\
+        <div class="nav-tabs-custom">\
             <ul class="nav nav-tabs" id="'+this.id+'_tab_index">\
-              <li class="pull-right"><a href="#" class="text-muted"><i class="fa fa-gear"></i></a></li>\
+              <li class="pull-right"><a href="#" class="text-muted"><i class="fas fa-gear"></i></a></li>\
             </ul>\
-            <div class="tab-content" id="'+this.id+'_tab_content">\
-            </div>\
-          </div>\
+            <div class="tab-content" id="'+this.id+'_tab_content"></div>\
         </div>'
         $(body).append(panel)
         // select first group
@@ -172,7 +170,7 @@ class Configuration extends Widget {
             var tab_content_textarea = is_new_item ? "" : jsyaml.dump(message.get_data())
             var tab_content_html = '\
                 <div class="tab-pane '+active+'" id="'+tab_id+'">\
-                    <div class="form-group">\
+                    <div class="form-group text-left">\
                         <textarea rows="15" class="form-control" id="'+tab_id+'_text" placeholder="type in the YAML configuration">'+tab_content_textarea+'</textarea>\
                     </div>\
                     <div class="form-group">\
@@ -182,6 +180,20 @@ class Configuration extends Widget {
                     </div>\
                 </div>'
             $("#"+this.id+"_tab_content").append(tab_content_html)
+            // Prettify the textarea with CodeMirror
+            var codemirror_options = {
+                    lineNumbers: true,
+                    mode: "yaml",
+                    indentWithTabs: true,
+                    tabSize: 2,
+            }
+            var codemirror_object = CodeMirror.fromTextArea(document.getElementById(tab_id+'_text'), codemirror_options);
+            // CodeMirror doesn't work with hidden tabs, refresh it when a new tab is open
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function(event){
+                $($(event.target).attr("href") + ' .CodeMirror').each( function(i, el) {
+                    el.CodeMirror.refresh()
+                })
+            });
             // configure the save button
             $("#"+tab_id+"_save").unbind().click(function(args, version, tab_id, is_new_item) {
                 return function () {

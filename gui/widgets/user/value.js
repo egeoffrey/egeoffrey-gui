@@ -26,11 +26,14 @@ class Value extends Widget {
             "widget": this.widget["widget"]
         })
         this.send(message)
+        var timestamp_sensor = sensor_id
+        // if for the timestamp we need to ask a different sensor
+        if ("timestamp_sensor" in this.widget) timestamp_sensor = this.widget["timestamp_sensor"]
         // ask for the timestamp of the latest value
         var message = new Message(gui)
         message.recipient = "controller/db"
         message.command = "GET_TIMESTAMP"
-        message.args = sensor_id
+        message.args = timestamp_sensor
         gui.sessions.register(message, {
             "component": "timestamp",
             "sensor_id": sensor_id
@@ -106,6 +109,7 @@ class Value extends Widget {
             var sensor_id = this.widget["sensor"]
             this.add_configuration_listener("sensors/"+sensor_id, gui.supported_sensors_config_schema)
             if (this.widget["widget"] == "value" && "icon_sensor" in this.widget) this.add_configuration_listener("sensors/"+this.widget["icon_sensor"], gui.supported_sensors_config_schema)
+            if ("timestamp_sensor" in this.widget) this.add_configuration_listener("sensors/"+this.widget["timestamp_sensor"], gui.supported_sensors_config_schema)
             this.request_data()
         }
         // subscribe for acknoledgments from the database for saved values
@@ -129,6 +133,10 @@ class Value extends Widget {
             var session = gui.sessions.restore(message)
             if (session == null) return
             var data = message.get("data")
+            if (gui.configurations["sensors/"+session["sensor_id"]] == null) {
+                gui.log_warning("configuration of sensor "+session["sensor_id"]+" not found")
+                return
+            }
             var sensor = gui.configurations["sensors/"+session["sensor_id"]].get_data()
             // add value
             if (session["component"] == "value") {

@@ -8,6 +8,6 @@ github: myhouse-project/myhouse-gui
 manifest_schema: 2
 modules: []
 package: myhouse-gui
-revision: 19
+revision: 20
 tags: gui
 version: 1.0
