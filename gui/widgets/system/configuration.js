@@ -83,19 +83,29 @@ class Configuration extends Widget {
                 };
             }(this));
             // add selector
+            var myhouse_configuration_items = '\
+                        <optgroup label="myHouse Configuration">\
+                            <option value="controller">Controller Modules</option>\
+                            <option value="interaction">Interaction Modules</option>\
+                            <option value="notification">Notification Modules</option>\
+                            <option value="service">Services</option>\
+                        </optgroup>\
+            '
+            if (! gui.is_authorized({ "allow": ["myhouse_admins"]})) myhouse_configuration_items = ""
             var selector = '\
                 <div class="form-group">\
                     <select class="form-control" id="'+this.id+'_selector">\
-                        <option value="house">house</option>\
-                        <option value="controller">controller</option>\
-                        <option value="interaction">interaction</option>\
-                        <option value="notification">notification</option>\
-                        <option value="service">service</option>\
-                        <option value="sensors">sensors</option>\
-                        <option value="rules">rules</option>\
-                        <option value="gui">gui</option>\
-                        <option value="menu">menu</option>\
-                        <option value="pages">pages</option>\
+                        <optgroup label="House Configuration">\
+                            <option value="house">House Settings</option>\
+                            <option value="sensors">Sensors</option>\
+                            <option value="rules">Rules</option>\
+                        </optgroup>\
+                           <optgroup label="Web Interface Configuration">\
+                            <option value="gui">Settings</option>\
+                            <option value="menu">Menu</option>\
+                            <option value="pages">Pages</option>\
+                        </optgroup>\
+                        '+myhouse_configuration_items+'\
                     </select>\
                 </div>\
             '
@@ -187,7 +197,7 @@ class Configuration extends Widget {
                     indentWithTabs: true,
                     tabSize: 2,
             }
-            var codemirror_object = CodeMirror.fromTextArea(document.getElementById(tab_id+'_text'), codemirror_options);
+            var codemirror = CodeMirror.fromTextArea(document.getElementById(tab_id+'_text'), codemirror_options);
             // CodeMirror doesn't work with hidden tabs, refresh it when a new tab is open
             $('a[data-toggle="tab"]').on('shown.bs.tab', function(event){
                 $($(event.target).attr("href") + ' .CodeMirror').each( function(i, el) {
@@ -195,8 +205,10 @@ class Configuration extends Widget {
                 })
             });
             // configure the save button
-            $("#"+tab_id+"_save").unbind().click(function(args, version, tab_id, is_new_item) {
+            $("#"+tab_id+"_save").unbind().click(function(args, version, tab_id, is_new_item, codemirror) {
                 return function () {
+                    // sync the textarea with the editor
+                    codemirror.save()
                     // ask the config module to save the new configuration
                     if ($("#"+tab_id+"_title").val() == "") {
                         gui.notify("error","Invalid configuration filename")
@@ -209,15 +221,16 @@ class Configuration extends Widget {
                     message.config_schema = is_new_item ? parseInt($("#"+tab_id+"_config_schema").val()) : version
                     try {
                         var yaml = jsyaml.load($("#"+tab_id+"_text").val())
-                        message.set_data(yaml)
-                        gui.send(message)
-                        gui.notify("success","Configuration "+message.args+" saved successfully. Please manually restart any impacted module")
-                        if (location.hash.includes("=")) window.history.back()
                     } catch(e) {
                         gui.notify("error","Invalid configuration file: "+e.message)
+                        return
                     }
+                    message.set_data(yaml)
+                    gui.send(message)
+                    gui.notify("success","Configuration "+message.args+" saved successfully. Please manually restart any impacted module")
+                    if (location.hash.includes("=")) window.history.back()
                 };
-            }(message.args, message.config_schema, tab_id, is_new_item))
+            }(message.args, message.config_schema, tab_id, is_new_item, codemirror))
             // configure the delete button
             $("#"+tab_id+"_delete").unbind().click(function(args, version) {
                 return function () {

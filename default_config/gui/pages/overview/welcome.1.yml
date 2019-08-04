@@ -4,22 +4,6 @@
     widget: text
     text: "You can configure your rules from the <a href='#house_admin/rules'>RULES</a> menu item on the left to trigger notifications generating E-mail, Slack alerts, SMS messages, etc. whenever a configured condition is met.<br>Notifications can also be reviewed from the web interface thorugh the widgets below."
 - "":
-  - title: Informational
-    icon: info
-    size: 4
-    scope: alerts
-    sensor: info
-    widget: counter
-    color: aqua
-    link: overview/notifications=INFO
-  - title: Warnings
-    icon: exclamation-triangle
-    size: 4
-    scope: alerts
-    sensor: warning
-    widget: counter
-    color: yellow
-    link: overview/notifications=WARNING
   - title: Alerts
     icon: ban
     scope: alerts
@@ -28,6 +12,22 @@
     widget: counter
     color: red
     link: overview/notifications=ALERT
+  - title: Warnings
+    icon: exclamation-triangle
+    size: 4
+    scope: alerts
+    sensor: warning
+    widget: counter
+    color: yellow
+    link: overview/notifications=WARNING
+  - title: Informational
+    icon: info
+    size: 4
+    scope: alerts
+    sensor: info
+    widget: counter
+    color: aqua
+    link: overview/notifications=INFO
 - "Your Sensors":
   - title: Easily connect your sensors and interact with myHouse in realtime 
     size: 12
