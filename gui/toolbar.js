@@ -42,7 +42,7 @@ class Toolbar extends Widget {
         if (message.recipient == "*/*" && message.command == "NOTIFY") {
             var severity = message.args.split("/")[0]
             if (severity == "value" && ! $("#notification_value_enabled").prop('checked')) return
-            var alert_text = message.get_data()
+            var alert_text = escape_html(message.get_data())
             var widget = "#notification_"+severity;
             var widget_counter = "#notification_"+severity+"_count"
             // increase the counter
@@ -89,7 +89,7 @@ class Toolbar extends Widget {
             var severity = message.args
             var widget = "#notification_"+severity
             for (var entry of data) {
-                $(widget).prepend('<li><a title="'+entry+'">'+entry+'</a></li>')
+                $(widget).prepend('<li><a title="'+escape_html(entry)+'">'+escape_html(entry)+'</a></li>')
             }
         }
         // manifest file - check for updates

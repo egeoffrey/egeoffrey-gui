@@ -53,10 +53,10 @@ class Modules extends Widget {
         var selector = '\
             <div class="form-group">\
                 <select class="form-control" id="'+this.id+'_selector">\
-                    <option value="controller">controller</option>\
-                    <option value="service">service</option>\
-                    <option value="interaction">interaction</option>\
-                    <option value="notification">notification</option>\
+                    <option value="controller">myHouse Controller</option>\
+                    <option value="service">Services</option>\
+                    <option value="interaction">Interaction Modules</option>\
+                    <option value="notification">Notification Modules</option>\
                 </select>\
             </div>\
         '
