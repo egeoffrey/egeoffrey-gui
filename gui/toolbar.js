@@ -33,7 +33,7 @@ class Toolbar extends Widget {
         // subscribe for new alert
         this.add_broadcast_listener("+/+", "NOTIFY", "#")
         // ask for manifest files needed for notifying about available updates
-        this.add_broadcast_listener("+/+", "MANIFEST", "#")
+        if (gui.check_for_updates) this.add_broadcast_listener("+/+", "MANIFEST", "#")
     }
         
     // receive data and load it into the widget

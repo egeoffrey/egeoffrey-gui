@@ -190,6 +190,7 @@ class Page {
         else if (widget["widget"] == "database") widget_object = new Database(id, widget)
         else if (widget["widget"] == "gateway") widget_object = new Gateway(id, widget)
         else if (widget["widget"] == "notifications") widget_object = new Notifications(id, widget)
+        else if (widget["widget"] == "marketplace") widget_object = new Marketplace(id, widget)
         else gui.log_error("unknown widget "+JSON.stringify(widget))
         if (widget_object != null) this.widgets.push(widget_object)
         return widget_object

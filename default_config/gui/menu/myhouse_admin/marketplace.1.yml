@@ -1,0 +1,6 @@
+allow:
+- myhouse_admins
+icon: shopping-cart
+order: 3
+page: myhouse_admin/marketplace
+text: Marketplace
