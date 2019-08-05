@@ -5,10 +5,10 @@ container_config:
 description: Provides a web user interface for accessing all myHouse's functionalities
 dockerhub: myhouseproject/myhouse-gui
 github: myhouse-project/myhouse-gui
-icon: chrome
+icon: columns
 manifest_schema: 2
 modules: []
 package: myhouse-gui
-revision: 24
+revision: 25
 tags: gui
 version: 1.0

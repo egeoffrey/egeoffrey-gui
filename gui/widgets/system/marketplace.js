@@ -5,17 +5,18 @@ class Marketplace extends Widget {
         this.marketplace_url = "https://api.github.com/repos/myhouse-project/myhouse-marketplace/contents/marketplace"
         this.marketplace_branch = "master"
         this.manifests = []
+        this.packages_branch = "development"
         // add an empty box into the given column
         this.add_large_box(this.id, this.widget["title"])
     }
     
     // load the marketplace
     load_marketplace() {
-        $("#"+this.id+"_marketplace").empty()
         var this_class = this
         // list marketplace entries
         $.get(this.marketplace_url, function(content) {
             gui.log_debug("Marketplace has "+content.length+" entries")
+            $("#"+this_class.id+"_marketplace").empty()
             // for each package in the parketplace
             for (var entry of content) {
                 if (! ("path" in entry) || ! ("name" in entry)) continue
@@ -32,9 +33,8 @@ class Marketplace extends Widget {
                         gui.log_warning("Invalid marketplace file for package "+package_name+": "+e.message)
                         return
                     }
-                    var branch = "development"
                     // download the manifest of the package
-                    $.get("https://raw.githubusercontent.com/"+yaml["github"]+"/"+branch+"/manifest.yml?timestamp="+(new Date()).getTime(), function(data) {
+                    $.get("https://raw.githubusercontent.com/"+yaml["github"]+"/"+this_class.packages_branch+"/manifest.yml?timestamp="+(new Date()).getTime(), function(data) {
                         try {
                             var manifest = jsyaml.load(data)
                         } catch(e) {
@@ -55,6 +55,9 @@ class Marketplace extends Widget {
                         }
                         // define icon
                         var icon = "icon" in manifest ? manifest["icon"] : "box-open"
+                        // define author
+                        var split = manifest["github"].split("/", 1)
+                        var author = split[0]
                         // define the item
                         var item_html = '\
                             <li class="item text-left" id="'+this_class.id+'_box_'+manifest["package"]+'">\
@@ -62,11 +65,13 @@ class Marketplace extends Widget {
                                 <i class="fas fa-'+icon+' fa-3x"></i>\
                               </div>\
                               <div class="product-info">\
-                                <a class="product-title" target="_blank" href="https://github.com/'+manifest["github"]+'">'+manifest["package"]+'</a>\
+                                <a class="product-title" target="_blank" href="https://github.com/'+manifest["github"]+'"><big>'+manifest["package"]+'</big></a>\
                                 <span class="pull-right-container">'+tags_html+'</span>\
                                 <span class="product-description"><b>Version</b>: '+manifest["version"]+'-'+manifest["revision"]+' ('+manifest["branch"]+')</span>\
+                                <span class="product-description"><b>Author</b>: '+author+'</span>\
                                 <span class="product-description"><b>Modules</b>: '+modules.join(", ")+'</span>\
-                                <span class="product-description"><b>Description</b>: '+manifest["description"]+'</span>\
+                                <br>\
+                                <span class="product-description">'+manifest["description"]+'</span>\
                               </div>\
                             </li>\
                         '
@@ -85,14 +90,30 @@ class Marketplace extends Widget {
         // IDs Widget: _table
         var body = "#"+this.id+"_body"
         this.manifests = []
-        $("#"+this.id+"_marketplace").empty()
+        $(body).empty()
         var search_html = '\
+            <div class="input-group input-group-sm">\
+                 <input id="'+this.id+'_branch" class="form-control" id="'+this.id+'_branch" type="text" value="'+this.packages_branch+'" placeholder="">\
+                <span class="input-group-btn">\
+                  <button type="button" class="btn btn-info btn-flat" id="'+this.id+'_branch_button">Switch Branch</button>\
+                </span>\
+            </div><br>\
             <div class="input-group input-group-lg">\
-                <input id="'+this.id+'_search" class="form-control input-lg" type="text" placeholder="Search the marketplace...">\
-            </div><br>'
+                <label>Search the Marketplace: </label>\
+                <input id="'+this.id+'_search" class="form-control" type="text" placeholder="Search the marketplace...">\
+            </div>\
+            <br>'
         $(body).append(search_html)
-        // listen for changes
         var this_class = this
+        // configure branch input
+        $("#"+this.id+"_branch_button").unbind().click(function(this_class) {
+            return function () {
+                var branch = $("#"+this_class.id+"_branch").val()
+                this_class.packages_branch = branch
+                this_class.draw()
+            };
+        }(this));
+        // configure search input
         $("#"+this.id+"_search").unbind().keyup(function(this_class) {
             return function () {
                 var search = $("#"+this_class.id+"_search").val()
