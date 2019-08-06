@@ -178,6 +178,7 @@ class Page {
         else if (widget["widget"] == "text") widget_object = new Text(id, widget)
         else if (widget["widget"] == "table") widget_object = new Table(id, widget)
         else if (widget["widget"] == "counter") widget_object = new Counter(id, widget)
+        else if (widget["widget"] == "tasks") widget_object = new Tasks(id, widget)
         // system widgets
         else if (widget["widget"] == "packages") widget_object = new Packages(id, widget)
         else if (widget["widget"] == "modules") widget_object = new Modules(id, widget)

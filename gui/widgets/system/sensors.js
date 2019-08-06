@@ -157,6 +157,7 @@ class Sensors extends Widget {
                     var row = this.data()
                     if (row[0] != sensor_id) return
                     else if (row[3] == "calendar") data = '<i class="fas fa-calendar-alt fa-2x"></i>'
+                    else if (row[3] == "tasks") data = '<i class="fas fa-tasks fa-2x"></i>'
                     else if (row[3] == "image" && data != "") data = '<img class="img-responsive" width="200" height="100" src="data:image/jpeg;base64,'+data+'"/>'
                     else {
                         var unit = data != "" ? row[4] : ""

@@ -42,6 +42,7 @@ class Sensor_wizard extends Widget {
                                 <option value="calendar">Calendar</option>\
                                 <option value="image">Image</option>\
                                 <option value="position">Position</option>\
+                                <option value="tasks">Tasks</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\

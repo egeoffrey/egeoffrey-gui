@@ -9,6 +9,6 @@ icon: columns
 manifest_schema: 2
 modules: []
 package: myhouse-gui
-revision: 25
+revision: 26
 tags: gui
 version: 1.0

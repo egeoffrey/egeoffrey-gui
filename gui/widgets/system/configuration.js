@@ -70,6 +70,7 @@ class Configuration extends Widget {
             this.configuration_id = request[1]
         }
         var body = "#"+this.id+"_body"
+        $(body).empty()
         if (this.configuration_id == null) {
             // add new file button
             var button_html = '\
