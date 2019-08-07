@@ -1,6 +1,0 @@
-allow:
-- myhouse_admins
-icon: database
-order: 2
-page: myhouse_inspector/database
-text: Database

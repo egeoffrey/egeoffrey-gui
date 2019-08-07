@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>AdminLTE 3 | Dashboard 2</title>
+  
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.js"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script src="dist/js/demo.js"></script>
+
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script src="plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
+<script src="plugins/raphael/raphael.min.js"></script>
+<script src="plugins/jquery-mapael/jquery.mapael.min.js"></script>
+<script src="plugins/jquery-mapael/maps/world_countries.min.js"></script>
+<!-- ChartJS -->
+<script src="plugins/chart.js/Chart.min.js"></script>
+
+  
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="dist/css/adminlte.min.css">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  
+<!-- MQTT -->
+<script src="lib/mqtt/mqttws31.min.js"></script>
+
+<!-- SlimScroll -->
+<script src="lib/slimScroll/jquery.slimscroll.min.js"></script>
+
+<!-- FastClick -->
+<script src="lib/fastclick/fastclick.min.js"></script>
+
+<!--  Bootstrap-notify -->
+<script src="lib/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+<!--  Validator -->
+<script src="lib/validator/validator.min.js"></script>
+
+<!--  Touchspin -->
+<script src="lib/touchspin/touchspin.min.js"></script>
+<link rel="stylesheet" href="lib/touchspin/touchspin.min.css" />
+
+<!-- BoootstrapToggle -->
+<link href="lib/bootstrap-toggle/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="lib/bootstrap-toggle/bootstrap-toggle.min.js"></script>
+
+<!-- iCheck -->
+<script src="lib/icheck/icheck.min.js"></script>
+<link rel="stylesheet" href="lib/icheck/square/blue.css" />
+
+<!-- CodeMirror -->
+<script src="lib/codemirror/codemirror.js"></script>
+<link rel="stylesheet" href="lib/codemirror/codemirror.css" />
+<script src="lib/codemirror/yaml.js"></script>
+
+<!-- Bootbox -->
+<script src="lib/bootbox/bootbox.all.min.js"></script>
+
+<!--  Datatables -->
+<!-- DataTables -->
+<script src="lib/datatables/datatables.min.js"></script>
+<script src="lib/datatables-plugins/dataTables.responsive.min.js"></script>
+<script src="lib/datatables-plugins/dataTables.colResize.js"></script>
+<link rel="stylesheet" href="lib/datatables/datatables.min.css" />
+<link rel="stylesheet" href="lib/datatables-plugins/dataTables.fontAwesome.css" />
+<link rel="stylesheet" href="lib/datatables-plugins/responsive.dataTables.min.css" />
+
+<!--
+<script src="plugins/datatables/jquery.dataTables.js"></script>
+<script src="plugins/datatables/dataTables.bootstrap4.js"></script>
+  <link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap4.css">
+  -->
+
+  <!--  dhtmlxscheduler -->
+<script src="lib/dhtmlxscheduler/dhtmlxscheduler.js"></script>
+<script src="lib/dhtmlxscheduler/ext/dhtmlxscheduler_recurring.js"></script>
+<script src="lib/dhtmlxscheduler/ext/dhtmlxscheduler_serialize.js"></script>
+<script src="lib/dhtmlxscheduler/ext/dhtmlxscheduler_quick_info.js"></script>
+<script src="lib/dhtmlxscheduler/ext/dhtmlxscheduler_key_nav.js"></script>
+<script src="lib/dhtmlxscheduler/ext/dhtmlxscheduler_collision.js"></script>
+<script src="lib/dhtmlxscheduler/ext/dhtmlxscheduler_minical.js"></script>
+<script src="lib/dhtmlxscheduler/ext/dhtmlxscheduler_limit.js"></script>
+<script src="lib/dhtmlxscheduler/ext/dhtmlxscheduler_responsive.js"></script>
+<link rel="stylesheet" href="lib/dhtmlxscheduler/dhtmlxscheduler_flat.css" />
+<link rel="stylesheet" href="lib/dhtmlxscheduler/ext/dhtmlxscheduler_responsive.css" />
+
+<!--  Highstock -->
+<script src="lib/highstock/highstock.js"></script>
+<script src="lib/highstock/highcharts-more.js"></script>
+<script src="lib/highstock/modules/exporting.js"></script>
+<script src="lib/highstock/modules/offline-exporting.js"></script>
+  
+<!--  js-yaml -->
+<script src="lib/js-yaml/js-yaml.min.js"></script>
+  
+<!--  eGeoffrey -->
+<script src="sdk/javascript/constants.js"></script>
+<script src="sdk/javascript/utils/strings.js"></script>
+<script src="sdk/javascript/utils/datetimeutils.js"></script>
+<script src="sdk/javascript/module/helpers/session.js"></script>
+<script src="sdk/javascript/module/helpers/message.js"></script>
+<script src="sdk/javascript/module/helpers/mqtt_client.js"></script>
+<script src="sdk/javascript/module/module.js"></script>
+
+<script src="gui/gui.js"></script>
+<script src="gui/widget.js"></script>
+<script src="gui/menu.js"></script>
+<script src="gui/toolbar.js"></script>
+<script src="gui/page.js"></script>
+
+<script src="gui/widgets/user/summary.js"></script>
+<script src="gui/widgets/user/timeline.js"></script>
+<script src="gui/widgets/user/range.js"></script>
+<script src="gui/widgets/user/calendar.js"></script>
+<script src="gui/widgets/user/value.js"></script>
+<script src="gui/widgets/user/images.js"></script>
+<script src="gui/widgets/user/maps.js"></script>
+<script src="gui/widgets/user/text.js"></script>
+<script src="gui/widgets/user/table.js"></script>
+<script src="gui/widgets/user/counter.js"></script>
+<script src="gui/widgets/user/tasks.js"></script>
+
+<script src="gui/widgets/system/modules.js"></script>
+<script src="gui/widgets/system/sensors.js"></script>
+<script src="gui/widgets/system/logs.js"></script>
+<script src="gui/widgets/system/rules.js"></script>
+<script src="gui/widgets/system/chatbot.js"></script>
+<script src="gui/widgets/system/configuration.js"></script>
+<script src="gui/widgets/system/icons.js"></script>
+<script src="gui/widgets/system/packages.js"></script>
+<script src="gui/widgets/system/database.js"></script>
+<script src="gui/widgets/system/gateway.js"></script>
+<script src="gui/widgets/system/notifications.js"></script>
+<script src="gui/widgets/system/sensor_wizard.js"></script>
+<script src="gui/widgets/system/marketplace.js"></script>
+</head>
+
+<style>
+th.dt-center, td.dt-center { text-align: center; }
+.center-block {float: none !important}
+.col-centered{
+    margin: 0 auto;
+    float: none;
+}
+
+.modal-dialog.modal-lg {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.modal-content {
+  height: auto;
+  border-radius: 0;
+}
+
+
+.direct-chat-messages {
+    height: 365px;
+}
+
+</style>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-sm-inline-block">
+        <b><a id="house_name" class=" nav-link brand-text"></a></b>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a class="nav-link">|</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a id="house_time" class=" nav-link"></a>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <!-- Messages Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="fas fa-ban"></i>
+          <span class="badge badge-danger navbar-badge" id="notification_alert_count"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notification_alert">
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item dropdown-footer" id="notification_alert_link">View all</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span class="badge badge-warning navbar-badge" id="notification_warning_count"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notification_warning">
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item dropdown-footer" id="notification_warning_link">View all</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="fas fa-info"></i>
+          <span class="badge badge-success navbar-badge" id="notification_info_count"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notification_info">
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item dropdown-footer" id="notification_info_link">View all</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <input type="checkbox" id="notification_value_enabled">
+          <i class="fas fa-microchip"></i>
+          <span class="badge badge-info navbar-badge" id="notification_value_count"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notification_value">
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item dropdown-footer" id="notification_value_link">View all</a>
+        </div>
+      </li>
+ 
+      <li class="nav-item d-none">
+        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"><i
+            class="fas fa-th-large"></i></a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="index3.html" class="brand-link">
+    <i class="fa fa-home"></i>
+      <span class="brand-text font-weight-light"><b>my</b>House</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+              <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="pull-left bg-primary fas fa-3x" id="user_icon">
+
+                </div>
+                <div class="pull-left info">
+                  <p id="user_fullname" class="d-block"></p>
+                  <a id="status" href="#" class="d-block"><i class="fa fa-circle text-red"></i></a>
+                </div>
+              </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" id="menu">
+         </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark" id="title"></h1>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+      				<div id="body"></div>
+				<div style="padding: 10px 0px; text-align: center;">
+					<div class="text-muted"><a href="javascript:window.scrollTo(0,0);">Go to Top</a></div>
+				</div>
+        
+      </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2019 <a href="http://egeoffrey.github.io" target="_new">eGeoffrey</a>.
+			</strong> All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> <span id="version"></span>
+    </div>
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+	<script type="text/javascript">
+    // override default configuration
+    window.EGEOFFREY_DEBUG = 0
+    window.EGEOFFREY_GATEWAY_HOSTNAME = window.location.hostname
+    window.EGEOFFREY_GATEWAY_PORT = 443
+    window.EGEOFFREY_LOGGING_LOCAL = true
+    
+    // set to true when the login button is pressed
+    var login_submit = false
+
+    // setup checkboxes
+    $(":checkbox").iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' 
+    });
+    
+    // generate a random session_id
+    function generate_session_id() {
+        var min = 1; 
+        var max = 100000;
+        return Math.floor(Math.random() * (+max - +min)) + +min; 
+    }
+    
+    // configure login button
+    $("#login_button").unbind().click(function() {
+        return function () {
+            // disable the login button
+            $("#login_button").prop("disabled", true)
+            $("#login_button").html("Connecting...")
+            $("#login_error").html("")
+            // pull out the user's data and set the variables
+            window.EGEOFFREY_GATEWAY_HOSTNAME = $("#egeoffrey_gateway_hostname").val()
+            window.EGEOFFREY_GATEWAY_PORT = $("#egeoffrey_gateway_port").val()
+            window.EGEOFFREY_GATEWAY_SSL = $("#egeoffrey_gateway_ssl").is(":checked")
+            window.EGEOFFREY_ID = $("#egeoffrey_id").val()
+            window.EGEOFFREY_PASSCODE = $("#egeoffrey_passcode").val()
+            window.EGEOFFREY_USERNAME = $("#egeoffrey_username").val()
+            window.EGEOFFREY_PASSWORD = $("#egeoffrey_password").val()
+            window.EGEOFFREY_REMEMBER_ME = $("#egeoffrey_remember_me").is(":checked")
+            // create a new instance of the gui and run it
+            window.gui = new Gui("gui",EGEOFFREY_USERNAME+"_"+generate_session_id())
+            window.gui.run()
+            login_submit = true
+        };
+    }());
+
+    // upon loading, build and run the GUI
+    $(document).ready(function(){
+        // restore user credentials 
+        if (localStorage.getItem("EGEOFFREY_GATEWAY_HOSTNAME") != null) window.EGEOFFREY_GATEWAY_HOSTNAME = localStorage.getItem("EGEOFFREY_GATEWAY_HOSTNAME")
+        if (localStorage.getItem("EGEOFFREY_GATEWAY_PORT") != null) window.EGEOFFREY_GATEWAY_PORT = localStorage.getItem("EGEOFFREY_GATEWAY_PORT")
+        if (localStorage.getItem("EGEOFFREY_GATEWAY_SSL") != null) window.EGEOFFREY_GATEWAY_SSL = Boolean(parseInt(localStorage.getItem("EGEOFFREY_GATEWAY_SSL")))
+        if (localStorage.getItem("EGEOFFREY_ID") != null) window.EGEOFFREY_ID = localStorage.getItem("EGEOFFREY_ID")
+        if (localStorage.getItem("EGEOFFREY_PASSCODE") != null) window.EGEOFFREY_PASSCODE = localStorage.getItem("EGEOFFREY_PASSCODE")
+        if (localStorage.getItem("EGEOFFREY_USERNAME") != null) window.EGEOFFREY_USERNAME = localStorage.getItem("EGEOFFREY_USERNAME")
+        if (localStorage.getItem("EGEOFFREY_PASSWORD") != null) window.EGEOFFREY_PASSWORD = localStorage.getItem("EGEOFFREY_PASSWORD")
+        if (localStorage.getItem("EGEOFFREY_REMEMBER_ME") != null) window.EGEOFFREY_REMEMBER_ME = Boolean(parseInt(localStorage.getItem("EGEOFFREY_REMEMBER_ME")))
+        // create a gui and start it
+        window.gui = new Gui("gui","guest_"+generate_session_id())
+        window.gui.run()
+    });
+    
+    // periodically check if the connection is established, otherwise show login page
+    var watchdog = setInterval(function() {
+        $("#login_button").prop("disabled", false)
+        $("#login_button").html("Login")
+        var login_screen = $('#login').is(':visible');
+        // when the login screen is shown
+        if (login_screen) {
+            // check if connected and if so hide the login screen
+            if (window.gui.connected) {
+                // connected
+                $("#login_error").html("")
+                // remember user credentials if requested
+                if ($("#egeoffrey_remember_me").is(":checked")) {
+                    localStorage.setItem("EGEOFFREY_GATEWAY_HOSTNAME", window.EGEOFFREY_GATEWAY_HOSTNAME)
+                    localStorage.setItem("EGEOFFREY_GATEWAY_PORT", window.EGEOFFREY_GATEWAY_PORT)
+                    localStorage.setItem("EGEOFFREY_GATEWAY_SSL", window.EGEOFFREY_GATEWAY_SSL)
+                    localStorage.setItem("EGEOFFREY_ID", window.EGEOFFREY_ID)
+                    localStorage.setItem("EGEOFFREY_PASSCODE", window.EGEOFFREY_PASSCODE)
+                    localStorage.setItem("EGEOFFREY_USERNAME", window.EGEOFFREY_USERNAME)
+                    localStorage.setItem("EGEOFFREY_PASSWORD", window.EGEOFFREY_PASSWORD)
+                    localStorage.setItem("EGEOFFREY_REMEMBER_ME", window.EGEOFFREY_REMEMBER_ME)
+                } else localStorage.clear()
+                $("#login").modal("hide")
+                login_submit = false
+            }
+            else {
+                if (login_submit) $("#login_error").html("ERROR: Unable to connect or invalid credentials")
+                login_submit = false
+            }
+        }
+        // already logged in, ensure we are still connected
+        else {
+            if (! window.gui.connected) {
+                // not connected, stop the current instance of the gui from connecting
+                window.gui.join()
+                // set login information from previous settings
+                $("#egeoffrey_gateway_hostname").val(gui.gateway_hostname)
+                $("#egeoffrey_gateway_port").val(gui.gateway_port)
+                if (gui.gateway_ssl) $("#egeoffrey_gateway_ssl").iCheck('check')
+                else $("#egeoffrey_gateway_ssl").iCheck('uncheck')
+                $("#egeoffrey_id").val(gui.house_id)
+                $("#egeoffrey_passcode").val(gui.house_passcode)
+                $("#egeoffrey_username").val(gui.username)
+                $("#egeoffrey_password").val(gui.password)
+                // show up the login screen
+                $("#login").modal()
+            }
+        }
+    }, 2000);
+
+</script>
+</body>
+</html>

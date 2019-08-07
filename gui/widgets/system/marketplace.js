@@ -2,7 +2,7 @@
 class Marketplace extends Widget {
     constructor(id, widget) {
         super(id, widget)
-        this.marketplace_url = "https://api.github.com/repos/myhouse-project/myhouse-marketplace/contents/marketplace"
+        this.marketplace_url = "https://api.github.com/repos/egeoffrey/egeoffrey-marketplace/contents/marketplace"
         this.marketplace_branch = "master"
         this.manifests = []
         this.packages_branch = "development"
@@ -22,7 +22,7 @@ class Marketplace extends Widget {
                 if (! ("path" in entry) || ! ("name" in entry)) continue
                 var package_name = entry["name"].replace(".yml", "")
                 // download the marketplace item
-                $.get("https://raw.githubusercontent.com/myhouse-project/myhouse-marketplace/"+this_class.marketplace_branch+"/marketplace/"+package_name+".yml?timestamp="+(new Date()).getTime(), function(data) {
+                $.get("https://raw.githubusercontent.com/egeoffrey/egeoffrey-marketplace/"+this_class.marketplace_branch+"/marketplace/"+package_name+".yml?timestamp="+(new Date()).getTime(), function(data) {
                     try {
                         var yaml = jsyaml.load(data)
                     } catch(e) {
@@ -118,8 +118,8 @@ class Marketplace extends Widget {
             return function () {
                 var search = $("#"+this_class.id+"_search").val()
                 for (var manifest of this_class.manifests) {
-                    if (manifest["package"].includes(search) || manifest["description"].includes(search) || manifest["tags"].includes(search)) $("#"+this_class.id+"_box_"+manifest["package"]).removeClass("hidden")
-                    else $("#"+this_class.id+"_box_"+manifest["package"]).addClass("hidden")
+                    if (manifest["package"].includes(search) || manifest["description"].includes(search) || manifest["tags"].includes(search)) $("#"+this_class.id+"_box_"+manifest["package"]).removeClass("d-none")
+                    else $("#"+this_class.id+"_box_"+manifest["package"]).addClass("d-none")
                 }
             };
         }(this));

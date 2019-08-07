@@ -2,13 +2,13 @@ branch: development
 container_config:
   ports:
   - 80:80
-description: Provides a web user interface for accessing all myHouse's functionalities
-dockerhub: myhouseproject/myhouse-gui
-github: myhouse-project/myhouse-gui
+description: Provides a web user interface for accessing all eGeoffrey's functionalities
+dockerhub: egeoffrey/egeoffrey-gui
+github: egeoffrey/egeoffrey-gui
 icon: columns
 manifest_schema: 2
 modules: []
-package: myhouse-gui
-revision: 26
+package: egeoffrey-gui
+revision: 27
 tags: gui
 version: 1.0

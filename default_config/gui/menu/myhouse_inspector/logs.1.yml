@@ -1,6 +1,0 @@
-allow:
-- myhouse_admins
-icon: align-justify
-order: 1
-page: myhouse_inspector/logs
-text: Logs

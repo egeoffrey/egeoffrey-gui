@@ -68,7 +68,7 @@ class Value extends Widget {
         // for button widgets, just add the button and configure the action(s)
         if (this.widget["widget"] == "button") {
             var tag = "#"+this.id+"_value"
-            $(tag.replace("_value","_timestamp")).addClass("hidden")
+            $(tag.replace("_value","_timestamp")).addClass("d-none")
             var html = '\
             <center><div class="input-group">\
                 <button type="button" id="'+this.id+'_button" class="btn btn-primary btn-lg">'+this.widget["text"]+'</button>\
@@ -225,7 +225,7 @@ class Value extends Widget {
                 // this is an input box, populate the input
                 else if (session["widget"] == "input") {
                     var id = tag.replace("#","")
-                    $(tag.replace("_value","_timestamp")).addClass("hidden")
+                    $(tag.replace("_value","_timestamp")).addClass("d-none")
                     var html = '\
                     <div class="input-group input-group-lg">\
                     <input style="text-align:center;" id="'+id+'_input" class="form-control input-lg" type="text" value="">\

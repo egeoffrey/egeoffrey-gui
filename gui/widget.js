@@ -83,25 +83,25 @@ class Widget {
     // add a large box
     add_large_box(id, title) {
         var template = '\
-            <div class="box box-primary" id="'+id+'_box">\
-                <div class="box-header with-border">\
-                    <h3 class="box-title" id="'+id+'_title">'+title+'</h3>\
-                    <div class="box-tools pull-right" id="'+id+'_box_buttons">\
-                        <button id="'+id+'_refresh" type="button" class="btn btn-box-tool"><i class="fas fa-sync"></i></button>\
-                        <button id="'+id+'_popup" type="button" class="btn btn-box-tool" ><i class="fas fa-arrows-alt"></i></button>\
+            <div class="card card-primary" id="'+id+'_card">\
+                <div class="card-header with-border">\
+                    <h3 class="card-title" id="'+id+'_title">'+title+'</h3>\
+                    <div class="card-tools pull-right" id="'+id+'_card_buttons">\
+                        <button id="'+id+'_refresh" type="button" class="btn btn-tool"><i class="fas fa-sync"></i></button>\
+                        <button id="'+id+'_popup" type="button" class="btn btn-tool" ><i class="fas fa-arrows-alt"></i></button>\
                     </div>\
                 </div>\
-                <div class="box-body no-padding box-primary">\
-                    <div class="box-body" id="'+id+'_body" align="center">\
+                <div class="card-body no-padding card-primary">\
+                    <div class="card-body" id="'+id+'_body" align="center">\
                     </div>\
                 </div>\
-                <div class="overlay hidden" id="'+id+'_loading">\
+                <div class="overlay d-none" id="'+id+'_loading">\
                     <i class="fas fa-refresh fa-spin"></i>\
                 </div>\
             </div>'
         $("#"+id).empty()
         $("#"+id).html(template)
-        if (id.includes("popup_body")) $("#"+id+"_box_buttons").addClass("hidden")
+        if (id.includes("popup_body")) $("#"+id+"_card_buttons").addClass("d-none")
     }
 
     // add an info box
@@ -139,7 +139,7 @@ class Widget {
         $("#"+id).empty()
         $("#"+id).html(template)
         if (link != null) $("#"+id+"_link").attr("href", "#"+link)
-        else $("#"+id+"_link").addClass("hidden")
+        else $("#"+id+"_link").addClass("d-none")
     }
     
     // add chat box

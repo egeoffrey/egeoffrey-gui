@@ -215,7 +215,7 @@ class Sensors extends Widget {
         var service = ""
         if ("service" in sensor) {
             var service_name = "<u>"+sensor["service"]["name"]+"</u>"
-            var service_mode = '<span class="hidden">'+"mode: "+sensor["service"]["mode"]+"</span>"
+            var service_mode = '<span class="d-none">'+"mode: "+sensor["service"]["mode"]+"</span>"
             var service_configuration = "configuration:<br>&nbsp;&nbsp;"+this.format_object(sensor["service"]["configuration"]).replaceAll("<br>", "<br>&nbsp;&nbsp;")
             var service_icon = ""
             service = "<u>"+sensor["service"]["name"]+"</u><br>mode: "+sensor["service"]["mode"]+"<br>configuration:<br>&nbsp;&nbsp;"+this.format_object(sensor["service"]["configuration"]).replaceAll("<br>", "<br>&nbsp;&nbsp;")
@@ -256,9 +256,9 @@ class Sensors extends Widget {
         this.request_data(sensor_id)
         // enable graph and set button
         if (sensor["format"] != "float_1" && sensor["format"] != "float_2" && sensor["format"] != "string" && sensor["format"] != "int") {
-            $("#"+this.id+"_graph_"+sensor_tag).addClass("hidden");
-            $("#"+this.id+"_set_"+sensor_tag).addClass("hidden");
-            $("#"+this.id+"_set_text_"+sensor_tag).addClass("hidden");
+            $("#"+this.id+"_graph_"+sensor_tag).addClass("d-none");
+            $("#"+this.id+"_set_"+sensor_tag).addClass("d-none");
+            $("#"+this.id+"_set_text_"+sensor_tag).addClass("d-none");
         }
         // poll the service associated to the sensor
         $("#"+this.id+"_poll_"+sensor_tag).unbind().click(function(sensor_id) {

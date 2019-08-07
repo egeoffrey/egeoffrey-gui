@@ -1,0 +1,6 @@
+allow:
+- egeoffrey_admins
+icon: cubes
+order: 1
+page: egeoffrey_admin/packages
+text: Packages

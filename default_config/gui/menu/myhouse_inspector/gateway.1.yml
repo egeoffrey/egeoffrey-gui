@@ -1,6 +1,0 @@
-allow:
-- myhouse_admins
-icon: project-diagram
-order: 3
-page: myhouse_inspector/gateway
-text: Gateway

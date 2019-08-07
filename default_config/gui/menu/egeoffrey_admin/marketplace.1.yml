@@ -1,0 +1,6 @@
+allow:
+- egeoffrey_admins
+icon: shopping-cart
+order: 3
+page: egeoffrey_admin/marketplace
+text: Marketplace

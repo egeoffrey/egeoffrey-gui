@@ -1,4 +1,4 @@
-- "myHouse is your home monitoring and automation suite":
+- "eGeoffrey is your home monitoring and automation suite":
   - title: Create your rules and receive notifications
     size: 12
     widget: text
@@ -29,10 +29,10 @@
     color: aqua
     link: overview/notifications=INFO
 - "Your Sensors":
-  - title: Easily connect your sensors and interact with myHouse in realtime 
+  - title: Easily connect your sensors and interact with eGeoffrey in realtime 
     size: 12
     widget: text
-    text: "Before data can be displayed here or used in a rule, a sensor has to be created through the <a href='#house_admin/sensors'>SENSORS</a> menu item on the left.<br>A sensor in myHouse is a logical container of one or more values: it can hold just a single piece of data or a timeseries. Sensor's values can come from an associated service (e.g. a url with an image, a command to run, etc.), from actions associated to rules or from your interaction with widgets on this interface.<br>Once a sensor is created and data starts to get in, you can create a custom page to present values in many ways in this interface (see the <a href='#examples/widgets'>Widget Showcase</a> page for examples).<br>Live interaction is also supported thorugh your personal housebot who will take care of your house on your behalf. No need to configure anything, based on the rules and sensors you have configured the housebot will be able to answer any question you could have! The same level of interaction is also possible through Slack when you are away from Home."
+    text: "Before data can be displayed here or used in a rule, a sensor has to be created through the <a href='#house_admin/sensors'>SENSORS</a> menu item on the left.<br>A sensor in eGeoffrey is a logical container of one or more values: it can hold just a single piece of data or a timeseries. Sensor's values can come from an associated service (e.g. a url with an image, a command to run, etc.), from actions associated to rules or from your interaction with widgets on this interface.<br>Once a sensor is created and data starts to get in, you can create a custom page to present values in many ways in this interface (see the <a href='#examples/widgets'>Widget Showcase</a> page for examples).<br>Live interaction is also supported thorugh your personal housebot who will take care of your house on your behalf. No need to configure anything, based on the rules and sensors you have configured the housebot will be able to answer any question you could have! The same level of interaction is also possible through Slack when you are away from Home."
 - "":
   - title: Latest Data
     size: 6

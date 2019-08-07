@@ -1,0 +1,6 @@
+allow:
+- egeoffrey_admins
+icon: server
+order: 2
+page: egeoffrey_admin/modules
+text: Modules

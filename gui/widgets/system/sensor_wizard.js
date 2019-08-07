@@ -91,7 +91,7 @@ class Sensor_wizard extends Widget {
                                         <option value="cron">Cron - run the job periodically at certain time(s) of day</option>\
                                     </select>\
                                 </div>\
-                                <div id="'+this.id+'_service_schedule_panel_interval" class="hidden">\
+                                <div id="'+this.id+'_service_schedule_panel_interval" class="d-none">\
                                     <div class="form-group">\
                                         <label>days</label>\
                                         <input type="text" id="'+this.id+'_service_schedule_days" class="form-control" placeholder="e.g. 3 to poll every 3 days">\
@@ -109,7 +109,7 @@ class Sensor_wizard extends Widget {
                                         <input type="text" id="'+this.id+'_service_schedule_seconds" class="form-control" placeholder="e.g. 3 to poll every 3 seconds">\
                                     </div>\
                                 </div>\
-                                <div id="'+this.id+'_service_schedule_panel_cron" class="hidden">\
+                                <div id="'+this.id+'_service_schedule_panel_cron" class="d-none">\
                                     <div class="form-group">\
                                         <label>day</label>\
                                         <input type="text" id="'+this.id+'_service_schedule_day" class="form-control" placeholder="e.g. 3 to poll at the 3rd of each month. Use \'*\' for every day">\
@@ -144,9 +144,9 @@ class Sensor_wizard extends Widget {
                 var service = $('#'+this_class.id+'_service_name').val()
                 // show the service panel only if a service is selected
                 if (service == "") {
-                    $('#'+this_class.id+'_service_panel').addClass("hidden")
+                    $('#'+this_class.id+'_service_panel').addClass("d-none")
                     return
-                } else $('#'+this_class.id+'_service_panel').removeClass("hidden")
+                } else $('#'+this_class.id+'_service_panel').removeClass("d-none")
                 // get the manifest associated to the selected service
                 var manifest = this_class.manifests["service/"+service]
                 if (manifest == null) {
@@ -186,8 +186,8 @@ class Sensor_wizard extends Widget {
                 var selected_service = $('#'+this_class.id+'_service_name').val()
                 var selected_mode = $('#'+this_class.id+'_service_mode').val()
                 // show/hide the schedule panel
-                if (selected_mode == "active") $('#'+this_class.id+'_service_schedule_panel').removeClass("hidden")
-                else $('#'+this_class.id+'_service_schedule_panel').addClass("hidden")
+                if (selected_mode == "active") $('#'+this_class.id+'_service_schedule_panel').removeClass("d-none")
+                else $('#'+this_class.id+'_service_schedule_panel').addClass("d-none")
                 // clear service configuration
                 $('#'+this_class.id+'_service_configuration').html("")
                 // get the manifest associated to the selected service
@@ -238,12 +238,12 @@ class Sensor_wizard extends Widget {
             return function () {
                 var value = $('#'+this_class.id+'_service_schedule_trigger').val()
                 if (value == "cron") {
-                    $('#'+this_class.id+'_service_schedule_panel_interval').addClass("hidden")
-                    $('#'+this_class.id+'_service_schedule_panel_cron').removeClass("hidden")
+                    $('#'+this_class.id+'_service_schedule_panel_interval').addClass("d-none")
+                    $('#'+this_class.id+'_service_schedule_panel_cron').removeClass("d-none")
                 }
                 else if (value == "interval") {
-                    $('#'+this_class.id+'_service_schedule_panel_cron').addClass("hidden")
-                    $('#'+this_class.id+'_service_schedule_panel_interval').removeClass("hidden")
+                    $('#'+this_class.id+'_service_schedule_panel_cron').addClass("d-none")
+                    $('#'+this_class.id+'_service_schedule_panel_interval').removeClass("d-none")
                 }
 
             };

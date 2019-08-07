@@ -89,7 +89,8 @@ class Toolbar extends Widget {
             var severity = message.args
             var widget = "#notification_"+severity
             for (var entry of data) {
-                $(widget).prepend('<li><a title="'+escape_html(entry)+'">'+escape_html(entry)+'</a></li>')
+                entry = truncate(escape_html(entry), 40)
+                $(widget).prepend('<a class="dropdown-item" title="'+entry+'">'+entry+'</a>')
             }
         }
         // manifest file - check for updates
@@ -97,7 +98,7 @@ class Toolbar extends Widget {
             var manifest = message.get_data()
             if (manifest["manifest_schema"] != gui.supported_manifest_schema) return
             // set gui version
-            if (manifest["package"] == "myhouse-gui") $("#version").html(manifest["version"].toFixed(1)+"-"+manifest["revision"]+" ("+manifest["branch"]+")")
+            if (manifest["package"] == "egeoffrey-gui") $("#version").html(manifest["version"].toFixed(1)+"-"+manifest["revision"]+" ("+manifest["branch"]+")")
             // check for update
             var url = "https://raw.githubusercontent.com/"+manifest["github"]+"/"+manifest["branch"]+"/manifest.yml?timestamp="+new Date().getTime()
             $.get(url, function(data) {

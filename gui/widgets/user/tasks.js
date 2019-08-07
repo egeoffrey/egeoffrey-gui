@@ -35,15 +35,15 @@ class Tasks extends Widget {
         $("#"+this.id+'_'+item_id+'_text_input').val(text)
         $("#"+this.id+'_'+item_id+'_tags_input').val(tags)
         // hide the text
-        $("#"+this.id+'_'+item_id+'_text').addClass("hidden")
-        $("#"+this.id+'_'+item_id+'_tags_box').addClass("hidden")
+        $("#"+this.id+'_'+item_id+'_text').addClass("d-none")
+        $("#"+this.id+'_'+item_id+'_tags_box').addClass("d-none")
         // show the form
-        $("#"+this.id+'_'+item_id+'_text_input').removeClass("hidden")
-        $("#"+this.id+'_'+item_id+'_tags_input').removeClass("hidden")
+        $("#"+this.id+'_'+item_id+'_text_input').removeClass("d-none")
+        $("#"+this.id+'_'+item_id+'_tags_input').removeClass("d-none")
         // show save button
-        $("#"+this.id+'_'+item_id+'_edit').addClass("hidden")
-        $("#"+this.id+'_'+item_id+'_delete').addClass("hidden")
-        $("#"+this.id+'_'+item_id+'_save').removeClass("hidden")
+        $("#"+this.id+'_'+item_id+'_edit').addClass("d-none")
+        $("#"+this.id+'_'+item_id+'_delete').addClass("d-none")
+        $("#"+this.id+'_'+item_id+'_save').removeClass("d-none")
         $("#"+this.id+'_'+item_id+'_checkbox').attr("disabled", true)
         $("#"+this.id+'_'+item_id+'_text_input').focus()
     }
@@ -61,17 +61,17 @@ class Tasks extends Widget {
             $("#"+this.id+'_'+item_id+'_tags').html(tags)
         }
         // hide the input
-        $("#"+this.id+'_'+item_id+'_text_input').addClass("hidden")
-        $("#"+this.id+'_'+item_id+'_tags_input').addClass("hidden")
+        $("#"+this.id+'_'+item_id+'_text_input').addClass("d-none")
+        $("#"+this.id+'_'+item_id+'_tags_input').addClass("d-none")
         // show the text
-        $("#"+this.id+'_'+item_id+'_text').removeClass("hidden")
-        $("#"+this.id+'_'+item_id+'_tags_box').removeClass("hidden")
+        $("#"+this.id+'_'+item_id+'_text').removeClass("d-none")
+        $("#"+this.id+'_'+item_id+'_tags_box').removeClass("d-none")
         // render tags
         if (save) this.render_tags(item_id)
         // hide save button
-        $("#"+this.id+'_'+item_id+'_edit').removeClass("hidden")
-        $("#"+this.id+'_'+item_id+'_delete').removeClass("hidden")
-        $("#"+this.id+'_'+item_id+'_save').addClass("hidden")
+        $("#"+this.id+'_'+item_id+'_edit').removeClass("d-none")
+        $("#"+this.id+'_'+item_id+'_delete').removeClass("d-none")
+        $("#"+this.id+'_'+item_id+'_save').addClass("d-none")
         $("#"+this.id+'_'+item_id+'_checkbox').attr("disabled", false)
         if (save) this.save_list()
     }
@@ -155,8 +155,8 @@ class Tasks extends Widget {
               <span class="text" id="'+this.id+'_'+item_id+'_text"></span>\
               <span class="text hidden" id="'+this.id+'_'+item_id+'_tags"></span>\
               <span id="'+this.id+'_'+item_id+'_tags_box"></span>\
-              <input class="hidden" id="'+this.id+'_'+item_id+'_text_input" placeholder="description of the item"></span>\
-              <input class="hidden" id="'+this.id+'_'+item_id+'_tags_input" placeholder="tags"></span>\
+              <input class="d-none" id="'+this.id+'_'+item_id+'_text_input" placeholder="description of the item"></span>\
+              <input class="d-none" id="'+this.id+'_'+item_id+'_tags_input" placeholder="tags"></span>\
               <div class="tools">\
                 <i class="fas fa-edit" id="'+this.id+'_'+item_id+'_edit"></i>\
                 <i class="fas fa-trash-alt" id="'+this.id+'_'+item_id+'_delete"></i>\
@@ -298,10 +298,10 @@ class Tasks extends Widget {
                         var tags = $("#"+this_class.id+"_"+item_id+"_tags").html()
                         var search = $("#"+this_class.id+"_search").val()
                         if (text.includes(search) || tags.includes(search)) {
-                            $("#"+this_class.id+"_"+item_id+"_item").removeClass("hidden")
+                            $("#"+this_class.id+"_"+item_id+"_item").removeClass("d-none")
                             counter++
                         }
-                        else $("#"+this_class.id+"_"+item_id+"_item").addClass("hidden")
+                        else $("#"+this_class.id+"_"+item_id+"_item").addClass("d-none")
                     });
                     // update the counter
                     $("#"+this_class.id+"_list_"+list+"_counter").html(counter)

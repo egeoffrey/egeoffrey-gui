@@ -28,15 +28,15 @@ class Menu extends Widget {
             if (! (section["section_id"] in this.entries)) continue
             var section_icon = "icon" in section ? section["icon"] : "angle-right"
             var section_html = '\
-                <li class="treeview" id="menu_section_'+section["section_id"]+'_tree">\
-                    <a href="#">\
+                <li class="nav-item has-treeview" id="menu_section_'+section["section_id"]+'_tree">\
+                    <a href="#" class="nav-link">\
                         <i class="fas fa-'+section_icon+'"></i>\
                         <span>'+section["text"]+'</span>\
                         <span class="pull-right-container">\
                             <i class="fa fa-angle-left pull-right"></i>\
                         </span>\
                     </a>\
-                    <ul class="treeview-menu" id="menu_section_'+section["section_id"]+'">\
+                    <ul class="nav nav-treeview" id="menu_section_'+section["section_id"]+'">\
                     </ul>\
                 </li>'
             $("#"+this.id).append(section_html)
@@ -47,7 +47,7 @@ class Menu extends Widget {
                 // add the entry to the menu
                 if (! gui.is_authorized(entry)) continue
                 var page_tag = entry["page"].replaceAll("/","_")
-                $("#menu_section_"+section["section_id"]).append('<li id="menu_user_item_'+page_tag+'"><a href="#'+entry["page"]+'"> <i class="fas fa-'+entry["icon"]+'"></i> '+capitalizeFirst(entry["text"])+'</a></li>');
+                $("#menu_section_"+section["section_id"]).append('<li class="nav-item" id="menu_user_item_'+page_tag+'"><a class="nav-link" href="#'+entry["page"]+'"> <i class="nav-icon fas fa-'+entry["icon"]+'"></i> '+capitalizeFirst(entry["text"])+'</a></li>');
                 // open the page on click
                 $("#menu_user_item_"+page_tag).click(function(page){
                     return function () {
@@ -64,7 +64,7 @@ class Menu extends Widget {
                 }
             }
             // hide the section if it has no items
-            if (items == 0) $("#menu_section_"+section["section_id"]).addClass("hidden")
+            if (items == 0) $("#menu_section_"+section["section_id"]).addClass("d-none")
         }
     }
     
