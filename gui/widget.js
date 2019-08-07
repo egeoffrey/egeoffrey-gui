@@ -114,7 +114,7 @@ class Widget {
                 <span id="'+id+'_value"></span>\
                 <span id="'+id+'_value_suffix"></span>\
               </span>\
-              <div class="text-muted" id="'+id+'_timestamp">&nbsp;</div>\
+              <small><div class="text-muted" id="'+id+'_timestamp">&nbsp;</div></small>\
             </div>\
         </div>'
         $("#"+id).empty()
@@ -145,19 +145,19 @@ class Widget {
     // add chat box
     add_chat_box(id, title) {
         var template = '\
-          <div class="box box-primary direct-chat direct-chat-primary">\
-            <div class="box-header with-border">\
-              <h3 class="box-title">'+title+'</h3>\
-              <div class="box-tools pull-right">\
-                <button type="button" id="'+id+'_eraser" class="btn btn-box-tool"><i class="fas fa-eraser"></i></button>\
-                <button type="button" id="'+id+'_popup" class="btn btn-box-tool"><i class="fas fa-arrows-alt"></i></button>\
+          <div class="card card-primary cardutline direct-chat direct-chat-success">\
+            <div class="card-header with-border">\
+              <h3 class="card-title">'+title+'</h3>\
+              <div class="card-tools pull-right">\
+                <button type="button" id="'+id+'_eraser" class="btn btn-tool"><i class="fas fa-eraser"></i></button>\
+                <button type="button" id="'+id+'_popup" class="btn btn-tool"><i class="fas fa-arrows-alt"></i></button>\
               </div>\
             </div>\
-            <div class="box-body">\
+            <div class="card-body">\
               <div class="direct-chat-messages" id="'+id+'_messages">\
               </div>\
             </div>\
-            <div class="box-footer">\
+            <div class="card-footer">\
               <form>\
                 <div class="input-group">\
                   <input type="text" name="message" placeholder="Type Message ..." class="form-control" id="'+id+'_text">\

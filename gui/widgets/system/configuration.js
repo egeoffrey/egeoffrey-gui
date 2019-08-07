@@ -121,12 +121,10 @@ class Configuration extends Widget {
         }
         // add panel
         var panel = '\
-        <div class="nav-tabs-custom">\
-            <ul class="nav nav-tabs" id="'+this.id+'_tab_index">\
-              <li class="pull-right"><a href="#" class="text-muted"><i class="fas fa-gear"></i></a></li>\
+            <ul class="nav nav-tabs" id="'+this.id+'_tab_index" role="tablist">\
             </ul>\
             <div class="tab-content" id="'+this.id+'_tab_content"></div>\
-        </div>'
+        '
         $(body).append(panel)
         // select first group
         if (this.configuration_id == null) {
@@ -173,14 +171,14 @@ class Configuration extends Widget {
             var tab_title_html = is_new_item ? '<input type=text id="'+tab_id+'_title" placeholder="give it a name"></input> <input size=10 type=text id="'+tab_id+'_config_schema" placeholder="schema"></input><br>' : tab_title
             // add the tab 
             var tab_index_html = '\
-                <li class="'+active+'">\
-                    <a href="#'+tab_id+'" data-toggle="tab">'+tab_title_html+'</a>\
+                <li class="nav-item">\
+                    <a href="#'+tab_id+'" class="nav-link '+active+'" role="tab" data-toggle="pill">'+tab_title_html+'</a>\
                 </li>'
             $("#"+this.id+"_tab_index").append(tab_index_html)
             // add the content to the tab
             var tab_content_textarea = is_new_item ? "" : jsyaml.dump(message.get_data())
             var tab_content_html = '\
-                <div class="tab-pane '+active+'" id="'+tab_id+'">\
+                <div class="tab-pane show fade '+active+'" id="'+tab_id+'" role="tabpanel">\
                     <div class="form-group text-left">\
                         <textarea rows="15" class="form-control" id="'+tab_id+'_text" placeholder="type in the YAML configuration">'+tab_content_textarea+'</textarea>\
                     </div>\
@@ -200,7 +198,7 @@ class Configuration extends Widget {
             }
             var codemirror = CodeMirror.fromTextArea(document.getElementById(tab_id+'_text'), codemirror_options);
             // CodeMirror doesn't work with hidden tabs, refresh it when a new tab is open
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function(event){
+            $('a[data-toggle="pill"]').on('shown.bs.tab', function(event){
                 $($(event.target).attr("href") + ' .CodeMirror').each( function(i, el) {
                     el.CodeMirror.refresh()
                 })

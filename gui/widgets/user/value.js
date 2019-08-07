@@ -227,8 +227,8 @@ class Value extends Widget {
                     var id = tag.replace("#","")
                     $(tag.replace("_value","_timestamp")).addClass("d-none")
                     var html = '\
-                    <div class="input-group input-group-lg">\
-                    <input style="text-align:center;" id="'+id+'_input" class="form-control input-lg" type="text" value="">\
+                    <div class="input-group input-group">\
+                    <input style="text-align:center;" id="'+id+'_input" class="form-control input" type="text" value="">\
                     </div>'
                     $(tag).html(html)
                     if (data.length == 1) $(tag+"_input").val(data[0])
@@ -243,7 +243,6 @@ class Value extends Widget {
                             decimals: decimals,
                             boostat: 5,
                             maxboostedstep: 10,
-                            //postfix: this.__formats[sensor["format"]]["suffix"]
                         });
                     }
                     // listen for changes

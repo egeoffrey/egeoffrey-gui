@@ -2,4 +2,4 @@ map:
   api_key: null
   type: hybrid
 skin: blue
-default_page: overview/dashboard
+default_page: overview/welcome
