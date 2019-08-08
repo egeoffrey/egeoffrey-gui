@@ -7,36 +7,27 @@
 
   <title>eGeoffrey</title>
   
-<!-- REQUIRED SCRIPTS -->
 <!-- jQuery -->
-<script src="plugins/jquery/jquery.min.js"></script>
+<script src="lib/jquery/jquery.min.js"></script>
+
 <!-- Bootstrap -->
-<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
+
 <!-- overlayScrollbars -->
-<script src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-<!-- AdminLTE App -->
-<script src="dist/js/adminlte.js"></script>
+<script src="lib/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<link rel="stylesheet" href="lib/overlayScrollbars/css/OverlayScrollbars.min.css">
 
-<!-- OPTIONAL SCRIPTS -->
-<script src="dist/js/demo.js"></script>
+<!-- AdminLTE (theme) -->
+<script src="lib/adminlte/adminlte.js"></script>
+<link rel="stylesheet" href="lib/adminlte/adminlte.css">
 
-<!-- PAGE PLUGINS -->
-<!-- jQuery Mapael -->
-<script src="plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
-<script src="plugins/raphael/raphael.min.js"></script>
-<script src="plugins/jquery-mapael/jquery.mapael.min.js"></script>
-<script src="plugins/jquery-mapael/maps/world_countries.min.js"></script>
-<!-- ChartJS -->
-<script src="plugins/chart.js/Chart.min.js"></script>
+<!-- Font Awesome (icons) -->
+<link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
 
-  
+<!-- Toastr (notify) -->
+<script src="lib/toastr/toastr.min.js"></script>
+<link rel="stylesheet" href="lib/toastr/toastr.min.css">
 
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
-  <!-- overlayScrollbars -->
-  <link rel="stylesheet" href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   
@@ -48,9 +39,6 @@
 
 <!-- FastClick -->
 <script src="lib/fastclick/fastclick.min.js"></script>
-
-<!--  Bootstrap-notify -->
-<script src="lib/bootstrap-notify/bootstrap-notify.min.js"></script>
 
 <!--  Validator -->
 <script src="lib/validator/validator.min.js"></script>
@@ -75,20 +63,9 @@
 <!-- Bootbox -->
 <script src="lib/bootbox/bootbox.all.min.js"></script>
 
-<!--  Datatables -->
 <!-- DataTables -->
-<script src="lib/datatables/datatables.min.js"></script>
-<script src="lib/datatables-plugins/dataTables.responsive.min.js"></script>
-<script src="lib/datatables-plugins/dataTables.colResize.js"></script>
 <link rel="stylesheet" href="lib/datatables/datatables.min.css" />
-<link rel="stylesheet" href="lib/datatables-plugins/dataTables.fontAwesome.css" />
-<link rel="stylesheet" href="lib/datatables-plugins/responsive.dataTables.min.css" />
-
-<!--
-<script src="plugins/datatables/jquery.dataTables.js"></script>
-<script src="plugins/datatables/dataTables.bootstrap4.js"></script>
-  <link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap4.css">
-  -->
+<script src="lib/datatables/datatables.min.js"></script>
 
   <!--  dhtmlxscheduler -->
 <script src="lib/dhtmlxscheduler/dhtmlxscheduler.js"></script>
@@ -419,15 +396,14 @@ th.dt-center, td.dt-center { text-align: center; }
                                 </div>
                               </div>
                               <center><p class="text-red" id="login_error"></p></center>
-                              <div class="row">
-                                <div class="col-xs-8">
+                                <div class="form-group has-feedback">
                                   <div class="checkbox icheck">
                                     <label>
                                       <input type="checkbox" id="egeoffrey_remember_me"> Remember Me
                                     </label>
                                   </div>
                                 </div>
-                                <div class="col-xs-4">
+                                <div class="form-group has-feedback">
                                   <button type="button" class="btn btn-primary btn-block btn-flat" id="login_button">Login</button>
                                 </div>
                               </div>

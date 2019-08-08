@@ -45,7 +45,7 @@ class Marketplace extends Widget {
                         // define tags
                         var tags = manifest["tags"].split(" ")
                         var tags_html = ""
-                        for (var tag of tags) tags_html = tags_html+'<a class="label label-primary pull-right" onClick=\'$("#'+this_class.id+'_search").val("'+tag+'"); $("#'+this_class.id+'_search").keyup()\'>'+tag+'</a>&nbsp;'
+                        for (var tag of tags) tags_html = tags_html+'<a onClick=\'$("#'+this_class.id+'_search").val("'+tag+'"); $("#'+this_class.id+'_search").keyup()\'><span class="badge badge-info">'+tag+'</span></a>&nbsp;'
                         // define modules
                         var modules = []
                         if (manifest["modules"].length > 0) {
@@ -62,7 +62,7 @@ class Marketplace extends Widget {
                         var item_html = '\
                             <li class="item text-left" id="'+this_class.id+'_box_'+manifest["package"]+'">\
                               <div class="product-img">\
-                                <i class="fas fa-'+icon+' fa-3x"></i>\
+                                <i class="fas fa-'+icon+' fa-2x"></i>\
                               </div>\
                               <div class="product-info">\
                                 <a class="product-title" target="_blank" href="https://github.com/'+manifest["github"]+'"><big>'+manifest["package"]+'</big></a>\
@@ -92,14 +92,13 @@ class Marketplace extends Widget {
         this.manifests = []
         $(body).empty()
         var search_html = '\
-            <div class="input-group input-group-sm">\
-                 <input id="'+this.id+'_branch" class="form-control" id="'+this.id+'_branch" type="text" value="'+this.packages_branch+'" placeholder="">\
+            <div class="input-group">\
                 <span class="input-group-btn">\
                   <button type="button" class="btn btn-info btn-flat" id="'+this.id+'_branch_button">Switch Branch</button>\
                 </span>\
+                 <input id="'+this.id+'_branch" class="form-control" id="'+this.id+'_branch" type="text" value="'+this.packages_branch+'" placeholder="">\
             </div><br>\
             <div class="input-group input-group-lg">\
-                <label>Search the Marketplace: </label>\
                 <input id="'+this.id+'_search" class="form-control" type="text" placeholder="Search the marketplace...">\
             </div>\
             <br>'
@@ -123,7 +122,7 @@ class Marketplace extends Widget {
                 }
             };
         }(this));
-        $(body).append('<ul class="products-list product-list-in-box" id="'+this.id+'_marketplace"><li><i class="fas fa-spin fa-3x fa-spinner"></i> Loading marketplace...</li></ul>')
+        $(body).append('<ul class="products-list product-list-in-card pl-2 pr-2" id="'+this.id+'_marketplace"><li><i class="fas fa-spin fa-3x fa-spinner"></i> Loading marketplace...</li></ul>')
         this.load_marketplace()
     }
     

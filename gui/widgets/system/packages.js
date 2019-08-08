@@ -87,7 +87,7 @@ class Packages extends Widget {
                     return
                 }
                 if (remote_manifest["version"] > manifest["version"] || (remote_manifest["version"] == manifest["version"] && remote_manifest["revision"] > manifest["revision"])) $("#"+update_id).html('<a href="https://github.com/'+manifest["github"]+'/tree/'+manifest["branch"]+'" target="_blank" ><i class="fas fa-external-link-alt"></i></a>')
-                else $("#"+update_id).html('<i class="fas fa-check">')
+                else $("#"+update_id).html('<i class="fas fa-check text-success">')
             });
             this.manifests[manifest["package"]] = manifest
         }

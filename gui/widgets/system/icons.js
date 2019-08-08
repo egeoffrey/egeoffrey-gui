@@ -12,13 +12,16 @@ class Icons extends Widget {
         var count = 0
         var body = "#"+this.id+"_icons"
         $(body).empty()
+        $(body).append('<div class="table-responsive"><table class="table m-0">')
+        $(body).append("")
         for (var icon of this.icons) {
             if (search != null && (! icon.includes(search))) continue
-            if (count % 6 == 0) $(body).append('<div class="row">')
-            $(body).append('<div class="col-sm-2"><i class="fas fa-3x fa-'+icon+'"></i><br><p class="text-muted">'+icon+'<p></div>')
-            if (count % 6 == 0) $(body).append('</div>')
+            if (count % 6 == 0) $(body).append('<tr>')
+            $(body).append('<td><i class="fas fa-3x fa-'+icon+'"></i><br><p class="text-muted">'+icon+'<p></td>')
+            if (count % 6 == 0) $(body).append('</tr>')
             count++
         }
+        $(body).append('</div></div>')
     }
     
     // draw the widget's content

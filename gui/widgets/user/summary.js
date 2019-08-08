@@ -100,7 +100,7 @@ class Summary extends Widget {
         var color = "color" in this.widget ? this.widget["color"] : "gray"
 		var box_header = '\
 			<div class="box-profile">\
-				<div class="profile-user-img img-responsive"><span id="'+this.id+'_icon" class="fas fa-5x fa-'+icon+' icon-logo" style="color:'+color+'"></span></div>\
+				<div class="profile-user-img img-fluid img-responsive"><span id="'+this.id+'_icon" class="fas fa-4x fa-'+icon+' icon-logo" style="color:'+color+'"></span></div>\
 					<h3 class="profile-username text-center"><span id="'+this.id+'_value">&nbsp;</span><span id="'+this.id+'_value_suffix"></span></h3>\
 					<p class="text-muted text-center" id="'+this.id+'_timestamp">&nbsp;</p>\
 					<div id="'+this.id+'_chart"></div>\

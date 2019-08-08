@@ -60,13 +60,13 @@ class Gui extends Module {
     
 	// notify the user about something
 	notify(type, message) {
-		var options = {
-			message: message,
-		}
-		var settings = {
-			type: type,
-		}
-		$.notify(options, settings);
+        toastr.options = {
+            "closeButton": false,
+            "preventDuplicates": false,
+            "hideDuration": "500",
+            "timeOut": "2000",
+        }
+        toastr[type](message)
 	}
     
 	// ask the user confirmation about something
@@ -159,7 +159,7 @@ class Gui extends Module {
 
     // What to do just after connecting
     on_connect() {
-        $("#status").html('<i class="fas fa-circle text-success"></i>Connected</span>');
+        $("#status").html('<i class="fas fa-circle text-success"></i> Connected</span>');
         $("#status").unbind().click(function(this_class) {
             return function () {
                 // clear stored credentials
@@ -179,6 +179,7 @@ class Gui extends Module {
                 if (! (group in this.groups)) continue
                 if (this.groups[group].includes(this.username)) return true
             }
+                    console.log(this.groups)
             return false
         }
         else return true
