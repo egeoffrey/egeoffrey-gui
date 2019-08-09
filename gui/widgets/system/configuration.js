@@ -185,7 +185,7 @@ class Configuration extends Widget {
                     <div class="form-group">\
                         <button type="button"  onclick="window.history.go(-1); return false;" class="btn btn-default">Back</button> \
                         <button type="button" id="'+tab_id+'_save" class="btn btn-primary">Save</button>\
-                        <button type="button" id="'+tab_id+'_delete" class="pull-right btn btn-default text-red">Delete</button>\
+                        <button type="button" id="'+tab_id+'_delete" class="float-right btn btn-default text-red">Delete</button>\
                     </div>\
                 </div>'
             $("#"+this.id+"_tab_content").append(tab_content_html)

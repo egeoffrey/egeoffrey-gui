@@ -86,7 +86,7 @@ class Widget {
             <div class="card card-primary" id="'+id+'_card">\
                 <div class="card-header with-border">\
                     <h3 class="card-title" id="'+id+'_title">'+title+'</h3>\
-                    <div class="card-tools pull-right" id="'+id+'_card_buttons">\
+                    <div class="card-tools float-right" id="'+id+'_card_buttons">\
                         <button id="'+id+'_refresh" type="button" class="btn btn-tool"><i class="fas fa-sync"></i></button>\
                         <button id="'+id+'_popup" type="button" class="btn btn-tool" ><i class="fas fa-arrows-alt"></i></button>\
                     </div>\
@@ -148,7 +148,7 @@ class Widget {
           <div class="card card-primary cardutline direct-chat direct-chat-success">\
             <div class="card-header with-border">\
               <h3 class="card-title">'+title+'</h3>\
-              <div class="card-tools pull-right">\
+              <div class="card-tools float-right">\
                 <button type="button" id="'+id+'_eraser" class="btn btn-tool"><i class="fas fa-eraser"></i></button>\
                 <button type="button" id="'+id+'_popup" class="btn btn-tool"><i class="fas fa-arrows-alt"></i></button>\
               </div>\

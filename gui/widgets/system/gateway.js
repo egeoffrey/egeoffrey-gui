@@ -17,7 +17,7 @@ class Gateway extends Widget {
         $(body).html("")
         // add buttons
         var button_html = '\
-            <div class="form-group pull-right">&nbsp;\
+            <div class="form-group float-right">&nbsp;\
                 <button type="button" id="'+this.id+'_clear" class="btn btn-default btn-sm"><i class="fas fa-eraser"></i> Clear</button>\
                 <input id="'+this.id+'_live" type="checkbox" checked> Live\
             </div>'

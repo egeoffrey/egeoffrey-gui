@@ -135,7 +135,7 @@ class Tasks extends Widget {
         var tags = $("#"+this.id+'_'+item_id+'_tags').html()
         if (tags == "") return
         for (var tag of tags.split(" ")) {
-            $("#"+this.id+'_'+item_id+'_tags_box').append('<a class="label label-primary" onClick=\'$("#'+this.id+'_search").val("'+tag+'"); $("#'+this.id+'_search").keyup()\'><i class="fas fa-tag"></i> '+tag+'</a>')
+            $("#"+this.id+'_'+item_id+'_tags_box').append('<a onClick=\'$("#'+this.id+'_search").val("'+tag+'"); $("#'+this.id+'_search").keyup()\'><span class="badge badge-info"><i class="fas fa-tag"></i> '+tag+'</span></a>')
         }
     }
     
@@ -153,14 +153,14 @@ class Tasks extends Widget {
                   </span>\
               <input type="checkbox" value="" id="'+this.id+'_'+item_id+'_checkbox" '+checked+'>\
               <span class="text" id="'+this.id+'_'+item_id+'_text"></span>\
-              <span class="text hidden" id="'+this.id+'_'+item_id+'_tags"></span>\
+              <span class="text d-none" id="'+this.id+'_'+item_id+'_tags"></span>\
               <span id="'+this.id+'_'+item_id+'_tags_box"></span>\
               <input class="d-none" id="'+this.id+'_'+item_id+'_text_input" placeholder="description of the item"></span>\
               <input class="d-none" id="'+this.id+'_'+item_id+'_tags_input" placeholder="tags"></span>\
               <div class="tools">\
                 <i class="fas fa-edit" id="'+this.id+'_'+item_id+'_edit"></i>\
                 <i class="fas fa-trash-alt" id="'+this.id+'_'+item_id+'_delete"></i>\
-                <i class="fas fa-save hidden text-green" id="'+this.id+'_'+item_id+'_save"></i>\
+                <i class="fas fa-save d-none text-green" id="'+this.id+'_'+item_id+'_save"></i>\
               </div>\
             </li>'
         // add the item at the beginning of the list
@@ -232,12 +232,6 @@ class Tasks extends Widget {
                 if(e.which == 27) this_class.edit_text_end(item_id, false)
             };
         }(this, item_id));
-        /*
-        $("#"+this.id+'_'+item_id+"_tags_box").unbind().dblclick(function(this_class, item_id) {
-            return function () {
-                this_class.edit_text_start(item_id)
-            };
-        }(this, item_id));*/
         // increase the counter
         var counter = parseInt($("#"+this.id+'_list_'+list+'_counter').html())
         $("#"+this.id+'_list_'+list+'_counter').html(counter+1)
@@ -255,16 +249,16 @@ class Tasks extends Widget {
                 <input type="text" class="form-control input-sm" id="'+this.id+'_search" placeholder="Search..."><br>\
             </div></div>\
             <div class="row"><div class="col-lg-12">\
-                <button type="button" class="btn btn-default pull-right" id="'+this.id+'_add"><i class="fas fa-plus"></i> Add item</button>\
+                <button type="button" class="btn btn-default float-right" id="'+this.id+'_add"><i class="fas fa-plus"></i> Add item</button>\
             </div></div>\
             <div class="row"><div class="col-lg-12 text-left">\
                 <label class="text-muted">To Do (<span id="'+this.id+'_list_todo_counter">0</span> items):</label>\
-                <ul class="todo-list" id="'+this.id+'_list_todo"></ul>\
+                <ul class="todo-list" data-widget="todo-list" id="'+this.id+'_list_todo"></ul>\
             </div></div>\
             <div class="row"><div class="col-lg-12 text-left">\
                 <br>\
                 <label class="text-muted text-left">Done (<span id="'+this.id+'_list_done_counter">0</span> items):</label>\
-                <ul class="todo-list" id="'+this.id+'_list_done"></ul>\
+                <ul class="todo-list" data-widget="todo-list" id="'+this.id+'_list_done"></ul>\
             </div></div>\
         '
         $(body).html(todo)

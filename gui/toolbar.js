@@ -4,6 +4,7 @@ class Toolbar extends Widget {
     constructor(id) {
         super(id, {})
         this.persistent = true
+        this.max_items = 10
         this.notification_value_enabled = false
     }
     
@@ -88,6 +89,8 @@ class Toolbar extends Widget {
             var data = message.get("data")
             var severity = message.args
             var widget = "#notification_"+severity
+            // take the latest elements if needed
+            if (data.length > this.max_items) data = data.slice(-this.max_items)
             for (var entry of data) {
                 entry = truncate(escape_html(entry), 40)
                 $(widget).prepend('<a class="dropdown-item" title="'+entry+'">'+entry+'</a>')

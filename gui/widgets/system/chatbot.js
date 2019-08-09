@@ -58,7 +58,7 @@ class Chatbot extends Widget {
             <div class="direct-chat-msg">\
               <div class="direct-chat-info clearfix">\
                 <span class="direct-chat-name pull-left">'+user["fullname"]+'</span>\
-                <span class="direct-chat-timestamp pull-right">23 Jan 5:37 pm</span>\
+                <span class="direct-chat-timestamp float-right">23 Jan 5:37 pm</span>\
               </div>\
               <i class="direct-chat-img fas fa-2x fa-'+user["icon"]+'"></i>\
               <div class="direct-chat-text">\
@@ -83,7 +83,7 @@ class Chatbot extends Widget {
         var answer_html = '\
             <div class="direct-chat-msg right">\
               <div class="direct-chat-info clearfix">\
-                <span class="direct-chat-name pull-right">'+gui.house["name"]+'</span>\
+                <span class="direct-chat-name float-right">'+gui.house["name"]+'</span>\
                 <span class="direct-chat-timestamp pull-left">23 Jan 5:37 pm</span>\
               </div>\
               <i class="direct-chat-img fas fa-2x fa-robot"></i>\

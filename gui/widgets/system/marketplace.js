@@ -66,7 +66,7 @@ class Marketplace extends Widget {
                               </div>\
                               <div class="product-info">\
                                 <a class="product-title" target="_blank" href="https://github.com/'+manifest["github"]+'"><big>'+manifest["package"]+'</big></a>\
-                                <span class="pull-right-container">'+tags_html+'</span>\
+                                <span class="float-right-container">'+tags_html+'</span>\
                                 <span class="product-description"><b>Version</b>: '+manifest["version"]+'-'+manifest["revision"]+' ('+manifest["branch"]+')</span>\
                                 <span class="product-description"><b>Author</b>: '+author+'</span>\
                                 <span class="product-description"><b>Modules</b>: '+modules.join(", ")+'</span>\

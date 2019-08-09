@@ -32,8 +32,8 @@ class Menu extends Widget {
                     <a href="#" class="nav-link">\
                         <i class="fas fa-'+section_icon+'"></i>\
                         <span>'+section["text"]+'</span>\
-                        <span class="pull-right-container">\
-                            <i class="fa fa-angle-left pull-right"></i>\
+                        <span class="float-right-container">\
+                            <i class="fa fa-angle-left float-right"></i>\
                         </span>\
                     </a>\
                     <ul class="nav nav-treeview" id="menu_section_'+section["section_id"]+'">\
