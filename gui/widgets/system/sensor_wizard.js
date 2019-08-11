@@ -16,22 +16,43 @@ class Sensor_wizard extends Widget {
         $("#wizard").modal()
         // build the form
         $("#wizard_body").append('\
-            <form method="POST" data-toggle="validator" role="form" id="'+this.id+'_form">\
-                <div class="form-group">\
-                    <label>Sensor identifier*</label>\
-                    <input type="text" id="'+this.id+'_sensor_id" class="form-control" placeholder="identifier that will be used to reference the sensor" required>\
-                </div>\
-                <div class="form-group">\
-                    <label>Sensor Description</label>\
-                    <input type="text" id="'+this.id+'_description" class="form-control" placeholder="short description of the sensor">\
-                </div>\
-                <div class="form-group">\
-                    <label>Sensor Icon</label>\
-                    <input type="text" id="'+this.id+'_icon" class="form-control" placeholder="e.g. microchip">\
-                </div>\
-                <div class="panel panel-default">\
-                    <div class="panel-heading">Data</div>\
-                    <div class="panel-body">\
+            <form method="POST" role="form" id="'+this.id+'_form" class="needs-validation" novalidate>\
+                <ul class="nav nav-tabs" id="'+this.id+'_tabs" role="tablist">\
+                    <li class="nav-item">\
+                        <a class="nav-link active" id="'+this.id+'_tab_general" data-toggle="pill" href="#'+this.id+'_tab_general_content" role="tab" aria-controls="'+this.id+'_tab_general_content" aria-selected="true">General</a>\
+                    </li>\
+                    <li class="nav-item">\
+                        <a class="nav-link" id="'+this.id+'_tab_data" data-toggle="pill" href="#'+this.id+'_tab_data_content"  role="tab" aria-controls="'+this.id+'_tab_data_content" aria-selected="false">Data</a>\
+                    </li>\
+                    <li class="nav-item">\
+                        <a class="nav-link" id="'+this.id+'_tab_processing" data-toggle="pill" href="#'+this.id+'_tab_processing_content" role="tab" aria-controls="'+this.id+'_tab_processing_content" aria-selected="false">Processing</a>\
+                    </li>\
+                    <li class="nav-item">\
+                        <a class="nav-link" id="'+this.id+'_tab_service" data-toggle="pill" href="#'+this.id+'_tab_service_content" role="tab" aria-controls="'+this.id+'_tab_service_content" aria-selected="false">Service</a>\
+                    </li>\
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+this.id+'_tab_service_schedule" data-toggle="pill" href="#'+this.id+'_tab_service_schedule_content" role="tab" aria-controls="'+this.id+'_tab_service_schedule_content" aria-selected="false">Schedule</a>\
+                    </li>\
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+this.id+'_tab_service_configuration" data-toggle="pill" href="#'+this.id+'_tab_service_configuration_content" role="tab" aria-controls="'+this.id+'_tab_service_configuration_content" aria-selected="false">Configuration</a>\
+                    </li>\
+                </ul>\
+                <div class="tab-content">\
+                    <div class="tab-pane fade show active" id="'+this.id+'_tab_general_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_general">\
+                        <div class="form-group">\
+                            <label>Sensor identifier*</label>\
+                            <input type="text" id="'+this.id+'_sensor_id" class="form-control" placeholder="identifier that will be used to reference the sensor" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Sensor Description</label>\
+                            <input type="text" id="'+this.id+'_description" class="form-control" placeholder="short description of the sensor">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Sensor Icon</label>\
+                            <input type="text" id="'+this.id+'_icon" class="form-control" placeholder="e.g. microchip">\
+                        </div>\
+                    </div>\
+                    <div class="tab-pane fade" id="'+this.id+'_tab_data_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_data">\
                         <div class="form-group">\
                             <label>Format*</label>\
                             <select id="'+this.id+'_format" class="form-control" required>\
@@ -50,93 +71,82 @@ class Sensor_wizard extends Widget {
                             <input type="text" id="'+this.id+'_unit" class="form-control" placeholder="e.g. °C">\
                         </div>\
                     </div>\
-                </div>\
-                <div class="panel panel-default">\
-                    <div class="panel-heading">Processing</div>\
-                    <div class="panel-body">\
+                    <div class="tab-pane fade" id="'+this.id+'_tab_processing_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_processing">\
                         <div class="form-group">\
                             <label>Automatic Aggregation</label>\
-                            <select id="'+this.id+'_calculate" class="form-control"><option value="">None</option></select>\
+                            <select id="'+this.id+'_calculate" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Retention Policies</label>\
-                            <select id="'+this.id+'_retain" class="form-control"><option value="">None</option></select>\
+                            <select id="'+this.id+'_retain" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
-                            <label>Post Process Data After Acquisition</label>\
-                            <select id="'+this.id+'_post_processor" class="form-control"><option value="">None</option></select>\
-                        </div>\
-                    </div>\
-                </div>\
-                <div class="panel panel-primary">\
-                    <div class="panel-heading">\
-                        <div class="form-group">\
-                            <label>Associated Service</label>\
-                            <select id="'+this.id+'_service_name" class="form-control"><option value="">None</option></select>\
+                            <label>Transform Data After Acquisition</label>\
+                            <select id="'+this.id+'_post_processor" class="form-control"></select>\
                         </div>\
                     </div>\
-                    <div class="panel-body hidden" id="'+this.id+'_service_panel">\
+                    <div class="tab-pane fade" id="'+this.id+'_tab_service_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_service">\
                         <div class="form-group">\
-                            <label>How to interact with the service*</label>\
-                            <select id="'+this.id+'_service_mode" class="form-control">\
+                                <label>Associated Service</label>\
+                                <select id="'+this.id+'_service_name" class="form-control"><option value="">None</option></select>\
+                            </div>\
+                        <div class="hidden" id="'+this.id+'_service_mode_panel">\
+                            <div class="form-group">\
+                                <label>How to interact with the service*</label>\
+                                <select id="'+this.id+'_service_mode" class="form-control">\
+                                </select>\
+                            </div>\
+                        </div>\
+                    </div>\
+                    <div class="tab-pane fade" id="'+this.id+'_tab_service_schedule_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_service_schedule">\
+                        <div class="form-group">\
+                            <label>Polling Mode*</label>\
+                            <select id="'+this.id+'_service_schedule_trigger" class="form-control">\
+                                <option value="interval">Interval - run the job at fixed intervals of time</option>\
+                                <option value="cron">Cron - run the job periodically at certain time(s) of day</option>\
                             </select>\
                         </div>\
-                        <div class="panel panel-default hidden" id="'+this.id+'_service_schedule_panel">\
-                            <div class="panel-heading">Scheduler</div>\
-                            <div class="panel-body">\
-                                <div class="form-group">\
-                                    <label>Polling Mode*</label>\
-                                    <select id="'+this.id+'_service_schedule_trigger" class="form-control">\
-                                        <option value="interval">Interval - run the job at fixed intervals of time</option>\
-                                        <option value="cron">Cron - run the job periodically at certain time(s) of day</option>\
-                                    </select>\
-                                </div>\
-                                <div id="'+this.id+'_service_schedule_panel_interval" class="d-none">\
-                                    <div class="form-group">\
-                                        <label>days</label>\
-                                        <input type="text" id="'+this.id+'_service_schedule_days" class="form-control" placeholder="e.g. 3 to poll every 3 days">\
-                                    </div>\
-                                    <div class="form-group">\
-                                        <label>hours</label>\
-                                        <input type="text" id="'+this.id+'_service_schedule_hours" class="form-control" placeholder="e.g. 3 to poll every 3 hours">\
-                                    </div>\
-                                    <div class="form-group">\
-                                        <label>minutes</label>\
-                                        <input type="text" id="'+this.id+'_service_schedule_minutes" class="form-control" placeholder="e.g. 3 to poll every 3 minutes">\
-                                    </div>\
-                                    <div class="form-group">\
-                                        <label>seconds</label>\
-                                        <input type="text" id="'+this.id+'_service_schedule_seconds" class="form-control" placeholder="e.g. 3 to poll every 3 seconds">\
-                                    </div>\
-                                </div>\
-                                <div id="'+this.id+'_service_schedule_panel_cron" class="d-none">\
-                                    <div class="form-group">\
-                                        <label>day</label>\
-                                        <input type="text" id="'+this.id+'_service_schedule_day" class="form-control" placeholder="e.g. 3 to poll at the 3rd of each month. Use \'*\' for every day">\
-                                    </div>\
-                                    <div class="form-group">\
-                                        <label>hour</label>\
-                                        <input type="text" id="'+this.id+'_service_schedule_hour" class="form-control" placeholder="e.g. 3 to poll at 3am every day. Use \'*\' for every hour">\
-                                    </div>\
-                                    <div class="form-group">\
-                                        <label>minute</label>\
-                                        <input type="text" id="'+this.id+'_service_schedule_minute" class="form-control" placeholder="e.g. 3 to poll at the 3rd minute of every hour. Use \'*\' for every minute">\
-                                    </div>\
-                                    <div class="form-group">\
-                                        <label>second</label>\
-                                        <input type="text" id="'+this.id+'_service_schedule_second" class="form-control" placeholder="e.g. 3 to poll at the 3rd second of every minute">\
-                                    </div>\
-                                </div>\
+                        <div id="'+this.id+'_service_schedule_panel_interval" class="d-none">\
+                            <div class="form-group">\
+                                <label>days</label>\
+                                <input type="text" id="'+this.id+'_service_schedule_days" class="form-control" placeholder="e.g. 3 to poll every 3 days">\
+                            </div>\
+                            <div class="form-group">\
+                                <label>hours</label>\
+                                <input type="text" id="'+this.id+'_service_schedule_hours" class="form-control" placeholder="e.g. 3 to poll every 3 hours">\
+                            </div>\
+                            <div class="form-group">\
+                                <label>minutes</label>\
+                                <input type="text" id="'+this.id+'_service_schedule_minutes" class="form-control" placeholder="e.g. 3 to poll every 3 minutes">\
+                            </div>\
+                            <div class="form-group">\
+                                <label>seconds</label>\
+                                <input type="text" id="'+this.id+'_service_schedule_seconds" class="form-control" placeholder="e.g. 3 to poll every 3 seconds">\
                             </div>\
                         </div>\
-                        <div class="panel panel-default">\
-                            <div class="panel-heading">Configuration</div>\
-                            <div class="panel-body" id="'+this.id+'_service_configuration">\
+                        <div id="'+this.id+'_service_schedule_panel_cron" class="d-none">\
+                            <div class="form-group">\
+                                <label>day</label>\
+                                <input type="text" id="'+this.id+'_service_schedule_day" class="form-control" placeholder="e.g. 3 to poll at the 3rd of each month. Use \'*\' for every day">\
+                            </div>\
+                            <div class="form-group">\
+                                <label>hour</label>\
+                                <input type="text" id="'+this.id+'_service_schedule_hour" class="form-control" placeholder="e.g. 3 to poll at 3am every day. Use \'*\' for every hour">\
+                            </div>\
+                            <div class="form-group">\
+                                <label>minute</label>\
+                                <input type="text" id="'+this.id+'_service_schedule_minute" class="form-control" placeholder="e.g. 3 to poll at the 3rd minute of every hour. Use \'*\' for every minute">\
+                            </div>\
+                            <div class="form-group">\
+                                <label>second</label>\
+                                <input type="text" id="'+this.id+'_service_schedule_second" class="form-control" placeholder="e.g. 3 to poll at the 3rd second of every minute">\
                             </div>\
                         </div>\
                     </div>\
+                    <div class="tab-pane fade" id="'+this.id+'_tab_service_configuration_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_service_configuration">\
+                    </div>\
                 </div>\
-            </div>\
+            </form>\
             ')
         // configure service name selector
         $('#'+this.id+'_service_name').unbind().change(function(this_class) {
@@ -144,9 +154,15 @@ class Sensor_wizard extends Widget {
                 var service = $('#'+this_class.id+'_service_name').val()
                 // show the service panel only if a service is selected
                 if (service == "") {
-                    $('#'+this_class.id+'_service_panel').addClass("d-none")
+                    $('#'+this_class.id+'_service_mode_panel').addClass("d-none")
+                    $('#'+this_class.id+'_tab_service_schedule').parent('li').addClass("d-none")
+                    $('#'+this_class.id+'_tab_service_configuration').parent('li').addClass("d-none")
                     return
-                } else $('#'+this_class.id+'_service_panel').removeClass("d-none")
+                } else {
+                    $('#'+this_class.id+'_service_mode_panel').removeClass("d-none")
+                    $('#'+this_class.id+'_tab_service_schedule').parent('li').removeClass("d-none")
+                    $('#'+this_class.id+'_tab_service_configuration').parent('li').removeClass("d-none")
+                }
                 // get the manifest associated to the selected service
                 var manifest = this_class.manifests["service/"+service]
                 if (manifest == null) {
@@ -154,29 +170,29 @@ class Sensor_wizard extends Widget {
                     $("#wizard").modal("hide")
                     return
                 }
+                // delete all options from service mode
+                $('#'+this_class.id+'_service_mode').find('option').remove()
                 // populate service mode only with allowed modes
-                if ($('#'+this_class.id+'_service_mode').size() == 1) {
-                    for (var module_object of manifest["modules"]) {
-                        for (var module in module_object) {
-                            for (var mode in module_object[module]["service_configuration"]) {
-                                var text = ""
-                                if (mode == "active") text = "Active - periodically poll the sensor for new data"
-                                else if (mode == "passive") text = "Passive - the sensor will periodically provide new data"
-                                else if (mode == "actuator") text = "Actuator - the sensor is an actuator"
-                                // add it to the select
-                                $('#'+this_class.id+'_service_mode').append($('<option>', {
-                                    value: mode,
-                                    text: text
-                                }));
-                                // select the first item
-                                $('#'+this_class.id+'_service_mode').prop("selectedIndex", 0).trigger("change")
-                                // if active is selected, trigger the change event on the schedule trigger
-                                if ($('#'+this_class.id+'_service_mode').val() == "active") {
-                                    $('#'+this_class.id+'_service_schedule_trigger').prop("selectedIndex", 0).trigger("change")
-                                }
+                for (var module_object of manifest["modules"]) {
+                    for (var module in module_object) {
+                        for (var mode in module_object[module]["service_configuration"]) {
+                            var text = ""
+                            if (mode == "active") text = "Active - periodically poll the sensor for new data"
+                            else if (mode == "passive") text = "Passive - the sensor will periodically provide new data"
+                            else if (mode == "actuator") text = "Actuator - the sensor is an actuator"
+                            // add it to the select
+                            $('#'+this_class.id+'_service_mode').append($('<option>', {
+                                value: mode,
+                                text: text
+                            }));
+                            // select the first item
+                            $('#'+this_class.id+'_service_mode').prop("selectedIndex", 0).trigger("change")
+                            // if active is selected, trigger the change event on the schedule trigger
+                            if ($('#'+this_class.id+'_service_mode').val() == "active") {
+                                $('#'+this_class.id+'_service_schedule_trigger').prop("selectedIndex", 0).trigger("change")
                             }
-                         }
-                    }
+                        }
+                     }
                 }
             };
         }(this))
@@ -186,10 +202,10 @@ class Sensor_wizard extends Widget {
                 var selected_service = $('#'+this_class.id+'_service_name').val()
                 var selected_mode = $('#'+this_class.id+'_service_mode').val()
                 // show/hide the schedule panel
-                if (selected_mode == "active") $('#'+this_class.id+'_service_schedule_panel').removeClass("d-none")
-                else $('#'+this_class.id+'_service_schedule_panel').addClass("d-none")
+                if (selected_mode == "active") $('#'+this_class.id+'_tab_service_schedule').parent('li').removeClass("d-none")
+                else $('#'+this_class.id+'_tab_service_schedule').parent('li').addClass("d-none")
                 // clear service configuration
-                $('#'+this_class.id+'_service_configuration').html("")
+                $('#'+this_class.id+'_tab_service_configuration_content').html("")
                 // get the manifest associated to the selected service
                 var manifest = this_class.manifests["service/"+selected_service]
                 if (manifest == null) return
@@ -226,7 +242,7 @@ class Sensor_wizard extends Widget {
                                             <input type="text" id="'+this_class.id+'_service_configuration_'+configuration["name"]+'" name="'+configuration["name"]+'" class="form-control" placeholder="'+placeholder+'" '+required+'>\
                                         </div>'
                                 }
-                                $('#'+this_class.id+'_service_configuration').append(input)
+                                $('#'+this_class.id+'_tab_service_configuration_content').append(input)
                             }
                         }
                     }
@@ -251,14 +267,14 @@ class Sensor_wizard extends Widget {
         // what to do when the form is submitted
         var id = this.id
         var this_class = this
-        $('#'+this.id+'_form').validator().on('submit', function (e) {
+        $('#'+this.id+'_form').on('submit', function (e) {
             // form is validated
-            if (! e.isDefaultPrevented()) {
+            if ($('#'+this_class.id+'_form')[0].checkValidity()) {
                 // get sensor_id 
                 var sensor_id = $("#"+this_class.id+"_sensor_id").val()
                 // build up the configuration file
                 var sensor = {}
-                for (var item of ["description", "icon", "format", "unit", "calculate", "retain", "post_process"]) {
+                for (var item of ["description", "icon", "format", "unit", "calculate", "retain", "post_processor"]) {
                     var value = $("#"+this_class.id+"_"+item).val()
                     if (value == null || value == "") continue
                     sensor[item] = $.isNumeric(value) ? parseFloat(value) : value
@@ -280,7 +296,7 @@ class Sensor_wizard extends Widget {
                         });
                     }
                     sensor["service"]["configuration"] = {}
-                    $("#"+this_class.id+"_service_configuration :input").each(function(e){
+                    $("#"+this_class.id+"_tab_service_configuration_content :input").each(function(e){
                         var item = this.id.replace(this_class.id+"_service_configuration_", "")
                         var value = this.value
                         if (value != null && value != "") sensor["service"]["configuration"][item] = $.isNumeric(value) ? parseFloat(value) : value
@@ -299,6 +315,11 @@ class Sensor_wizard extends Widget {
                 gui.notify("success","Sensor "+sensor_id+" saved successfully")
                 return false
             }
+            else {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            $('#'+this_class.id+'_form').addClass("was-validated")
         })
         // configure submit button
         $('#wizard_save').unbind().click(function(this_class) {
@@ -357,16 +378,27 @@ class Sensor_wizard extends Widget {
         if (message.args == "controller/hub") {
             var data = message.get_data()
             // populate the selector with options
-            for (var item of ["retain", "calculate", "post_processor"]) {
-                if ($('#'+this.id+'_'+item+' option').size() == 1) {
-                    for (var value in data[item]) {
-                        // add it to the select
-                        $('#'+this.id+'_'+item).append($('<option>', {
-                            value: value,
-                            text: data[item][value]["description"]
-                        }));
-                    }
+            for (var item of ["retain", "calculate"]) {
+                // delete all options 
+                $('#'+this.id+'_'+item).find('option').remove()
+                // add it to the select            
+                $('#'+this.id+'_'+item).append($('<option>', { value: "", text: "None" }));
+                for (var value in data[item]) {
+                    $('#'+this.id+'_'+item).append($('<option>', {
+                        value: escape_html(value),
+                        text: escape_html(data[item][value]["description"])
+                    }));
                 }
+            }
+            // delete all options 
+            $('#'+this.id+'_post_processor').find('option').remove()
+            // add it to the select   
+            $('#'+this.id+'_post_processor').append($('<option>', { value: "", text: "None" }));
+            for (var value in data["post_processors"]) {
+                $('#'+this.id+'_post_processor').append($('<option>', {
+                    value: escape_html(value),
+                    text: value
+                }));
             }
        } 
         // assuming we are receiving a sensor configuration (edit)
@@ -377,7 +409,7 @@ class Sensor_wizard extends Widget {
             $("#"+this.id+"_sensor_id").val(sensor_id)
             $("#"+this.id+"_sensor_id").prop("disabled", true)
             // populate the rest of the form
-            for (var item of ["description", "icon", "format", "unit", "calculate", "retain", "post_process"]) {
+            for (var item of ["description", "icon", "format", "unit", "calculate", "retain", "post_processor"]) {
                 if (item in sensor) $("#"+this.id+"_"+item).val(sensor[item])
             }
             if ("service" in sensor) {

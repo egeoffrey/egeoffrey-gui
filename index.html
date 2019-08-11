@@ -41,9 +41,6 @@
     <!-- FastClick (speed up clicks) -->
     <script src="lib/fastclick/fastclick.js"></script>
 
-    <!--  Validator (form validator) -->
-    <script src="lib/validator/validator.min.js"></script>
-
     <!--  Touchspin (numeric input box with +/-) -->
     <script src="lib/touchspin/touchspin.min.js"></script>
     <link rel="stylesheet" href="lib/touchspin/touchspin.min.css" />
@@ -277,7 +274,7 @@
 
         <!-- =============================================== -->
 
-        <!-- ### ENLARGE POPUP  ### -->
+        <!-- ### GENERIC POPUP  ### -->
         <div class="modal fade modal-fullscreen force-fullscreen" id="popup">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -295,12 +292,12 @@
 
         <!-- ### WIZARD POPUP  ### -->
         <div class="modal fade" id="wizard">
-            <div class="modal-dialog modal-md">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
+                        <h4 class="modal-title" id="wizard_title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="wizard_title"></h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
