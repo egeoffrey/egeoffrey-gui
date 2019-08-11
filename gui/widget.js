@@ -106,7 +106,8 @@ class Widget {
 
     // add an info box
     add_small_box(id, title, icon, color) {
-        var template = '<div class="info-box">\
+        var template = '\
+        <section class="info-box">\
             <span class="info-box-icon bg-'+color+'" id="'+id+'_color"><i class="fas fa-'+icon+'" id="'+id+'_icon"></i></span>\
             <div class="info-box-content">\
               <span class="info-box-text">'+title+'</span>\
@@ -116,14 +117,15 @@ class Widget {
               </span>\
               <small><div class="text-muted" id="'+id+'_timestamp">&nbsp;</div></small>\
             </div>\
-        </div>'
+        </section>'
         $("#"+id).empty()
         $("#"+id).html(template)
     }
     
     // add a stat box
     add_small_box_2(id, title, icon, color, link=null) {
-        var template = '<div class="small-box bg-'+color+'" id="'+id+'_color">\
+        var template = '\
+        <section class="small-box bg-'+color+'" id="'+id+'_color">\
             <div class="inner">\
               <h3 >\
                 <span id="'+id+'_value">&nbsp;</span>\
@@ -135,7 +137,7 @@ class Widget {
               <i class="fas fa-'+icon+'" id="'+id+'_icon"></i>\
             </div>\
             <a class="small-box-footer" id="'+id+'_link"> Show More <i class="fa fa-arrow-circle-right"></i></a>\
-          </div>'
+        </section>'
         $("#"+id).empty()
         $("#"+id).html(template)
         if (link != null) $("#"+id+"_link").attr("href", "#"+link)

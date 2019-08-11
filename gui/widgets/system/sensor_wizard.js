@@ -90,7 +90,7 @@ class Sensor_wizard extends Widget {
                                 <label>Associated Service</label>\
                                 <select id="'+this.id+'_service_name" class="form-control"><option value="">None</option></select>\
                             </div>\
-                        <div class="hidden" id="'+this.id+'_service_mode_panel">\
+                        <div class="d-none" id="'+this.id+'_service_mode_panel">\
                             <div class="form-group">\
                                 <label>How to interact with the service*</label>\
                                 <select id="'+this.id+'_service_mode" class="form-control">\
@@ -166,8 +166,14 @@ class Sensor_wizard extends Widget {
                 // get the manifest associated to the selected service
                 var manifest = this_class.manifests["service/"+service]
                 if (manifest == null) {
-                    gui.notify("error","The associated service is not available, cannot display the sensor's options")
+                    gui.notify("warning","The associated service is not running, opening the advanced configuration editor")
+                    $('#wizard').unbind('hidden.bs.modal')
+                    console.log($("#wizard"))
                     $("#wizard").modal("hide")
+                    console.log($("#wizard"))
+                    gui.unload_page()
+                    var request = location.hash.split("=")
+                    window.location.hash = '#__configuration=sensors/'+request[1]
                     return
                 }
                 // delete all options from service mode
@@ -324,7 +330,6 @@ class Sensor_wizard extends Widget {
         // configure submit button
         $('#wizard_save').unbind().click(function(this_class) {
             return function () {
-                $("#"+this_class.id+"_form").validator("update")
                 $("#"+this_class.id+"_form").submit()
             };
         }(this))

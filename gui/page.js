@@ -119,7 +119,7 @@ class Page {
                     if ("offset" in widget) offset = widget["offset"]
                     // add the column
                     var id = "widget_"+row+"_"+column
-                    $("#"+row_id).append('<div class="col-lg-'+widget["size"]+' col-md-offset-'+offset+'" id="'+id+'">');
+                    $("#"+row_id).append('<section class="connectedSortable col-lg-'+widget["size"]+' col-md-offset-'+offset+'" id="'+id+'"></section>');
                     // TODO: add loading overlay
                     // add the requested widget type
                     var widget_object = this.add_widget(id, widget)
@@ -147,8 +147,21 @@ class Page {
                         }(this, widget));
                     }
                 }
+                $("#page").append('</div>')
             }
         }
+        // Make the dashboard widgets sortable
+        $('.connectedSortable').sortable({
+            placeholder         : 'sort-highlight',
+            connectWith         : '.connectedSortable',
+            handle              : '.card-header, .nav-tabs, .info-box-icon',
+            forcePlaceholderSize: true,
+            zIndex              : 999999,
+            stop: function( event, ui ) { 
+                console.log(event)
+            }
+        })
+        $('.connectedSortable .card-header, .connectedSortable .nav-tabs-custom').css('cursor', 'move')
     }
     
     // close the current page

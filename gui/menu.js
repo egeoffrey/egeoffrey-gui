@@ -26,14 +26,14 @@ class Menu extends Widget {
         for (var section of this.sections) {
             if (section == null) continue
             if (! (section["section_id"] in this.entries)) continue
-            var section_icon = "icon" in section ? section["icon"] : "angle-right"
+            var section_icon = "icon" in section ? section["icon"] : "none"
             var section_html = '\
                 <li class="nav-item has-treeview" id="menu_section_'+section["section_id"]+'_tree">\
-                    <a href="#" class="nav-link">\
-                        <i class="fas fa-'+section_icon+'"></i>\
+                    <a href="#" class="nav-link" id="menu_section_'+section["section_id"]+'_name">\
+                        <i class="fas fa-'+section_icon+'"></i> \
                         <span>'+section["text"]+'</span>\
                         <span class="float-right-container">\
-                            <i class="fa fa-angle-left float-right"></i>\
+                            <i class="fa fa-angle-left float-right" id="menu_section_'+section["section_id"]+'_arrow"></i>\
                         </span>\
                     </a>\
                     <ul class="nav nav-treeview" id="menu_section_'+section["section_id"]+'">\
@@ -47,20 +47,51 @@ class Menu extends Widget {
                 // add the entry to the menu
                 if (! gui.is_authorized(entry)) continue
                 var page_tag = entry["page"].replaceAll("/","_")
-                $("#menu_section_"+section["section_id"]).append('<li class="nav-item" id="menu_user_item_'+page_tag+'"><a class="nav-link" href="#'+entry["page"]+'"> <i class="nav-icon fas fa-'+entry["icon"]+'"></i> '+capitalizeFirst(entry["text"])+'</a></li>');
+                $("#menu_section_"+section["section_id"]).append('\
+                <li class="nav-item">\
+                    <a class="nav-link" id="menu_user_item_'+page_tag+'" href="#'+entry["page"]+'">\
+                        &nbsp;<i class="nav-icon fas fa-'+entry["icon"]+'"></i> '+capitalizeFirst(entry["text"])+'\
+                    </a>\
+                </li>');
                 // open the page on click
-                $("#menu_user_item_"+page_tag).click(function(page){
+                $("#menu_user_item_"+page_tag).unbind().click(function(page, section_id, page_tag){
                     return function () {
                         // if clicking on the current page, explicitely reload it since hash will not change
                         if (location.hash.replace("#","") == page) gui.load_page(page)
                         window.scrollTo(0,0)
-                        if ($("body").hasClass('sidebar-open')) $("body").removeClass('sidebar-open').removeClass('sidebar-collapse').trigger('collapsed.pushMenu')
+                        // close active section
+                        $("#menu li").removeClass("active menu-open")
+                        // remove active section
+                        $("#menu li a").removeClass("active")
+                        if ($("#menu li a span i").hasClass("fa-angle-down")) {
+                            $("#menu li a span i").removeClass("fa-angle-down")
+                            $("#menu li a span i").addClass("fa-angle-left")
+                        }
+                        // open new section
+                        $("#menu_section_"+section_id+"_tree").addClass("active menu-open")
+                        // make new section as active
+                        $("#menu_section_"+section_id+"_name").addClass("active")
+                        // place arrow down
+                        $("#menu_section_"+section_id+"_arrow").removeClass("fa-angle-left")
+                        $("#menu_section_"+section_id+"_arrow").addClass("fa-angle-down")
+                        // set item as active
+                        $("#menu_user_item_"+page_tag).addClass("active")
+                        // configure push menu
+                        //if ($("body").hasClass('menu-open')) $("body").removeClass('menu-open').removeClass('menu-collapse').trigger('collapsed.pushMenu')
                     }
-                }(entry["page"]));
+                }(entry["page"], section["section_id"], page_tag));
                 items++
                 // open up the section containing the selected menu item
                 if (selected != null && selected == entry["page"]) {
+                    // set section as active
+                    $("#menu_section_"+section["section_id"]+"_name").addClass("active")
+                    // place arrow down
+                    $("#menu_section_"+section["section_id"]+"_arrow").removeClass("fa-angle-left")
+                    $("#menu_section_"+section["section_id"]+"_arrow").addClass("fa-angle-down")
+                    // open the section menu
                     $("#menu_section_"+section["section_id"]+"_tree").addClass("active menu-open")
+                    // set item as active
+                    $("#menu_user_item_"+page_tag).addClass("active")
                 }
             }
             // hide the section if it has no items

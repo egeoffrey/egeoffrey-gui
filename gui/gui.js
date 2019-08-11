@@ -64,7 +64,7 @@ class Gui extends Module {
             "closeButton": false,
             "preventDuplicates": false,
             "hideDuration": "500",
-            "timeOut": "2000",
+            "timeOut": "3000",
         }
         toastr[type](message)
 	}
@@ -144,7 +144,10 @@ class Gui extends Module {
             page_id = split[0]
         }
         // if no page is provided, load the default_page
-        if (page_id == "") page_id = gui.settings["default_page"]
+        if (page_id == "") {
+            window.location.hash = '#'+gui.settings["default_page"]
+            return
+        }
         // load system pages
         if (page_id.startsWith("__")) {
             this.page = new Page("SYSTEM", page_id)
