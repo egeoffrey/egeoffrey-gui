@@ -46,7 +46,7 @@ class Gui extends Module {
         // scheduler's events
         this.scheduler_events = []
         // check for updates after login
-        this.check_for_updates = true
+        this.check_for_updates = false
         // safeguard, if not receiving a configuration file timely, disconnect
         setTimeout(function(this_class) {
             return function() {
@@ -62,7 +62,7 @@ class Gui extends Module {
 	notify(type, message) {
         toastr.options = {
             "closeButton": false,
-            "preventDuplicates": false,
+            "preventDuplicates": true,
             "hideDuration": "500",
             "timeOut": "3000",
         }

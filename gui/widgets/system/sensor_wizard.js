@@ -9,6 +9,12 @@ class Sensor_wizard extends Widget {
     
     // draw the widget's content
     draw() {
+        // extract requested sensor_id from URL
+        var sensor_id = null
+        if (location.hash.includes("=")) {
+            var request = location.hash.split("=")
+            sensor_id = request[1]
+        }
         // clear up the modal
         $("#wizard_body").html("")
         $("#wizard_title").html("Sensor Configuration")
@@ -43,6 +49,10 @@ class Sensor_wizard extends Widget {
                             <label>Sensor identifier*</label>\
                             <input type="text" id="'+this.id+'_sensor_id" class="form-control" placeholder="identifier that will be used to reference the sensor" required>\
                         </div>\
+                        <div class="form-check">\
+                            <input type="checkbox" class="form-check-input" id="'+this.id+'_disabled">\
+                            <label class="form-check-label">Disabled</label>\
+                        </div><br>\
                         <div class="form-group">\
                             <label>Sensor Description</label>\
                             <input type="text" id="'+this.id+'_description" class="form-control" placeholder="short description of the sensor">\
@@ -147,7 +157,18 @@ class Sensor_wizard extends Widget {
                     </div>\
                 </div>\
             </form>\
-            ')
+        ')
+        // add link to advanced configuration
+        var link = sensor_id == null ? "__new__" : sensor_id
+        $("#wizard_body").append('<a id="'+this.id+'_advanced_editor" class="float-right text-primary">Advanced Editor</a>')
+        $("#"+this.id+"_advanced_editor").unbind().click(function(this_class) {
+            return function () {
+                $('#wizard').unbind('hidden.bs.modal')
+                $("#wizard").modal("hide")
+                gui.unload_page()
+                window.location.hash = "#__configuration=sensors/"+link 
+            };
+        }(this));
         // configure service name selector
         $('#'+this.id+'_service_name').unbind().change(function(this_class) {
             return function () {
@@ -166,14 +187,9 @@ class Sensor_wizard extends Widget {
                 // get the manifest associated to the selected service
                 var manifest = this_class.manifests["service/"+service]
                 if (manifest == null) {
-                    gui.notify("warning","The associated service is not running, opening the advanced configuration editor")
-                    $('#wizard').unbind('hidden.bs.modal')
-                    console.log($("#wizard"))
-                    $("#wizard").modal("hide")
-                    console.log($("#wizard"))
-                    gui.unload_page()
-                    var request = location.hash.split("=")
-                    window.location.hash = '#__configuration=sensors/'+request[1]
+                    $('#'+this_class.id+'_service_name').prop("disabled", true)
+                    $('#'+this_class.id+'_service_mode').prop("disabled", true)
+                    gui.notify("warning","The associated service is not running, cannot build the configuration wizard. Open the advanced configuration editor to manually edit the sensor")
                     return
                 }
                 // delete all options from service mode
@@ -285,6 +301,9 @@ class Sensor_wizard extends Widget {
                     if (value == null || value == "") continue
                     sensor[item] = $.isNumeric(value) ? parseFloat(value) : value
                 }
+                // disabled
+                if ($("#"+this_class.id+"_disabled").prop("checked")) sensor["disabled"] = true
+                // service
                 var service_name = $("#"+this_class.id+"_service_name").val()
                 if (service_name != null && service_name != "") {
                     sensor["service"] = {}
@@ -301,6 +320,7 @@ class Sensor_wizard extends Widget {
                             if (value != null && value != "") sensor["service"]["schedule"][item] = $.isNumeric(value) ? parseFloat(value) : value
                         });
                     }
+                    // service configuration
                     sensor["service"]["configuration"] = {}
                     $("#"+this_class.id+"_tab_service_configuration_content :input").each(function(e){
                         var item = this.id.replace(this_class.id+"_service_configuration_", "")
@@ -343,13 +363,12 @@ class Sensor_wizard extends Widget {
         // request manifests for all the services
         this.add_broadcast_listener("+/+", "MANIFEST", "#")
         // extract requested sensor from URL
-        if (location.hash.includes("=")) {
-            setTimeout(function(this_class) {
+        if (sensor_id != null) {
+            setTimeout(function(this_class, sensor_id) {
                 return function() {
-                    var request = location.hash.split("=")
-                    this_class.add_configuration_listener("sensors/"+ request[1], gui.supported_sensors_config_schema)
+                    this_class.add_configuration_listener("sensors/"+sensor_id, gui.supported_sensors_config_schema)
                 };
-            }(this), 100);
+            }(this, sensor_id), 100);
         }
     }
     
@@ -405,7 +424,7 @@ class Sensor_wizard extends Widget {
                     text: value
                 }));
             }
-       } 
+        } 
         // assuming we are receiving a sensor configuration (edit)
         else {
             // set sensor_id
@@ -417,6 +436,9 @@ class Sensor_wizard extends Widget {
             for (var item of ["description", "icon", "format", "unit", "calculate", "retain", "post_processor"]) {
                 if (item in sensor) $("#"+this.id+"_"+item).val(sensor[item])
             }
+            // populate disabled checkbox
+            if ("disabled" in sensor && sensor["disabled"]) $("#"+this.id+"_disabled").prop("checked", true)
+            // populate service
             if ("service" in sensor) {
                 $("#"+this.id+"_service_name").val(sensor["service"]["name"]).trigger('change')
                 $("#"+this.id+"_service_mode").val(sensor["service"]["mode"]).trigger('change')

@@ -27,7 +27,7 @@ class Rules extends Widget {
         $(body).append(button_html)
         $("#"+this.id+"_new").unbind().click(function() {
             return function () {
-                window.location.hash = '#__configuration=rules/__new__'
+                window.location.hash = '#__rule_wizard'
             };
         }());
         // add table
@@ -160,7 +160,7 @@ class Rules extends Widget {
         // edit the selected rule
         $("#"+this.id+"_edit_"+rule_tag).unbind().click(function(rule_id) {
             return function () {
-                window.location.hash = '#__configuration=rules/'+rule_id;
+                window.location.hash = '#__rule_wizard='+rule_id;
             };
         }(rule_id));
         // delete the rule

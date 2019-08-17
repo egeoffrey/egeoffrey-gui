@@ -65,7 +65,11 @@ class Page {
                 this.draw(page_layout)
             }
             else if (page == "__sensor_wizard") {
-                var widget_object = new Sensor_wizard("wizard", {})
+                var widget_object = new Sensor_wizard("sensor_wizard", {})
+                widget_object.draw()
+            }
+            else if (page == "__rule_wizard") {
+                var widget_object = new Rule_wizard("rule_wizard", {})
                 widget_object.draw()
             }
             else if (page == "__notifications") {

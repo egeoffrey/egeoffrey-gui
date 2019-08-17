@@ -137,7 +137,7 @@ class Timeline extends Widget {
                 var flags = [];
                 for (var i = 0; i < data.length; i++) {
                     if (data[i][1] === null || data[i][1] === "") continue;
-                    flags[i] = {'x': data[i][0], 'shape': 'circlepin', 'title': '<i class="fas fa-2x fa-'+data[i][1]+'"></i>'};
+                    flags[i] = {'x': data[i][0], 'shape': 'circlepin', 'title': '<i class="fas fa-1x fa-'+data[i][1]+'"></i>'};
                 }
                 series["data"] = flags
             }
