@@ -86,9 +86,12 @@ class Widget {
             <div class="card card-primary" id="'+id+'_card">\
                 <div class="card-header with-border">\
                     <h3 class="card-title" id="'+id+'_title">'+title+'</h3>\
-                    <div class="card-tools float-right" id="'+id+'_card_buttons">\
-                        <button id="'+id+'_refresh" type="button" class="btn btn-tool"><i class="fas fa-sync"></i></button>\
-                        <button id="'+id+'_popup" type="button" class="btn btn-tool" ><i class="fas fa-arrows-alt"></i></button>\
+                    <div class="card-tools float-right" id="'+id+'_widget_buttons">\
+                        <button id="'+id+'_edit" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-edit"></i></button>\
+                        <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-arrows-alt sortable"></i></button>\
+                        <button id="'+id+'_delete" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-trash-alt"></i></button>\
+                        <button id="'+id+'_refresh" type="button" class="btn btn-tool no_edit_page_item d-none"><i class="fas fa-sync"></i></button>\
+                        <button id="'+id+'_popup" type="button" class="btn btn-tool no_edit_page_item d-none" ><i class="fas fa-expand"></i></button>\
                     </div>\
                 </div>\
                 <div class="card-body no-padding card-primary">\
@@ -101,7 +104,7 @@ class Widget {
             </div>'
         $("#"+id).empty()
         $("#"+id).html(template)
-        if (id.includes("popup_body")) $("#"+id+"_card_buttons").addClass("d-none")
+        if (id.includes("popup_body")) $("#"+id+"_widget_buttons").addClass("d-none")
     }
 
     // add an info box
@@ -110,12 +113,17 @@ class Widget {
         <section class="info-box">\
             <span class="info-box-icon bg-'+color+'" id="'+id+'_color"><i class="fas fa-'+icon+'" id="'+id+'_icon"></i></span>\
             <div class="info-box-content">\
-              <span class="info-box-text">'+title+'</span>\
-              <span class="info-box-number">\
-                <span id="'+id+'_value"></span>\
-                <span id="'+id+'_value_suffix"></span>\
-              </span>\
-              <small><div class="text-muted" id="'+id+'_timestamp">&nbsp;</div></small>\
+                <div class="card-tools float-right" id="'+id+'_widget_buttons">\
+                    <button id="'+id+'_edit" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-edit"></i></button>\
+                    <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none" ><i class="fas fa-arrows-alt sortable"></i></button>\
+                    <button id="'+id+'_delete" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-trash-alt"></i></button>\
+                </div>\
+                <span class="info-box-text">'+title+'</span>\
+                <span class="info-box-number">\
+                    <span id="'+id+'_value"></span>\
+                    <span id="'+id+'_value_suffix"></span>\
+                </span>\
+                <small><div class="text-muted" id="'+id+'_timestamp">&nbsp;</div></small>\
             </div>\
         </section>'
         $("#"+id).empty()
@@ -127,14 +135,19 @@ class Widget {
         var template = '\
         <section class="small-box bg-'+color+'" id="'+id+'_color">\
             <div class="inner">\
-              <h3 >\
-                <span id="'+id+'_value">&nbsp;</span>\
-                <span id="'+id+'_value_suffix"></span>\
-              </h3>\
-              <p>'+title+'</p>\
+                <div class="card-tools float-right" id="'+id+'_widget_buttons">\
+                    <button id="'+id+'_edit" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-edit"></i></button>\
+                    <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none" ><i class="fas fa-arrows-alt sortable"></i></button>\
+                    <button id="'+id+'_delete" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-trash-alt"></i></button>\
+                </div>\
+                <h3 >\
+                    <span id="'+id+'_value">&nbsp;</span>\
+                    <span id="'+id+'_value_suffix"></span>\
+                </h3>\
+                <p>'+title+'</p>\
             </div>\
             <div class="icon">\
-              <i class="fas fa-'+icon+'" id="'+id+'_icon"></i>\
+                <i class="fas fa-'+icon+'" id="'+id+'_icon"></i>\
             </div>\
             <a class="small-box-footer" id="'+id+'_link"> Show More <i class="fa fa-arrow-circle-right"></i></a>\
         </section>'
@@ -147,29 +160,34 @@ class Widget {
     // add chat box
     add_chat_box(id, title) {
         var template = '\
-          <div class="card card-primary cardutline direct-chat direct-chat-success">\
+        <div class="card card-primary cardutline direct-chat direct-chat-success">\
             <div class="card-header with-border">\
-              <h3 class="card-title">'+title+'</h3>\
-              <div class="card-tools float-right">\
-                <button type="button" id="'+id+'_eraser" class="btn btn-tool"><i class="fas fa-eraser"></i></button>\
-                <button type="button" id="'+id+'_popup" class="btn btn-tool"><i class="fas fa-arrows-alt"></i></button>\
-              </div>\
+                <h3 class="card-title">'+title+'</h3>\
+                <div class="card-tools float-right" id="'+id+'_widget_buttons">\
+                    <button id="'+id+'_edit" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-edit"></i></button>\
+                    <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none" ><i class="fas fa-arrows-alt sortable"></i></button>\
+                    <button id="'+id+'_delete" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-trash-alt"></i></button>\
+                    <button type="button" id="'+id+'_popup" class="btn btn-tool no_edit_page_item d-none"><i class="fas fa-expand"></i></button>\
+                </div>\
             </div>\
             <div class="card-body">\
-              <div class="direct-chat-messages" id="'+id+'_messages">\
-              </div>\
+                <div class="direct-chat-messages" id="'+id+'_messages">\
+                </div>\
             </div>\
             <div class="card-footer">\
-              <form>\
-                <div class="input-group">\
-                  <input type="text" name="message" placeholder="Type Message ..." class="form-control" id="'+id+'_text">\
-                      <span class="input-group-btn">\
-                        <button type="button" class="btn btn-primary btn-flat" id="'+id+'_button">Send</button>\
-                      </span>\
-                </div>\
-              </form>\
+                <form>\
+                    <div class="input-group">\
+                        <span class="input-group-btn">\
+                            <button type="button" class="btn btn-default btn-flat" id="'+id+'_eraser"><i class="fas fa-eraser"></i></button>\
+                        </span>\
+                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" id="'+id+'_text">\
+                        <span class="input-group-btn">\
+                            <button type="button" class="btn btn-primary btn-flat" id="'+id+'_button">Send</button>\
+                        </span>\
+                    </div>\
+                </form>\
             </div>\
-          </div>\
+        </div>\
         '
         $("#"+id).empty()
         $("#"+id).html(template)
@@ -178,5 +196,6 @@ class Widget {
                 $("#"+id+"_messages").empty()  
             };
         }(id));
+        if (id.includes("popup_body")) $("#"+id+"_widget_buttons").addClass("d-none")
     }
 }

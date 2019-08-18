@@ -72,7 +72,7 @@ class Sensors extends Widget {
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>_sensor_id_</th><th>Icon</th><th>Sensor</th><th>_format_</th><th>_unit_</th><th>_calculate_</th><th>_retain_</th><th>Associated Service</th><th>Value</th><th>Elapsed</th><th>Actions</th><th>_disabled_</th></tr>\
+                    <tr><th>_sensor_id_</th><th data-priority="1">Icon</th><th data-priority="1">Sensor</th><th>_format_</th><th>_unit_</th><th>_calculate_</th><th>_retain_</th><th>Associated Service</th><th>Value</th><th>Elapsed</th><th data-priority="2">Actions</th><th>_disabled_</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -251,6 +251,7 @@ class Sensors extends Widget {
             disabled
         ]
         table.row.add(row).draw(false);
+        table.responsive.recalc()
         if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         // request value and timestamp
         this.request_data(sensor_id)

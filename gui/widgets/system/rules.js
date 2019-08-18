@@ -42,14 +42,13 @@ class Rules extends Widget {
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>_rule_id_</th><th>Rule</th><th>Severity</th><th>Type</th><th>For</th><th>Conditions</th><th>Actions</th><th>Control</th></tr>\
+                    <tr><th>_rule_id_</th><th data-priority="1">Rule</th><th>Severity</th><th>Type</th><th>For</th><th>Conditions</th><th>Actions</th><th data-priority="2">Control</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
         $(body).append(table)
         // define datatables options
         var options = {
-
             "responsive": true,
             "dom": "Zlfrtip",
             "fixedColumns": false,
@@ -145,6 +144,7 @@ class Rules extends Widget {
         var delete_html = '<button type="button" id="'+this.id+'_delete_'+rule_tag+'" class="btn btn-default" ><i class="fas fa-trash"></i></button>'
         // add the row
         table.row.add(this.disabled_item([rule_id, format_multiline(description, 50), rule["severity"] , type, for_i, conditions, format_multiline(actions, 30), run_html+" "+edit_html+" "+delete_html], disabled)).draw(false);
+        table.responsive.recalc()
         if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         // run the selected rule
         $("#"+this.id+"_run_"+rule_tag).unbind().click(function(rule_id) {

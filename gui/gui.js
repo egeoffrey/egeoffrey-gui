@@ -150,7 +150,7 @@ class Gui extends Module {
         }
         // load system pages
         if (page_id.startsWith("__")) {
-            this.page = new Page("SYSTEM", page_id)
+            this.page = new Page("SYSTEM", page_id, "")
         }
         // load user's page
         else {
@@ -263,7 +263,7 @@ class Gui extends Module {
                 return false
             }
             this.log_debug("Received "+message.args)
-            this.page = new Page("USER", message.get_data())
+            this.page = new Page("USER", message.args, message.get_data())
             this.waiting_for_page = false
         }
         // load charts
