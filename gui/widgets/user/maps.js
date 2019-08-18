@@ -10,13 +10,6 @@ class Maps extends Widget {
     
     // request the data to the database
     request_data() {
-        // customize the chart based on the selected timeframe
-        var timeframe = "last_4_hours"
-        this.widget["group_by"]="day"
-        if ("group_by" in this.widget) {
-            if (this.widget["group_by"] == "hour") timeframe = "last_24_hours"
-            else if (this.widget["group_by"] == "day") timeframe = "last_365_days"
-        }
         // for each sensor
         for (var i = 0; i < this.widget["sensors"].length; i++) {
             var sensor_id = this.widget["sensors"][i]
@@ -24,9 +17,8 @@ class Maps extends Widget {
             var message = new Message(gui)
             message.recipient = "controller/db"
             message.command = "GET"
-            message.set("timeframe", timeframe)
             // request calculated average values if group_by specified
-            message.args = "group_by" in this.widget ? sensor_id+"/"+this.widget["group_by"]+"/"+"avg" : sensor_id
+            message.args = sensor_id
             gui.sessions.register(message, {
                 "sensor_id": sensor_id,
             })

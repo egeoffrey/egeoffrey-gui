@@ -228,7 +228,7 @@ class Value extends Widget {
                     $(tag.replace("_value","_timestamp")).addClass("d-none")
                     var html = '\
                     <div class="input-group input-group">\
-                    <input style="text-align:center;" id="'+id+'_input" class="form-control input" type="text" value="">\
+                        <input style="text-align:center;" id="'+id+'_input" class="form-control input" type="text" value="">\
                     </div>'
                     $(tag).html(html)
                     if (data.length == 1) $(tag+"_input").val(data[0])

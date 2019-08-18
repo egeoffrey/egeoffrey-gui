@@ -22,7 +22,7 @@ class Timeline extends Widget {
             this.add_configuration_listener("sensors/"+sensor_id, gui.supported_sensors_config_schema)
             // if it is the first sensor, request also range
             var add_range = true
-            if ("add_range" in this.widget && ! this.widget["add_range"]) add_range = false
+            if ("no_range" in this.widget && this.widget["no_range"]) add_range = false
             if (add_range && i == 0 && "group_by" in this.widget) {
                 var message = new Message(gui)
                 message.recipient = "controller/db"

@@ -5,8 +5,8 @@ class Page {
         this.page_id = page_id
         this.page = page
         this.type = type
-        // array of created widgets objects
-        this.widget_objects = []
+        // map widget_id with the widget object
+        this.widget_objects = {}
         // map each widget_id to the widget configuration
         this.widgets = {}
         // if it is a user page, draw the page layout provided by the user
@@ -110,35 +110,6 @@ class Page {
         }
     }
     
-    // what to do when the user finish sorting the widgets on the page
-    on_sort() {
-        return
-        var this_class = this
-        // build the new layout
-        var layout = []
-        // for each row of the page
-        $("#page > div").each(function(e){
-            var row_tag = this.id
-            // for each column
-            var row = parseInt(row_tag.replace("row_", ""))
-            layout[row] = []
-            $("#page > #"+row_tag+" > section").each(function(e){
-                var split = this.id.replace("widget_", "").split("_")
-                var widget_row = parseInt(split[0])
-                var widget_column = parseInt(split[1])
-                // build the array of widget up the updated row
-                layout[row].push(this_class.layout[widget_row][widget_column])
-            });
-        });
-        // rebuild the page structure with the new layout
-        for (var row = 0; row < this.page.length; row++) {
-            for (var section in this.page[row]) {
-                this.page[row][section] = layout[row]
-            }
-        }
-        this.layout = layout
-    }
-    
     // add a new row to the page
     add_row(row, title) {
         // add section title
@@ -169,6 +140,12 @@ class Page {
                 $("#row_"+row).remove()
             };
         }(this, row));
+        // configure add widget button
+        $("#add_widget_row_"+row).unbind().click(function(this_class, row) {
+            return function () {
+                this_class.widget_wizard("")
+            };
+        }(this, row));
         // make the widgets in the row sortable
         var this_class = this
         $("#row_"+row).sortable({
@@ -181,10 +158,654 @@ class Page {
             cancel: '',
             dropOnEmpty: true,
             zIndex: 999999,
-            stop: function( event, ui ) { 
-                this_class.on_sort()
-            }
         })
+    }
+    
+    // add an array item to the widget wizard form
+    widget_wizard_add_array_item(id, value="") {
+        var min = 1; 
+        var max = 100000;
+        var i = Math.floor(Math.random() * (+max - +min)) + +min;
+        var html = '\
+            <div class="row" id="'+id+'_row_'+i+'">\
+                <div class="col-11">\
+                    <input type="text" id="'+id+'_value_'+i+'" class="form-control" value="'+value+'" required>\
+                </div>\
+                <div class="col-1">\
+                    <button type="button" class="btn btn-default">\
+                        <i class="fas fa-times text-red" id="'+id+'_remove_'+i+'"></i>\
+                    </button>\
+                </div>\
+            </div>\
+        '
+        $("#"+id).append(html)
+        // configure remove button
+        $("#"+id+"_remove_"+i).unbind().click(function(id, i) {
+            return function () {
+                $("#"+id+"_row_"+i).remove()
+            };
+        }(id, i));
+    }
+    
+    // add/edit a widget
+    widget_wizard(id, widget=null) {
+        // clear up the modal
+        $("#wizard_body").html("")
+        $("#wizard_title").html("Widget Configuration")
+        // show the modal
+        $("#wizard").modal()
+        // build the form
+        $("#wizard_body").append('\
+            <form method="POST" role="form" id="'+id+'_form" class="needs-validation" novalidate>\
+                <ul class="nav nav-tabs" id="'+id+'_tabs" role="tablist">\
+                    <li class="nav-item">\
+                        <a class="nav-link active" id="'+id+'_tab_general" data-toggle="pill" href="#'+id+'_tab_general_content" role="tab" aria-controls="'+id+'_tab_general_content" aria-selected="true">General</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_timeline" data-toggle="pill" href="#'+id+'_tab_timeline_content"  role="tab" aria-controls="'+id+'_tab_timeline_content" aria-selected="false">Timeline</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_range" data-toggle="pill" href="#'+id+'_tab_range_content"  role="tab" aria-controls="'+id+'_tab_range_content" aria-selected="false">Range</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_value" data-toggle="pill" href="#'+id+'_tab_value_content"  role="tab" aria-controls="'+id+'_tab_value_content" aria-selected="false">Value</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_status" data-toggle="pill" href="#'+id+'_tab_status_content"  role="tab" aria-controls="'+id+'_tab_status_content" aria-selected="false">Status</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_control" data-toggle="pill" href="#'+id+'_tab_control_content"  role="tab" aria-controls="'+id+'_tab_control_content" aria-selected="false">Control</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_input" data-toggle="pill" href="#'+id+'_tab_input_content"  role="tab" aria-controls="'+id+'_tab_input_content" aria-selected="false">Input</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_button" data-toggle="pill" href="#'+id+'_tab_button_content"  role="tab" aria-controls="'+id+'_tab_button_content" aria-selected="false">Button</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_calendar" data-toggle="pill" href="#'+id+'_tab_calendar_content"  role="tab" aria-controls="'+id+'_tab_calendar_content" aria-selected="false">Calendar</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_image" data-toggle="pill" href="#'+id+'_tab_image_content"  role="tab" aria-controls="'+id+'_tab_image_content" aria-selected="false">Image</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_map" data-toggle="pill" href="#'+id+'_tab_map_content"  role="tab" aria-controls="'+id+'_tab_map_content" aria-selected="false">Map</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_text" data-toggle="pill" href="#'+id+'_tab_text_content"  role="tab" aria-controls="'+id+'_tab_text_content" aria-selected="false">Text</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_table" data-toggle="pill" href="#'+id+'_tab_table_content"  role="tab" aria-controls="'+id+'_tab_table_content" aria-selected="false">Table</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_counter" data-toggle="pill" href="#'+id+'_tab_counter_content"  role="tab" aria-controls="'+id+'_tab_counter_content" aria-selected="false">Counter</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_tasks" data-toggle="pill" href="#'+id+'_tab_tasks_content"  role="tab" aria-controls="'+id+'_tab_tasks_content" aria-selected="false">Tasks</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_logs" data-toggle="pill" href="#'+id+'_tab_logs_content"  role="tab" aria-controls="'+id+'_tab_logs_content" aria-selected="false">Logs</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_notifications" data-toggle="pill" href="#'+id+'_tab_notifications_content"  role="tab" aria-controls="'+id+'_tab_notifications_content" aria-selected="false">Notifications</a>\
+                    </li>\
+                    \
+                </ul>\
+                <div class="tab-content">\
+                    <div class="tab-pane fade show active" id="'+id+'_tab_general_content" role="tabpanel" aria-labelledby="'+id+'_tab_general">\
+                        <div class="form-group">\
+                            <label>Widget Title*</label>\
+                            <input type="text" id="'+id+'_general_title" value="" class="form-control" placeholder="title of the widget">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Size of the widget*</label>\
+                            <select id="'+id+'_general_size" class="form-control" required>\
+                                <option value="1">1</option>\
+                                <option value="2">2</option>\
+                                <option value="3">3</option>\
+                                <option value="4">4</option>\
+                                <option value="5">6</option>\
+                                <option value="7">7</option>\
+                                <option value="8">8</option>\
+                                <option value="9">9</option>\
+                                <option value="10">10</option>\
+                                <option value="11">11</option>\
+                                <option value="12">12</option>\
+                            </select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Widget Type*</label>\
+                            <select id="'+id+'_general_widget" class="form-control" required>\
+                                <option value=""></option>\
+                                <optgroup label="User Widgets">\
+                                    <option value="value">Value - display the latest value of a sensor</option>\
+                                    <option value="timeline">Timeline - display a timeline chart</option>\
+                                    <option value="range">Range - display a chart with min and max values</option>\
+                                    <option value="status">Status - display an on/off status</option>\
+                                    <option value="control">Control an on/off switch</option>\
+                                    <option value="input">Input - display an input box</option>\
+                                    <option value="button">Button - display a button and associate actions</option>\
+                                    <option value="calendar">Calendar - display a calendar for scheduling events</option>\
+                                    <option value="image">Image - display an image stored in a sensor</option>\
+                                    <option value="map">Map - display a map plotting positions stored in a sensor</option>\
+                                    <option value="text">Text - display a text statically or from a sensor</option>\
+                                    <option value="table">Table - display a dynamic table</option>\
+                                    <option value="counter">Counter - display counter of the values stored in a sensor</option>\
+                                    <option value="tasks">Tasks - display a to-do list</option>\
+                                </optgroup>\
+                                <optgroup label="System Widgets">\
+                                    <option value="packages">Packages - list installed packages</option>\
+                                    <option value="modules">Modules - list running modules</option>\
+                                    <option value="sensors">Sensors - list configured sensors</option>\
+                                    <option value="logs">Logs - list system logs</option>\
+                                    <option value="rules">Rules - list configured rules</option>\
+                                    <option value="chatbot">Chatbot - display the interactive chatbot</option>\
+                                    <option value="configuration">Configuration - display the advanced configuration editor</option>\
+                                    <option value="icons">Icons - display available icons</option>\
+                                    <option value="database">Database - display database statistics</option>\
+                                    <option value="gateway">Gateway - inspect gateway messages</option>\
+                                    <option value="notifications">Notifications - list the latest notifications</option>\
+                                    <option value="marketplace">Marketplace - list available packages in the marketplace</option>\
+                                </optgroup>\
+                            </select>\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_timeline_content" role="tabpanel" aria-labelledby="'+id+'_tab_timeline">\
+                        <div class="form-group">\
+                            <label>Sensors to Plot*</label>\
+                            <div id="'+id+'_timeline_sensors"></div>\
+                            <br>\
+                            <div class="form-group">\
+                                <button type="button" class="btn btn-default float-right" id="'+id+'_timeline_sensors_add"><i class="fas fa-plus"></i> Add Sensor</button>\
+                            </div>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Display Aggregated Data</label>\
+                            <select id="'+id+'_timeline_group_by" class="form-control">\
+                                <option value="">Show series with latest measures</option>\
+                                <option value="hour">Show series with hourly averages</option>\
+                                <option value="day">Show series with daily averages</option>\
+                            </select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Chart Style</label>\
+                            <input type="text" id="'+id+'_timeline_style" class="form-control" placeholder="Style of the chart. Default to spline">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Custom Series to Display</label>\
+                            <input type="text" id="'+id+'_timeline_series" class="form-control" placeholder="if displaying a custom series like \'sum\'">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Custom Timeframe</label>\
+                            <input type="text" id="'+id+'_timeline_timeframe" class="form-control" placeholder="Custom timeframe in the format last_24_hours. Best fit if not selected">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Range with Min and Max is Displayed for First Sensor. Check for Not Displaying</label>\
+                            <input type="checkbox" class="form-control" id="'+id+'_timeline_no_range">\
+                        </div><br>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_range_content" role="tabpanel" aria-labelledby="'+id+'_tab_range">\
+                        <div class="form-group">\
+                            <label>Sensor*</label>\
+                            <input type="text" id="'+id+'_range_sensor" class="form-control" placeholder="the sensor whose value has to be displayed" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Display Aggregated Data</label>\
+                            <select id="'+id+'_range_group_by" class="form-control">\
+                                <option value="">Show series with latest measures</option>\
+                                <option value="hour">Show series with hourly averages</option>\
+                                <option value="day">Show series with daily averages</option>\
+                            </select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Custom Timeframe</label>\
+                            <input type="text" id="'+id+'_range_timeframe" class="form-control" placeholder="Custom timeframe in the format last_24_hours. Best fit if not selected">\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_value_content" role="tabpanel" aria-labelledby="'+id+'_tab_value">\
+                        <div class="form-group">\
+                            <label>Sensor*</label>\
+                            <input type="text" id="'+id+'_value_sensor" class="form-control" placeholder="the sensor whose value has to be displayed" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon</label>\
+                            <input type="text" id="'+id+'_value_icon" class="form-control" placeholder="the icon to display next to the value">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Color of the icon</label>\
+                            <input type="text" id="'+id+'_value_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Elapsed from a different sensor</label>\
+                            <input type="text" id="'+id+'_value_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon from a sensor</label>\
+                            <input type="text" id="'+id+'_value_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Widget Style</label>\
+                            <input type="text" id="'+id+'_value_variant" class="form-control" placeholder="1 (default) for small box, 2 for larger box">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Show All Link</label>\
+                            <input type="text" id="'+id+'_value_link" class="form-control" placeholder="link for the \'Show All\' link. Applicable for style 2 widgets only">\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_status_content" role="tabpanel" aria-labelledby="'+id+'_tab_status">\
+                        <div class="form-group">\
+                            <label>Sensor*</label>\
+                            <input type="text" id="'+id+'_status_sensor" class="form-control" placeholder="the sensor whose status has to be displayed" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Elapsed from a different sensor</label>\
+                            <input type="text" id="'+id+'_status_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Widget Style</label>\
+                            <input type="text" id="'+id+'_status_variant" class="form-control" placeholder="1 (default) for small box, 2 for larger box">\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_control_content" role="tabpanel" aria-labelledby="'+id+'_tab_control">\
+                        <div class="form-group">\
+                            <label>Associated Sensor*</label>\
+                            <input type="text" id="'+id+'_control_sensor" class="form-control" placeholder="the sensor where to save the value of this widget" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Additional Actions to Execute</label>\
+                            <div id="'+id+'_control_actions"></div>\
+                            <br>\
+                            <div class="form-group">\
+                                <button type="button" class="btn btn-default float-right" id="'+id+'_control_actions_add"><i class="fas fa-plus"></i> Add Action</button>\
+                            </div>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon</label>\
+                            <input type="text" id="'+id+'_control_icon" class="form-control" placeholder="the icon to display next to the control">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Color of the icon</label>\
+                            <input type="text" id="'+id+'_control_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Elapsed from a different sensor</label>\
+                            <input type="text" id="'+id+'_control_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon from a sensor</label>\
+                            <input type="text" id="'+id+'_control_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Widget Style</label>\
+                            <input type="text" id="'+id+'_control_variant" class="form-control" placeholder="1 (default) for small box, 2 for larger box">\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_input_content" role="tabpanel" aria-labelledby="'+id+'_tab_input">\
+                        <div class="form-group">\
+                            <label>Sensor*</label>\
+                            <input type="text" id="'+id+'_input_sensor" class="form-control" placeholder="the sensor where the input is stored" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon</label>\
+                            <input type="text" id="'+id+'_input_icon" class="form-control" placeholder="the icon to display next to the input">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Color of the icon</label>\
+                            <input type="text" id="'+id+'_input_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Elapsed from a different sensor</label>\
+                            <input type="text" id="'+id+'_input_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon from a sensor</label>\
+                            <input type="text" id="'+id+'_input_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Widget Style</label>\
+                            <input type="text" id="'+id+'_input_variant" class="form-control" placeholder="1 (default) for small box, 2 for larger box">\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_button_content" role="tabpanel" aria-labelledby="'+id+'_tab_button">\
+                        <div class="form-group">\
+                            <label>Text*</label>\
+                            <input type="text" id="'+id+'_button_text" class="form-control" placeholder="the text of the button" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Actions to Execute*</label>\
+                            <div id="'+id+'_button_actions"></div>\
+                            <br>\
+                            <div class="form-group">\
+                                <button type="button" class="btn btn-default float-right" id="'+id+'_button_actions_add"><i class="fas fa-plus"></i> Add Action</button>\
+                            </div>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon</label>\
+                            <input type="text" id="'+id+'_button_icon" class="form-control" placeholder="the icon to display next to the button">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Color of the icon</label>\
+                            <input type="text" id="'+id+'_button_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon from a sensor</label>\
+                            <input type="text" id="'+id+'_button_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Widget Style</label>\
+                            <input type="text" id="'+id+'_button_variant" class="form-control" placeholder="1 (default) for small box, 2 for larger box">\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_calendar_content" role="tabpanel" aria-labelledby="'+id+'_tab_calendar">\
+                        <div class="form-group">\
+                            <label>Sensor*</label>\
+                            <input type="text" id="'+id+'_calendar_sensor" class="form-control" placeholder="the sensor whose calendar has to be displayed" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Event Time Step (Minutes)</label>\
+                            <input type="text" id="'+id+'_calendar_time_step" class="form-control" placeholder="minimum configurable time step for an event. Default to 15 minutes">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Event Default Value</label>\
+                            <input type="text" id="'+id+'_calendar_default_value" class="form-control" placeholder="default value when creating a new event">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Display Event Template</label>\
+                            <input type="text" id="'+id+'_calendar_event_template" class="form-control" placeholder="how to display the calendar\'s value with the %value% placeholder replaced with the actual value">\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_image_content" role="tabpanel" aria-labelledby="'+id+'_tab_image">\
+                        <div class="form-group">\
+                            <label>Sensor*</label>\
+                            <input type="text" id="'+id+'_image_sensor" class="form-control" placeholder="the sensor whose image has to be displayed" required>\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_map_content" role="tabpanel" aria-labelledby="'+id+'_tab_map">\
+                        <div class="form-group">\
+                            <label>Sensors with Positions*</label>\
+                            <div id="'+id+'_map_sensors"></div>\
+                            <br>\
+                            <div class="form-group">\
+                                <button type="button" class="btn btn-default float-right" id="'+id+'_map_sensors_add"><i class="fas fa-plus"></i> Add Sensor</button>\
+                            </div>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Track movements with a line among positions</label>\
+                            <input type="checkbox" class="form-control" id="'+id+'_map_tracking">\
+                        </div><br>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_text_content" role="tabpanel" aria-labelledby="'+id+'_tab_text">\
+                        <div class="form-group">\
+                            <label>Sensor</label>\
+                            <input type="text" id="'+id+'_text_sensor" class="form-control" placeholder="the sensor whose text has to be displayed" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Static Text</label>\
+                            <input type="text" id="'+id+'_text_text" class="form-control" placeholder="static text to be displayed. HTML allowed">\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_table_content" role="tabpanel" aria-labelledby="'+id+'_tab_table">\
+                        <div class="form-group">\
+                            <label>Associated Sensor</label>\
+                            <input type="text" id="'+id+'_table_sensor" class="form-control" placeholder="the sensor whose text has to be displayed as a table (one row per line)" required>\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_counter_content" role="tabpanel" aria-labelledby="'+id+'_tab_counter">\
+                        <div class="form-group">\
+                            <label>Associated Sensor*</label>\
+                            <input type="text" id="'+id+'_counter_sensor" class="form-control" placeholder="the sensor for which counting the values" required>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon</label>\
+                            <input type="text" id="'+id+'_counter_icon" class="form-control" placeholder="the icon to display next to the counter">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Color of the box</label>\
+                            <input type="text" id="'+id+'_counter_color" class="form-control" placeholder="color of the box">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Timeframe</label>\
+                            <input type="text" id="'+id+'_counter_timeframe" class="form-control" placeholder="timeframe to query in the format last_24_hours, default to the last 24 hours">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Scope</label>\
+                            <input type="text" id="'+id+'_counter_scope" class="form-control" placeholder="scope of the database to query, default to sensors">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Show All Link</label>\
+                            <input type="text" id="'+id+'_counter_link" class="form-control" placeholder="link for the \'Show All\' link">\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_tasks_content" role="tabpanel" aria-labelledby="'+id+'_tab_tasks">\
+                        <div class="form-group">\
+                            <label>Sensor*</label>\
+                            <input type="text" id="'+id+'_tasks_sensor" class="form-control" placeholder="the sensor where the to-list will be saved" required>\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_logs_content" role="tabpanel" aria-labelledby="'+id+'_tab_logs">\
+                        <div class="form-group">\
+                            <label>Filter by Value</label>\
+                            <input type="text" id="'+id+'_logs_show_only" class="form-control" placeholder="filter the table with this value" required>\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_notifications_content" role="tabpanel" aria-labelledby="'+id+'_tab_notifications">\
+                        <div class="form-group">\
+                            <label>Filter by Value</label>\
+                            <input type="text" id="'+id+'_notifications_show_only" class="form-control" placeholder="filter the table with this value" required>\
+                        </div>\
+                    </div>\
+                    \
+                </div>\
+            </form>\
+        ')
+        $("#wizard_body").append('<a id="'+id+'_advanced_editor" class="float-right text-primary">Advanced Editor</a>')
+        $("#"+id+"_advanced_editor").unbind().click(function(this_class) {
+            return function () {
+                $('#wizard').unbind('hidden.bs.modal')
+                $("#wizard").modal("hide")
+                gui.unload_page()
+                window.location.hash = "#__configuration="+this_class.page_id 
+            };
+        }(this));
+        // populate the form
+        var simple_types = {}
+        simple_types["general"] = ["title", "size", "widget"]
+        simple_types["value"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant", "link"]
+        simple_types["timeline"] = ["group_by", "timeframe", "style", "series"]
+        simple_types["range"] = ["sensor", "group_by", "timeframe"]
+        simple_types["status"] = ["sensor", "timestamp_sensor", "variant"]
+        simple_types["control"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant"]
+        simple_types["input"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant"]
+        simple_types["button"] = ["text", "icon", "color", "icon_sensor", "variant"]
+        simple_types["calendar"] = ["sensor", "time_step", "default_value", "event_template"]
+        simple_types["image"] = ["sensor"]
+        simple_types["text"] = ["sensor", "text"]
+        simple_types["table"] = ["sensor"]
+        simple_types["counter"] = ["sensor", "icon", "color", "timeframe", "scope", "link"]
+        simple_types["tasks"] = ["sensor"]
+        simple_types["logs"] = ["show_only"]
+        simple_types["notifications"] = ["show_only"]
+        var array_types = {}
+        array_types["timeline"] = ["sensors"]
+        array_types["control"] = ["actions"]
+        array_types["button"] = ["actions"]
+        array_types["map"] = ["sensors"]
+        var checkbox_types = {}
+        checkbox_types["timeline"] = ["no_range"]
+        checkbox_types["map"] = ["tracking"]
+        // editing the widget, fill in the values
+        if (widget != null) {
+            // common elements
+            for (var key of ["title", "size", "widget"]) {
+                $("#"+id+"_general_"+key).val(widget[key])
+            }
+            // widget-specific simple elements
+            for (var type in simple_types) {
+                if (widget["widget"] == type) {
+                    for (var key of simple_types[type]) {
+                        if (! (key in widget)) continue
+                        $("#"+id+"_"+type+"_"+key).val(widget[key])
+                    }
+                }
+            }
+            // widget-specific array elements
+            for (var type in array_types) {
+                if (widget["widget"] == type) {
+                    for (var key of array_types[type]) {
+                        if (! (key in widget)) continue
+                        for (var i = 0; i < widget[key].length; i++) {
+                            var value = widget[key][i]
+                            this.widget_wizard_add_array_item(id+'_'+type+'_'+key, value)
+                        }
+                        // configure add button
+                        $("#"+id+'_'+type+'_'+key+"_add").unbind().click(function(this_class, id) {
+                            return function () {
+                                this_class.widget_wizard_add_array_item(id)
+                            };
+                        }(this, id+'_'+type+'_'+key));
+                    }
+                }
+            }
+            // widget-specific checkbox elements
+            for (var type in checkbox_types) {
+                if (widget["widget"] == type) {
+                    for (var key of checkbox_types[type]) {
+                        if (! (key in widget)) continue
+                        $("#"+id+"_"+type+"_"+key).prop("checked", widget[key])
+                    }
+                }
+            }
+        }
+        // configure _widget type selector
+        $('#'+id+'_general_widget').unbind().change(function(this_class) {
+            return function () {
+                var type = $('#'+id+'_general_widget').val()
+                // show up only the relevant tab
+                $("#"+id+"_tabs .nav-link").each(function(e){
+                    var nav_id = $(this).attr("id")
+                    // always keep general
+                    if (nav_id.endsWith("_general")) return
+                    var is_hidden = $("#"+nav_id).parent('li').hasClass("d-none")
+                    // unhide requested tab
+                    if (nav_id.endsWith("_"+type)) {
+                        if (is_hidden) $("#"+nav_id).parent('li').removeClass("d-none")
+                    }
+                    // hide all other tabs
+                    else {
+                        if (! is_hidden) $("#"+nav_id).parent('li').addClass("d-none")
+                    }
+                });
+            };
+        }(this))
+        // refresh the widget type
+        $('#'+id+'_general_widget').trigger("change")
+        var this_class = this
+        $('#'+id+'_form').on('submit', function (e) {
+            // remove all hidden tabs otherwise will cause issue during validation
+            $("#"+id+"_tabs .nav-link").each(function(e){
+                var nav_id = $(this).attr("id")
+                // always keep general
+                if (nav_id.endsWith("_general")) return
+                var is_hidden = $("#"+nav_id).parent('li').hasClass("d-none")
+                // unhide requested tab
+                if (! nav_id.endsWith("_"+type)) {
+                    if (is_hidden) $("#"+nav_id+"_content").remove()
+                }
+            });
+            // disable the widget type select since we deleted them
+            $("#"+id+"_general_widget").prop("disabled", true) 
+            // form is validated
+            if ($('#'+id+'_form')[0].checkValidity()) {
+                // build up the data structure
+                var widget = {}
+                for (var item of ["title", "size", "widget"]) {
+                    var value = $("#"+id+"_general_"+item).val()
+                    widget[item] = $.isNumeric(value) ? parseFloat(value) : value
+                }
+                // widget-specific simple elements
+                for (var type in simple_types) {
+                    if (widget["widget"] == type) {
+                        for (var key of simple_types[type]) {
+                            var value = $("#"+id+"_"+type+"_"+key).val()
+                            if (value != "") widget[key] = $.isNumeric(value) ? parseFloat(value) : value
+                        }
+                    }
+                }
+                // widget-specific array elements
+                for (var type in array_types) {
+                    if (widget["widget"] == type) {
+                        for (var key of array_types[type]) {
+                            $("#"+id+"_"+type+"_"+key+" :input[type=text]").each(function(e){
+                                if (! (key in widget)) widget[key] = []
+                                widget[key].push(this.value)
+                            });
+
+                        }
+                    }
+                }
+                // widget-specific checkbox elements
+                for (var type in checkbox_types) {
+                    if (widget["widget"] == type) {
+                        for (var key of checkbox_types[type]) {
+                            var value = $("#"+id+"_"+type+"_"+key).prop("checked")
+                            widget[key] = value
+                        }
+                    }
+                }
+                // update the widget
+                this_class.add_widget(id, widget)
+                // enable edit mode
+                $("#"+id+" .edit_page_item").removeClass("d-none")
+                $("#"+id+" .no_edit_page_item").addClass("d-none")
+                // close the modal
+                $("#wizard").modal("hide")
+                gui.notify("info","Changes to the widget will not be persistent until the page will be saved")
+                return false
+            }
+            else {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            $('#'+id+'_form').addClass("was-validated")
+        })
+        // configure submit button
+        $('#wizard_save').unbind().click(function(this_class) {
+            return function () {
+                $("#"+id+"_form").submit()
+            };
+        }(this))
     }
     
     // draw the page
@@ -208,39 +829,8 @@ class Page {
                     // add the column
                     var id = "widget_"+row+"_"+column
                     $("#"+row_id).append('<section class="col-lg-'+widget["size"]+' col-md-offset-'+offset+'" id="'+id+'"></section>')
-                    this.widgets[id] = widget
-                    // TODO: add loading overlay
-                    // add the requested widget type
-                    var widget_object = this.add_widget(id, widget)
-                    // create the widget
-                    if (widget_object != null) {
-                        // load the data
-                        widget_object.draw()
-                        // configure the refresh button
-                        $("#"+id+"_refresh").unbind().click(function(widget_object) {
-                            return function () {
-                                widget_object.draw()
-                            };
-                        }(widget_object));
-                        // configure the expand button
-                        $("#"+id+"_popup").unbind().click(function(this_class, widget) {
-                            return function () {
-                                // clear the modal and load it
-                                $("#popup_body").html("")
-                                $("#popup_title").html(title)
-                                var widget_object = this_class.add_widget("popup_body", widget)
-                                if (widget_object != null) widget_object.draw()
-                                $("#popup").modal()
-                            };
-                        }(this, widget));
-                        // configure the delete button
-                        $("#"+id+"_delete").unbind().click(function(this_class, id) {
-                            return function () {
-                                // remove the widget
-                                $("#"+id).remove()
-                            };
-                        }(this, id));
-                    }
+                    // add the widget to the page
+                    this.add_widget(id, widget)
                 }
             }
         }
@@ -298,7 +888,7 @@ class Page {
                 $(".no_edit_page_item").removeClass("d-none")
                 $("#page_edit").removeClass("d-none")
                 $("#page_edit_done").addClass("d-none")
-                gui.notify("success", "Page "+this_class.page_id+" updated succesfully")
+                gui.notify("success", "Page "+this_class.page_id+" updated successfully")
                 gui.load_page()
             };
         }(this));
@@ -317,14 +907,15 @@ class Page {
     // close the current page
     close() {
         // close all the widget of the page
-        for (var widget_object of this.widget_objects) {
+        for (var id in this.widget_objects) {
+            var widget_object = this.widget_objects[id]
             if(typeof widget_object.close === 'function')
             widget_object.close()
         }
     }
     
-    // add the requested widget at the given html id
-    add_widget(id, widget) {
+    // create the requested widget and return it
+    create_widget(id, widget) {
         var widget_object = null
         // user widgets
         if (widget["widget"] == "summary") widget_object = new Summary(id, widget)
@@ -356,7 +947,56 @@ class Page {
         else if (widget["widget"] == "notifications") widget_object = new Notifications(id, widget)
         else if (widget["widget"] == "marketplace") widget_object = new Marketplace(id, widget)
         else gui.log_error("unknown widget "+JSON.stringify(widget))
-        if (widget_object != null) this.widget_objects.push(widget_object)
+        if (widget_object != null) this.widget_objects[id] = widget_object
         return widget_object
+    }
+    
+    // add the widget to the page
+    add_widget(id, widget) {
+        // keep track of the widget configuration
+        this.widgets[id] = widget
+        // if there is already something at the position, remove it first
+        if (id in this.widget_objects) {
+            var widget_object = this.widget_objects[id]
+            if(typeof widget_object.close === 'function')
+            widget_object.close()
+            delete this.widget_objects[id]
+        }
+        // create the requested widget
+        var widget_object = this.create_widget(id, widget)
+        if (widget_object != null) {
+            // load the data
+            widget_object.draw()
+            // configure the refresh button
+            $("#"+id+"_refresh").unbind().click(function(widget_object) {
+                return function () {
+                    widget_object.draw()
+                };
+            }(widget_object));
+            // configure the expand button
+            $("#"+id+"_popup").unbind().click(function(this_class, widget) {
+                return function () {
+                    // clear the modal and load it
+                    $("#popup_body").html("")
+                    $("#popup_title").html(title)
+                    var widget_object = this_class.create_widget("popup_body", widget)
+                    if (widget_object != null) widget_object.draw()
+                    $("#popup").modal()
+                };
+            }(this, widget));
+            // configure the delete button
+            $("#"+id+"_delete").unbind().click(function(this_class, id) {
+                return function () {
+                    // remove the widget
+                    $("#"+id).remove()
+                };
+            }(this, id));
+            // configure the edit button
+            $("#"+id+"_edit").unbind().click(function(this_class, id, widget) {
+                return function () {
+                    this_class.widget_wizard(id, widget)
+                };
+            }(this, id, widget));
+        }
     }
 }
