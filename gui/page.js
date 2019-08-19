@@ -226,6 +226,10 @@ class Page {
                     </li>\
                     \
                     <li class="nav-item d-none">\
+                        <a class="nav-link" id="'+id+'_tab_summary" data-toggle="pill" href="#'+id+'_tab_summary_content"  role="tab" aria-controls="'+id+'_tab_summary_content" aria-selected="false">Summary</a>\
+                    </li>\
+                    \
+                    <li class="nav-item d-none">\
                         <a class="nav-link" id="'+id+'_tab_timeline" data-toggle="pill" href="#'+id+'_tab_timeline_content"  role="tab" aria-controls="'+id+'_tab_timeline_content" aria-selected="false">Timeline</a>\
                     </li>\
                     \
@@ -317,6 +321,7 @@ class Page {
                             <select id="'+id+'_general_widget" class="form-control" required>\
                                 <option value=""></option>\
                                 <optgroup label="User Widgets">\
+                                    <option value="summary">Summary - display the latest value together with min/max of yesterday/today</option>\
                                     <option value="value">Value - display the latest value of a sensor</option>\
                                     <option value="timeline">Timeline - display a timeline chart</option>\
                                     <option value="range">Range - display a chart with min and max values</option>\
@@ -364,6 +369,29 @@ class Page {
                                 <option value="11">11</option>\
                                 <option value="12">12</option>\
                             </select>\
+                        </div>\
+                    </div>\
+                    \
+                    <div class="tab-pane fade" id="'+id+'_tab_summary_content" role="tabpanel" aria-labelledby="'+id+'_tab_summary">\
+                        <div class="form-group">\
+                            <label>Sensors to Plot*</label>\
+                            <div id="'+id+'_summary_sensors"></div>\
+                            <br>\
+                            <div class="form-group">\
+                                <button type="button" class="btn btn-default float-right" id="'+id+'_summary_sensors_add"><i class="fas fa-plus"></i> Add Sensor</button>\
+                            </div>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon</label>\
+                            <input type="text" id="'+id+'_summary_icon" class="form-control" placeholder="the icon to display on top of the summary">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Color of the icon</label>\
+                            <input type="text" id="'+id+'_summary_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon from a sensor</label>\
+                            <input type="text" id="'+id+'_summary_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
                         </div>\
                     </div>\
                     \
@@ -682,6 +710,7 @@ class Page {
         // populate the form
         var simple_types = {}
         simple_types["general"] = ["title", "size", "widget", "offset"]
+        simple_types["summary"] = ["icon", "color", "icon_sensor"]
         simple_types["value"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant", "link"]
         simple_types["timeline"] = ["group_by", "timeframe", "style", "series"]
         simple_types["range"] = ["sensor", "group_by", "timeframe"]
@@ -698,6 +727,7 @@ class Page {
         simple_types["logs"] = ["show_only"]
         simple_types["notifications"] = ["show_only"]
         var array_types = {}
+        array_types["summary"] = ["sensors"]
         array_types["timeline"] = ["sensors"]
         array_types["control"] = ["actions"]
         array_types["button"] = ["actions"]
