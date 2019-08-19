@@ -112,19 +112,21 @@ class Page {
     
     // add a new row to the page
     add_row(row, title) {
-        // add section title
-        $("#page").append('\
-            <h2 class="page-header" id="title_row_'+row+'">\
-                <center>\
-                    <span id="title_text_row_'+row+'" class="no_edit_page_item">'+title+'</span> \
-                    <input id="title_input_row_'+row+'" type="text" value="'+title+'" class="edit_page_item d-none">\
-                    <button class="btn btn-default d-none btn-sm edit_page_item" id="delete_row_'+row+'"><i class="fas fa-trash-alt"></i> Delete Row</button>\
-                    <button class="btn btn-default btn-sm edit_page_item d-none" id="add_widget_row_'+row+'"><i class="fas fa-ellipsis-h"></i> Add Widget</button>\
-                </center>\
-            </h2>\
-        ')
         // add row
-        $("#page").append('<div class="row connectedSortable" id="row_'+row+'"></div>')
+        $("#page").append('\
+            <div class="row_block">\
+                <h2 class="page-header" id="title_row_'+row+'">\
+                    <center>\
+                        <span id="title_text_row_'+row+'" class="no_edit_page_item">'+title+'</span> \
+                        <input id="title_input_row_'+row+'" type="text" value="'+title+'" class="edit_page_item d-none">\
+                        <button class="btn btn-default d-none btn-sm edit_page_item" id="delete_row_'+row+'"><i class="fas fa-trash-alt"></i></button>\
+                        <button class="btn btn-default btn-sm edit_page_item d-none sortable_row" style="cursor: move;"><i class="fas fa-arrows-alt"></i></button>\
+                        <button class="btn btn-default btn-sm edit_page_item d-none" id="add_widget_row_'+row+'"><i class="fas fa-plus"></i></button>\
+                    </center>\
+                </h2>\
+                <div class="row connected_widgets" id="row_'+row+'"></div>\
+            </div>\
+        ')
         // keep in sync section text and input
         $("#title_input_row_"+row).unbind().keyup(function(this_class, row) {
             return function (e) {
@@ -135,23 +137,26 @@ class Page {
         // configure delete row button
         $("#delete_row_"+row).unbind().click(function(this_class, row) {
             return function () {
-                // remove both the title and the entire row
-                $("#title_row_"+row).remove()
-                $("#row_"+row).remove()
+                gui.confirm("Do you really want to delete the row and all its the widgets?", function(result){ 
+                    if (! result) return
+                    // remove both the title and the entire row
+                    $("#title_row_"+row).remove()
+                    $("#row_"+row).remove()
+                })
             };
         }(this, row));
         // configure add widget button
         $("#add_widget_row_"+row).unbind().click(function(this_class, row) {
             return function () {
-                this_class.widget_wizard("")
+                this_class.widget_wizard(row)
             };
         }(this, row));
         // make the widgets in the row sortable
         var this_class = this
         $("#row_"+row).sortable({
             placeholder: 'sort-highlight',
-            connectWith: '.connectedSortable',
-            handle: '.sortable',
+            connectWith: '.connected_widgets',
+            handle: '.sortable_widget',
             tolerance: 'pointer',
             distance: 0.5,
             forcePlaceholderSize: false,
@@ -161,11 +166,23 @@ class Page {
         })
     }
     
-    // add an array item to the widget wizard form
-    widget_wizard_add_array_item(id, value="") {
+    // add column
+   add_column(row, column, size, offset) {
+        var id = "widget_"+row+"_"+column
+        $("#row_"+row).append('<section class="col-lg-'+size+' col-md-offset-'+offset+'" id="'+id+'"></section>')
+        return id
+    }
+    
+    // return a random number
+    get_random() {
         var min = 1; 
         var max = 100000;
-        var i = Math.floor(Math.random() * (+max - +min)) + +min;
+        return Math.floor(Math.random() * (+max - +min)) + +min;
+    }
+    
+    // add an array item to the widget wizard form
+    widget_wizard_add_array_item(id, value="") {
+        var i = this.get_random()
         var html = '\
             <div class="row" id="'+id+'_row_'+i+'">\
                 <div class="col-11">\
@@ -189,6 +206,12 @@ class Page {
     
     // add/edit a widget
     widget_wizard(id, widget=null) {
+        //if widget is null, this is a new widget and id is the row number
+        var is_new = widget == null ? true : false
+        if (is_new) {
+            var row = id
+            id = ""
+        }
         // clear up the modal
         $("#wizard_body").html("")
         $("#wizard_title").html("Widget Configuration")
@@ -323,6 +346,23 @@ class Page {
                                     <option value="notifications">Notifications - list the latest notifications</option>\
                                     <option value="marketplace">Marketplace - list available packages in the marketplace</option>\
                                 </optgroup>\
+                            </select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Widget Offset</label>\
+                            <select id="'+id+'_general_offset" class="form-control">\
+                                <option value=""></option>\
+                                <option value="1">1</option>\
+                                <option value="2">2</option>\
+                                <option value="3">3</option>\
+                                <option value="4">4</option>\
+                                <option value="5">6</option>\
+                                <option value="7">7</option>\
+                                <option value="8">8</option>\
+                                <option value="9">9</option>\
+                                <option value="10">10</option>\
+                                <option value="11">11</option>\
+                                <option value="12">12</option>\
                             </select>\
                         </div>\
                     </div>\
@@ -564,7 +604,7 @@ class Page {
                     <div class="tab-pane fade" id="'+id+'_tab_text_content" role="tabpanel" aria-labelledby="'+id+'_tab_text">\
                         <div class="form-group">\
                             <label>Sensor</label>\
-                            <input type="text" id="'+id+'_text_sensor" class="form-control" placeholder="the sensor whose text has to be displayed" required>\
+                            <input type="text" id="'+id+'_text_sensor" class="form-control" placeholder="the sensor whose text has to be displayed">\
                         </div>\
                         <div class="form-group">\
                             <label>Static Text</label>\
@@ -641,7 +681,7 @@ class Page {
         }(this));
         // populate the form
         var simple_types = {}
-        simple_types["general"] = ["title", "size", "widget"]
+        simple_types["general"] = ["title", "size", "widget", "offset"]
         simple_types["value"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant", "link"]
         simple_types["timeline"] = ["group_by", "timeframe", "style", "series"]
         simple_types["range"] = ["sensor", "group_by", "timeframe"]
@@ -668,7 +708,8 @@ class Page {
         // editing the widget, fill in the values
         if (widget != null) {
             // common elements
-            for (var key of ["title", "size", "widget"]) {
+            for (var key of ["title", "size", "widget", "offset"]) {
+                if (! (key in widget)) continue
                 $("#"+id+"_general_"+key).val(widget[key])
             }
             // widget-specific simple elements
@@ -731,6 +772,7 @@ class Page {
         }(this))
         // refresh the widget type
         $('#'+id+'_general_widget').trigger("change")
+        // configure what to do when submitting the form
         var this_class = this
         $('#'+id+'_form').on('submit', function (e) {
             // remove all hidden tabs otherwise will cause issue during validation
@@ -750,8 +792,9 @@ class Page {
             if ($('#'+id+'_form')[0].checkValidity()) {
                 // build up the data structure
                 var widget = {}
-                for (var item of ["title", "size", "widget"]) {
+                for (var item of ["title", "size", "widget", "offset"]) {
                     var value = $("#"+id+"_general_"+item).val()
+                    if (value == "") continue
                     widget[item] = $.isNumeric(value) ? parseFloat(value) : value
                 }
                 // widget-specific simple elements
@@ -771,7 +814,6 @@ class Page {
                                 if (! (key in widget)) widget[key] = []
                                 widget[key].push(this.value)
                             });
-
                         }
                     }
                 }
@@ -783,6 +825,11 @@ class Page {
                             widget[key] = value
                         }
                     }
+                }
+                // if a new widget we need to add a new column first
+                if (is_new) {
+                    var offset = "offset" in widget ? widget["offset"] : 0
+                    id = this_class.add_column(row, this_class.get_random(), widget["size"], offset)
                 }
                 // update the widget
                 this_class.add_widget(id, widget)
@@ -808,14 +855,42 @@ class Page {
         }(this))
     }
     
+    // start editing the page
+    page_edit_start() {
+        $(".edit_page_item").removeClass("d-none")
+        $(".no_edit_page_item").addClass("d-none")
+        $("#page_edit").addClass("d-none")
+        $("#page_edit_done").removeClass("d-none")
+    }
+    
+    // stop editing the page
+    page_edit_end() {
+        $(".edit_page_item").addClass("d-none")
+        $(".no_edit_page_item").removeClass("d-none")
+        $("#page_edit").removeClass("d-none")
+        $("#page_edit_done").addClass("d-none")
+    }
+    
     // draw the page
     draw(page) {
         // clear up the page
         $("#body").empty()
-        $("#body").append('<div id="page"></div>');
+        $("#body").append('<div id="page" class="connected_rows"></div>');
+        $("#page").sortable({
+            placeholder: 'sort-highlight',
+            connectWith: '.connected_rows',
+            handle: '.sortable_row',
+            tolerance: 'pointer',
+            items: '.row_block',
+            axis: 'y',
+            distance: 0.5,
+            forcePlaceholderSize: false,
+            cancel: '',
+            dropOnEmpty: true,
+            zIndex: 999999,
+        })
         // draw the page
         for (var row = 0; row < page.length; row++) {
-            var row_id = 'row_'+row
             // add a row
             for (var section in page[row]) {
                 // add a row/subtitle
@@ -824,34 +899,25 @@ class Page {
                 for (var column = 0; column < page[row][section].length; column++) {
                     var widget = page[row][section][column]
                     if (! gui.is_authorized(widget)) continue
-                    var offset = 0;
-                    if ("offset" in widget) offset = widget["offset"]
-                    // add the column
-                    var id = "widget_"+row+"_"+column
-                    $("#"+row_id).append('<section class="col-lg-'+widget["size"]+' col-md-offset-'+offset+'" id="'+id+'"></section>')
+                    var offset = "offset" in widget ? widget["offset"] : 0
+                    // add a new column
+                    var id = this.add_column(row, column, widget["size"], offset)
                     // add the widget to the page
                     this.add_widget(id, widget)
                 }
             }
         }
-        $('.connectedSortable .sortable').css('cursor', 'move')
         // configure page edit button
         $("#page_edit").unbind().click(function(this_class) {
             return function () {
-                $(".edit_page_item").removeClass("d-none")
-                $(".no_edit_page_item").addClass("d-none")
-                $("#page_edit").addClass("d-none")
-                $("#page_edit_done").removeClass("d-none")
+                this_class.page_edit_start()
             };
         }(this));
         // configure page edit cancel button
         $("#page_edit_cancel").unbind().click(function(this_class) {
             return function () {
                 // restore the page layout
-                $(".edit_page_item").addClass("d-none")
-                $(".no_edit_page_item").removeClass("d-none")
-                $("#page_edit").removeClass("d-none")
-                $("#page_edit_done").addClass("d-none")
+                this_class.page_edit_end()
                 gui.load_page()
             };
         }(this));
@@ -861,12 +927,12 @@ class Page {
                 // rebuild the page data structure
                 var page = []
                 // for each row of the page
-                $("#page > div").each(function(e){
+                $("#page > div > div").each(function(e){
                     var row_id = this.id
                     var row_num = parseInt(row_id.replace("row_", ""))
                     var columns = []
                     // for each column
-                    $("#page > #"+row_id+" > section").each(function(e){
+                    $("#page > div> #"+row_id+" > section").each(function(e){
                         // build up the new row with previously stored widgets' configuration
                         columns.push(this_class.widgets[this.id])
                     });
@@ -884,10 +950,7 @@ class Page {
                 message.set_data(page)
                 gui.send(message)
                 // restore the page layout
-                $(".edit_page_item").addClass("d-none")
-                $(".no_edit_page_item").removeClass("d-none")
-                $("#page_edit").removeClass("d-none")
-                $("#page_edit_done").addClass("d-none")
+                this_class.page_edit_end()
                 gui.notify("success", "Page "+this_class.page_id+" updated successfully")
                 gui.load_page()
             };
@@ -902,6 +965,27 @@ class Page {
                 window.scrollTo(0, document.body.scrollHeight);
             };
         }(this));
+        // configure page delete button
+        $("#page_delete").unbind().click(function(this_class) {
+            return function () {
+                gui.confirm("Do you really want to delete the current page?", function(result){ 
+                    if (! result) return
+                    // delete the page configuration file
+                    var message = new Message(gui)
+                    message.recipient = "controller/config"
+                    message.command = "DELETE"
+                    message.args = this_class.page_id
+                    message.config_schema = gui.page_config_schema
+                    gui.send(message)
+                    gui.notify("info", "Requesting to delete page "+this_class.page_id+". Please note the menu entry if any has to be deleted independently")
+                    gui.unload_page()
+                    // redirect to the main page
+                    window.location.hash = "" 
+                });
+            };
+        }(this));
+        // if editing another page, clean it up
+        this.page_edit_end()
     }
     
     // close the current page
@@ -965,6 +1049,9 @@ class Page {
         // create the requested widget
         var widget_object = this.create_widget(id, widget)
         if (widget_object != null) {
+            // resize the widget if necessary
+            var offset = "offset" in widget ? widget["offset"] : 0
+            $("#"+id).removeClass().addClass("col-lg-"+widget["size"]).addClass("col-md-offset-"+offset)
             // load the data
             widget_object.draw()
             // configure the refresh button

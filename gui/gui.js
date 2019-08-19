@@ -258,7 +258,7 @@ class Gui extends Module {
         // TODO: how to handle sensors/pages/menu removed from config
         if (message.is_null) return
         // load the page
-        else if (this.waiting_for_page && message.args.startsWith("gui/pages/")) {
+        else if ((this.waiting_for_page && message.args.startsWith("gui/pages/") ) || (this.page != null && message.args == this.page.page_id)) {
             if (message.config_schema != this.page_config_schema) {
                 return false
             }

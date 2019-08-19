@@ -88,7 +88,7 @@ class Widget {
                     <h3 class="card-title" id="'+id+'_title">'+title+'</h3>\
                     <div class="card-tools float-right" id="'+id+'_widget_buttons">\
                         <button id="'+id+'_edit" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-edit"></i></button>\
-                        <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-arrows-alt sortable"></i></button>\
+                        <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-arrows-alt sortable_widget" style="cursor: move;"></i></button>\
                         <button id="'+id+'_delete" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-trash-alt"></i></button>\
                         <button id="'+id+'_refresh" type="button" class="btn btn-tool no_edit_page_item"><i class="fas fa-sync"></i></button>\
                         <button id="'+id+'_popup" type="button" class="btn btn-tool no_edit_page_item" ><i class="fas fa-expand"></i></button>\
@@ -115,7 +115,7 @@ class Widget {
             <div class="info-box-content">\
                 <div class="card-tools float-right" id="'+id+'_widget_buttons">\
                     <button id="'+id+'_edit" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-edit"></i></button>\
-                    <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none" ><i class="fas fa-arrows-alt sortable"></i></button>\
+                    <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none" ><i class="fas fa-arrows-alt sortable_widget"></i></button>\
                     <button id="'+id+'_delete" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-trash-alt"></i></button>\
                 </div>\
                 <span class="info-box-text">'+title+'</span>\
@@ -137,7 +137,7 @@ class Widget {
             <div class="inner">\
                 <div class="card-tools float-right" id="'+id+'_widget_buttons">\
                     <button id="'+id+'_edit" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-edit"></i></button>\
-                    <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none" ><i class="fas fa-arrows-alt sortable"></i></button>\
+                    <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none" ><i class="fas fa-arrows-alt sortable_widget"></i></button>\
                     <button id="'+id+'_delete" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-trash-alt"></i></button>\
                 </div>\
                 <h3 >\
@@ -165,7 +165,7 @@ class Widget {
                 <h3 class="card-title">'+title+'</h3>\
                 <div class="card-tools float-right" id="'+id+'_widget_buttons">\
                     <button id="'+id+'_edit" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-edit"></i></button>\
-                    <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none" ><i class="fas fa-arrows-alt sortable"></i></button>\
+                    <button id="'+id+'_move" type="button" class="btn btn-tool edit_page_item d-none" ><i class="fas fa-arrows-alt sortable_widget"></i></button>\
                     <button id="'+id+'_delete" type="button" class="btn btn-tool edit_page_item d-none"><i class="fas fa-trash-alt"></i></button>\
                     <button type="button" id="'+id+'_popup" class="btn btn-tool no_edit_page_item"><i class="fas fa-expand"></i></button>\
                 </div>\
