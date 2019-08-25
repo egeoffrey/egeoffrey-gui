@@ -126,9 +126,12 @@
     <script src="gui/widgets/system/database.js"></script>
     <script src="gui/widgets/system/gateway.js"></script>
     <script src="gui/widgets/system/notifications.js"></script>
-    <script src="gui/widgets/system/sensor_wizard.js"></script>
     <script src="gui/widgets/system/marketplace.js"></script>
-    <script src="gui/widgets/system/rule_wizard.js"></script>
+
+    <script src="gui/widgets/helpers/sensor_wizard.js"></script>
+    <script src="gui/widgets/helpers/rule_wizard.js"></script>
+    <script src="gui/widgets/helpers/menu_item_wizard.js"></script>
+    <script src="gui/widgets/helpers/menu_section_wizard.js"></script>
 </head>
 
 <style>
@@ -243,11 +246,30 @@
                         <a id="status" href="#" class="d-block"><i class="fa fa-circle text-red"></i></a>
                     </div>
                 </div>
-
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" id="menu">
                     </ul>
                 </nav>
+                <div class="user-panel mt-0 pb-3 mb-3 d-flex"></div>
+                <center>
+                    <div class="form-group" id="menu_edit_button">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-info">Edit Menu</button>
+                            <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu" role="menu" style="cursor: pointer;">
+                                <a class="dropdown-item" id="menu_section_new" style="color: black">New Section</a>
+                                <a class="dropdown-item" id="menu_section_edit" style="color: black">Edit Sections</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" id="menu_menu_item_new" style="color: black">New Menu Item</a>
+                                <a class="dropdown-item" id="menu_menu_item_edit" style="color: black">Edit Menu Items</a>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-info d-none" id="menu_edit_cancel"><i class="fas fa-undo"></i> Cancel</button>
+                </center>
             </div>
         </aside>
 
@@ -256,17 +278,18 @@
             <div class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1 class="m-0 text-dark" id="title"></h1>
+                        <div class="col-sm-6" id="page_header">
+                            <div class="form-group"><input type="text" id="page_id" class="form-control d-none" placeholder="page identifier"></div>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item">
-                                    <button class="btn btn-default btn-sm" id="page_edit"><i class="fas fa-edit"></i> </button>
-                                    <button class="btn btn-default btn-sm edit_page_item d-none" id="page_add_row"><i class="fas fa-plus"></i></button>
-                                    <button class="btn btn-default btn-sm edit_page_item d-none text-danger" id="page_delete"><i class="fas fa-trash-alt"></i></button>
-                                    <button class="btn btn-default d-none btn-sm edit_page_item" id="page_edit_cancel"><i class="fas fa-undo"></i></button>
-                                    <button class="btn btn-default d-none btn-sm edit_page_item" id="page_edit_done"><i class="fas fa-save"></i></button>
+                                    <button class="btn btn-default btn-sm" id="page_new"><i class="far fa-file"></i> New Page</button>
+                                    <button class="btn btn-default btn-sm" id="page_edit"><i class="fas fa-edit"></i> Edit Page</button>
+                                    <button class="btn btn-default btn-sm text-danger" id="page_delete"><i class="fas fa-trash-alt"></i> Delete Page</button>
+                                    <button class="btn btn-default btn-sm edit_page_item d-none" id="page_add_row"><i class="fas fa-plus"></i> Add Row</button>
+                                    <button class="btn btn-default d-none btn-sm edit_page_item" id="page_edit_cancel"><i class="fas fa-undo"></i> Discard Changes</button>
+                                    <button class="btn btn-default d-none btn-sm edit_page_item" id="page_edit_done"><i class="fas fa-save"></i> Save Changes</button>
                                 </li>
                             </ol>
                         </div>
@@ -296,7 +319,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary pull-rigth" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -317,8 +340,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary pull-rigth" id="wizard_save">Save</button>
-                        <button type="button" class="btn btn-default pull-rigth" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default text-red d-none" id="wizard_delete">Delete</button>
+                        <button type="button" class="btn btn-primary" id="wizard_save">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

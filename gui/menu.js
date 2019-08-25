@@ -17,6 +17,12 @@ class Menu extends Widget {
     on_message(message) {
     }
     
+    // what to do when start editing the menu
+    menu_edit_start() {
+        $("#menu_edit_button").addClass("d-none")
+        $("#menu_edit_cancel").removeClass("d-none")
+    }
+    
     // refresh the menu
     refresh() {
         var selected = null
@@ -26,12 +32,13 @@ class Menu extends Widget {
         for (var section of this.sections) {
             if (section == null) continue
             if (! (section["section_id"] in this.entries)) continue
-            var section_icon = "icon" in section ? section["icon"] : "none"
+            var section_icon = "icon" in section ? "fas fa-"+section["icon"] : "far fa-circle"
             var section_html = '\
                 <li class="nav-item has-treeview" id="menu_section_'+section["section_id"]+'_tree">\
                     <a href="#" class="nav-link" id="menu_section_'+section["section_id"]+'_name">\
-                        <i class="fas fa-'+section_icon+'"></i> \
-                        <span>'+section["text"]+'</span>\
+                        <input type="text" value="'+section["section_id"]+'" class="d-none" id="menu_section_'+section["section_id"]+'_id">\
+                        <i class="'+section_icon+'" id="menu_section_'+section["section_id"]+'_icon"></i> \
+                        <span>'+section["text"].toUpperCase()+'</span>\
                         <span class="float-right-container">\
                             <i class="fa fa-angle-left float-right" id="menu_section_'+section["section_id"]+'_arrow"></i>\
                         </span>\
@@ -49,8 +56,9 @@ class Menu extends Widget {
                 var page_tag = entry["page"].replaceAll("/","_")
                 $("#menu_section_"+section["section_id"]).append('\
                 <li class="nav-item">\
-                    <a class="nav-link" id="menu_user_item_'+page_tag+'" href="#'+entry["page"]+'">\
-                        &nbsp;<i class="nav-icon fas fa-'+entry["icon"]+'"></i> '+capitalizeFirst(entry["text"])+'\
+                    <a class="nav-link" id="menu_user_item_'+page_tag+'" href="#'+entry["page"]+'">&nbsp;\
+                        <input type="text" value="'+entry["page"]+'" class="d-none" id="menu_user_item_'+page_tag+'_id">\
+                        <i class="nav-icon fas fa-'+entry["icon"]+'" id="menu_user_item_'+page_tag+'_icon"></i> '+capitalizeFirst(entry["text"])+'\
                     </a>\
                 </li>');
                 // open the page on click
@@ -97,6 +105,62 @@ class Menu extends Widget {
             // hide the section if it has no items
             if (items == 0) $("#menu_section_"+section["section_id"]).addClass("d-none")
         }
+        var this_class = this
+        // configure new menu section button
+        var this_class = this
+        $("#menu_section_new").unbind().click(function(this_class) {
+            return function () {
+                this_class.menu_edit_start()
+                // open up the wizard
+                window.location.hash = "#__menu_section_wizard"
+            };
+        }(this));
+        // configure menu section edit button
+        $("#menu_section_edit").unbind().click(function(this_class) {
+            return function () {
+                this_class.menu_edit_start()
+                $("#"+this_class.id+" > li > ul").each(function(e){
+                    $("#"+this.id).remove()
+                });
+                $("#"+this_class.id+" > li > a").each(function(e){
+                    var id = this.id.replace("_name", "")
+                    // change the icon of each menu item
+                    var section_id = $("#"+id+"_id").val()
+                    $("#"+id+"_icon").removeClass().addClass("fas fa-edit")
+                    // change anchor href to menu section wizard                    
+                    $("#"+this.id).off()
+                    $("#"+this.id).attr("href", "#__menu_section_wizard="+section_id)
+                });
+            };
+        }(this));
+        $("#menu_item_new").unbind().click(function(this_class) {
+            return function () {
+                this_class.menu_edit_start()
+                // open up the wizard
+                window.location.hash = "#__menu_item_wizard"
+            };
+        }(this));
+        // configure menu item edit button
+        $("#menu_item_edit").unbind().click(function(this_class) {
+            return function () {
+                this_class.menu_edit_start()
+                $("#"+this_class.id+" > li > ul > li > a").each(function(e){
+                    // change the icon of each menu item
+                    var menu_item_id = $("#"+this.id+"_id").val()
+                    $("#"+this.id+"_icon").removeClass().addClass("fas fa-edit")
+                    // change anchor href to menu item wizard                    
+                    $("#"+this.id).attr("href", "#__menu_item_wizard="+menu_item_id)
+                });
+            };
+        }(this));
+        // configure menu edit cancel button
+        $("#menu_edit_cancel").unbind().click(function(this_class) {
+            return function () {
+                $("#menu_edit_button").removeClass("d-none")
+                $("#menu_edit_cancel").addClass("d-none")
+                this_class.refresh()
+            };
+        }(this));
     }
     
     // receive configuration

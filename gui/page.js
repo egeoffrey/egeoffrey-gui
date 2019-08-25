@@ -79,6 +79,14 @@ class Page {
                 var widget_object = new Rule_wizard("rule_wizard", {})
                 widget_object.draw()
             }
+            else if (page_id == "__menu_item_wizard") {
+                var widget_object = new Menu_item_wizard("menu_item_wizard", {})
+                widget_object.draw()
+            }
+            else if (page_id == "__menu_section_wizard") {
+                var widget_object = new Menu_section_wizard("menu_section_wizard", {})
+                widget_object.draw()
+            }
             else if (page_id == "__notifications") {
                 var page_layout = [
                     {
@@ -118,10 +126,10 @@ class Page {
                 <h2 class="page-header" id="title_row_'+row+'">\
                     <center>\
                         <span id="title_text_row_'+row+'" class="no_edit_page_item">'+title+'</span> \
-                        <input id="title_input_row_'+row+'" type="text" value="'+title+'" class="edit_page_item d-none">\
-                        <button class="btn btn-default d-none btn-sm edit_page_item" id="delete_row_'+row+'"><i class="fas fa-trash-alt"></i></button>\
-                        <button class="btn btn-default btn-sm edit_page_item d-none sortable_row" style="cursor: move;"><i class="fas fa-arrows-alt"></i></button>\
-                        <button class="btn btn-default btn-sm edit_page_item d-none" id="add_widget_row_'+row+'"><i class="fas fa-plus"></i></button>\
+                        <input id="title_input_row_'+row+'" type="text" value="'+title+'" class="edit_page_item d-none" placeholder="give this row a title...">\
+                        <button class="btn btn-default d-none btn-sm edit_page_item" id="delete_row_'+row+'"><i class="fas fa-trash-alt"></i> Delete Row</button>\
+                        <button class="btn btn-default btn-sm edit_page_item d-none sortable_row" style="cursor: move;"><i class="fas fa-arrows-alt"></i> Move Row</button>\
+                        <button class="btn btn-default btn-sm edit_page_item d-none" id="add_widget_row_'+row+'"><i class="fas fa-plus"></i> Add Widget</button>\
                     </center>\
                 </h2>\
                 <div class="row connected_widgets" id="row_'+row+'"></div>\
@@ -202,6 +210,58 @@ class Page {
                 $("#"+id+"_row_"+i).remove()
             };
         }(id, i));
+    }
+    
+    // add new page
+    new_page_wizard(id="new_page") {
+        // clear up the modal
+        $("#wizard_body").html("")
+        $("#wizard_title").html("Create a new page")
+        // show the modal
+        $("#wizard").modal()
+        // build the form
+        $("#wizard_body").append('\
+            <form method="POST" role="form" id="'+id+'_form" class="needs-validation" novalidate>\
+                <div class="form-group">\
+                    <label>Page Identifier*</label>\
+                    <input type="text" id="'+id+'_page_id" class="form-control" placeholder="Give the page an id. It will be its filename" required>\
+                </div>\
+            </form>\
+        ')
+        // configure what to do when submitting the form
+        var this_class = this
+        $('#'+id+'_form').on('submit', function (e) {
+            // form is validated
+            if ($('#'+id+'_form')[0].checkValidity()) {
+                // save the updated page
+                var page_id = $("#"+id+"_page_id").val()
+                var message = new Message(gui)
+                message.recipient = "controller/config"
+                message.command = "SAVE"
+                message.args = "gui/pages/"+page_id
+                message.config_schema = gui.page_config_schema
+                message.set_data([])
+                gui.send(message)
+                // open up the new page
+                gui.notify("success", "Page "+page_id+" saved successfully. Click on 'Edit Page' to add your favorite widgets")
+                $('#wizard').unbind('hidden.bs.modal')
+                $("#wizard").modal("hide")
+                gui.unload_page()
+                window.location.hash = "#"+page_id
+                return false
+            }
+            else {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            $('#'+id+'_form').addClass("was-validated")
+        })
+        // configure submit button
+        $('#wizard_save').unbind().click(function(this_class) {
+            return function () {
+                $("#"+id+"_form").submit()
+            };
+        }(this))
     }
     
     // add/edit a widget
@@ -890,6 +950,8 @@ class Page {
         $(".edit_page_item").removeClass("d-none")
         $(".no_edit_page_item").addClass("d-none")
         $("#page_edit").addClass("d-none")
+        $("#page_delete").addClass("d-none")
+        $("#page_new").addClass("d-none")
         $("#page_edit_done").removeClass("d-none")
     }
     
@@ -898,6 +960,8 @@ class Page {
         $(".edit_page_item").addClass("d-none")
         $(".no_edit_page_item").removeClass("d-none")
         $("#page_edit").removeClass("d-none")
+        $("#page_delete").removeClass("d-none")
+        $("#page_new").removeClass("d-none")
         $("#page_edit_done").addClass("d-none")
     }
     
@@ -905,7 +969,13 @@ class Page {
     draw(page) {
         // clear up the page
         $("#body").empty()
+        // build up the page
+        if (this.page_id != null) {
+            $("#page_id").val(this.page_id.replace("gui/pages/", ""))
+            $("#page_id").prop("disabled", true)
+        }
         $("#body").append('<div id="page" class="connected_rows"></div>');
+        // configure sortable rows
         $("#page").sortable({
             placeholder: 'sort-highlight',
             connectWith: '.connected_rows',
@@ -943,6 +1013,12 @@ class Page {
                 this_class.page_edit_start()
             };
         }(this));
+        // configure new page button
+        $("#page_new").unbind().click(function(this_class) {
+            return function () {
+                this_class.new_page_wizard()
+            };
+        }(this));
         // configure page edit cancel button
         $("#page_edit_cancel").unbind().click(function(this_class) {
             return function () {
@@ -975,13 +1051,13 @@ class Page {
                 var message = new Message(gui)
                 message.recipient = "controller/config"
                 message.command = "SAVE"
-                message.args = this_class.page_id
+                message.args = "gui/pages/"+$("#page_id").val()
                 message.config_schema = gui.page_config_schema
                 message.set_data(page)
                 gui.send(message)
                 // restore the page layout
                 this_class.page_edit_end()
-                gui.notify("success", "Page "+this_class.page_id+" updated successfully")
+                gui.notify("success", "Page "+this_class.page_id+" saved successfully")
                 gui.load_page()
             };
         }(this));

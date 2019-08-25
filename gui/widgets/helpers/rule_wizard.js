@@ -401,7 +401,7 @@ class Rule_wizard extends Widget {
             gui.unload_page()
             window.history.back()
         })
-        // extract requested sensor from URL
+        // request content for editing the rule
         if (rule_id != null) {
             setTimeout(function(this_class, rule_id) {
                 return function() {
