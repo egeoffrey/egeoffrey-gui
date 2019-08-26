@@ -10,6 +10,29 @@ class Menu extends Widget {
     
     // draw the widget's content
     draw() {
+        // draw menu edit button
+        $("#menu_edit").html('\
+            <center>\
+                <div class="form-group" id="menu_edit_button">\
+                    <div class="btn-group">\
+                        <button type="button" class="btn btn-sm btn-info">'+locale("menu.edit")+'</button>\
+                        <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown">\
+                            <span class="caret"></span>\
+                            <span class="sr-only">Toggle Dropdown</span>\
+                        </button>\
+                        <div class="dropdown-menu" role="menu" style="cursor: pointer;">\
+                            <a class="dropdown-item" id="menu_section_new" style="color: black">'+locale("menu.new_section")+'</a>\
+                            <a class="dropdown-item" id="menu_section_edit" style="color: black">'+locale("menu.edit_sections")+'</a>\
+                            <div class="dropdown-divider"></div>\
+                            <a class="dropdown-item" id="menu_menu_item_new" style="color: black">'+locale("menu.new_item")+'</a>\
+                            <a class="dropdown-item" id="menu_menu_item_edit" style="color: black">'+locale("menu.edit_items")+'</a>\
+                        </div>\
+                    </div>\
+                </div>\
+                <button type="button" class="btn btn-sm btn-info d-none" id="menu_edit_cancel"><i class="fas fa-undo"></i> '+locale("menu.edit_cancel")+'</button>\
+            </center>\
+        ')
+        // get the menu contents
         this.add_configuration_listener("gui/menu/#", "+")
     }
     

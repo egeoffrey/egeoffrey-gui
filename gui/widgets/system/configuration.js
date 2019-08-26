@@ -47,14 +47,14 @@ class Configuration extends Widget {
     request_template(request) {
         // based on the selection, point out the configuration to subscribe to
         var configuration_array = []
-        if (request == "house") configuration_array = ["house", "users", "groups"]
+        if (request == "house") configuration_array = ["house"]
         else if (request == "controller") configuration_array = ["controller/#"]
         else if (request == "service") configuration_array = ["service/#"]
         else if (request == "interaction") configuration_array = ["interaction/#"]
         else if (request == "notification") configuration_array = ["notification/#"]
         else if (request == "sensors") configuration_array = ["sensors/#"]
         else if (request == "rules") configuration_array = ["rules/#"]
-        else if (request == "gui") configuration_array = ["gui/settings", "gui/charts"]
+        else if (request == "gui") configuration_array = ["gui/settings", "gui/charts", "gui/users", "gui/groups"]
         else if (request == "menu") configuration_array = ["gui/menu/#"]
         else if (request == "pages") configuration_array = ["gui/pages/#"]
         else return

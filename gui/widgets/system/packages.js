@@ -25,10 +25,11 @@ class Packages extends Widget {
         // 2: modules
         // 3: version
         // 4: up to date
+        // 5: manifest
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>Package</th><th>Description</th><th>Modules</th><th>Version</th><th>Up to Date</th></tr>\
+                    <tr><th>Package</th><th>Description</th><th>Modules</th><th>Version</th><th>Up to Date</th><th>Manifest</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -48,7 +49,7 @@ class Packages extends Widget {
             "columnDefs": [ 
                 {
                     "className": "dt-center",
-                    "targets": [3, 4]
+                    "targets": [3, 4, 5]
                 }
             ],
             "language": {
@@ -70,13 +71,49 @@ class Packages extends Widget {
             if (manifest["package"] in this.manifests) return
             if (manifest["manifest_schema"] != gui.supported_manifest_schema) return
             // add a new row for this package
+            var icon = "icon" in manifest ? manifest["icon"] : "cube"
+            var package_name = '<i class="fas fa-'+icon+'"></i> '+manifest["package"]
+            var description =  format_multiline(manifest["description"], 50)
             var update_id = this.id+'_'+manifest["package"]+'_update'
             var modules = ""
             for (var module_object of manifest["modules"]) {
                 for (var module in module_object) modules = modules+module+"<br>"
             }
             var version = manifest["version"].toFixed(1)+"-"+manifest["revision"]+" ("+manifest["branch"]+")"
-            table.row.add([manifest["package"], format_multiline(manifest["description"], 50), modules, version, '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>']).draw();
+            var up_to_date = '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>'
+            var manifest_button = '<button type="button" id="'+this.id+'_manifest_'+manifest["package"].replace("/", "_")+'" class="btn btn-default"><i class="fas fa-newspaper"></i></button>'
+            table.row.add([package_name, description, modules, version, up_to_date, manifest_button]).draw();
+            $("#"+this.id+'_manifest_'+manifest["package"].replace("/", "_")).unbind().click(function(this_class, manifest) {
+                return function () {
+                    // clear the modal and load it
+                    $("#wizard_body").html("")
+                    $("#wizard_title").html(manifest["package"]+" manifest")
+                    $("#wizard_body").append('\
+                        <div class="form-group text-left">\
+                            <textarea rows=15 class="form-control" id="manifest_textarea">'+jsyaml.dump(manifest)+'</textarea>\
+                            </div>\
+                    ')
+                    // CodeMirror doesn't work with hidden tabs, refresh it when a new tab is open
+                    $('#wizard').one('show.bs.modal', function () {
+                        // Prettify the textarea with CodeMirror
+                        var codemirror_options = {
+                                lineNumbers: false,
+                                readOnly: true,
+                                mode: "yaml",
+                                indentWithTabs: true,
+                                tabSize: 2,
+                        }
+                        var codemirror = CodeMirror.fromTextArea(document.getElementById("manifest_textarea"), codemirror_options);
+                        // TODO: despite this, the textarea shows up only on click
+                        $('#manifest_textarea').trigger("click")
+                    })
+                    $('#wizard_save').addClass("d-none")
+                    $('#wizard').one('hidden.bs.modal', function () {
+                        $('#wizard_save').removeClass("d-none")
+                    })
+                    $("#wizard").modal()                                        
+                };
+            }(this, manifest));
             if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
             // check for update
             var url = "https://raw.githubusercontent.com/"+manifest["github"]+"/"+manifest["branch"]+"/manifest.yml?timestamp="+new Date().getTime()

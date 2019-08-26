@@ -1,10 +1,16 @@
-
+// GUI main class
 
 class Gui extends Module {
     // What to do when initializing
     on_init() {
         this.username = "EGEOFFREY_USERNAME" in window ? window.EGEOFFREY_USERNAME : "guest"
         this.password = "EGEOFFREY_PASSWORD" in window ? window.EGEOFFREY_PASSWORD : ""
+        // apply locale
+        $("#popup_close").html(locale("gui.popup.close"))
+        $("#wizard_close").html(locale("gui.wizard.close"))
+        $("#wizard_delete").html(locale("gui.wizard.delete"))
+        $("#wizard_save").html(locale("gui.wizard.save"))
+        $("#version").html(locale("gui.version_text"))
         // map a subscribed topic with an array of widgets
         this.listeners = {}
         // map a requested configuration with its content (since a retained message, we need to keep track)
@@ -29,8 +35,8 @@ class Gui extends Module {
         this.add_configuration_listener("house", 1, true)
         this.add_configuration_listener("gui/settings", "+", true)
         this.add_configuration_listener("gui/charts", "+", true)
-        this.add_configuration_listener("users", 1, true)
-        this.add_configuration_listener("groups", 1, true)
+        this.add_configuration_listener("gui/users", 1, true)
+        this.add_configuration_listener("gui/groups", 1, true)
         this.supported_sensors_config_schema = 1
         this.supported_rules_config_schema = 1
         this.supported_manifest_schema = 2
@@ -85,31 +91,7 @@ class Gui extends Module {
         });
 	}
     
-    // set the sking to the GUI
-    load_skin(skin) {
-        var skins = [
-            "skin-blue",
-            "skin-black",
-            "skin-red",
-            "skin-yellow",
-            "skin-purple",
-            "skin-green",
-            "skin-blue-light",
-            "skin-black-light",
-            "skin-red-light",
-            "skin-yellow-light",
-            "skin-purple-light",
-            "skin-green-light"
-        ];
-        if (! (skins.includes("skin-"+skin))) return
-        // remove all the skins from the body first
-        $.each(skins, function (i) {
-            $("body").removeClass(skins[i]);
-        });
-        // apply the new skin
-        $("body").addClass("skin-"+skin);
-    }
-    
+    // unload the current page
     unload_page() {
         // clear all previously cached settings
         this.requests = {}
@@ -133,6 +115,7 @@ class Gui extends Module {
         if (this.page != null) this.page.close()
     }
     
+    // load the page requested in window.hash
     load_page() {
         this.unload_page()
         // load the page
@@ -162,7 +145,7 @@ class Gui extends Module {
 
     // What to do just after connecting
     on_connect() {
-        $("#status").html('<i class="fas fa-circle text-success"></i> Connected</span>');
+        $("#status").html('<i class="fas fa-circle text-success"></i> '+locale("gui.connected")+'</span>');
         $("#status").unbind().click(function(this_class) {
             return function () {
                 // clear stored credentials
@@ -182,7 +165,6 @@ class Gui extends Module {
                 if (! (group in this.groups)) continue
                 if (this.groups[group].includes(this.username)) return true
             }
-                    console.log(this.groups)
             return false
         }
         else return true
@@ -291,23 +273,20 @@ class Gui extends Module {
             setInterval(function() {
                 if (gui.date != null) $("#house_time").html(gui.date.format_timestamp())
             }, 1000);
-            this.load_skin(message.get("skin"))
-            
         }
         else if (message.args == "gui/settings") {
             if (message.config_schema != this.settings_config_schema) {
                 return false
             }
-            if (! this.is_valid_configuration(["skin", "map", "default_page"], message.get_data())) return false
+            if (! this.is_valid_configuration(["map", "default_page"], message.get_data())) return false
             this.settings = message.get_data()
-            this.load_skin(message.get("skin"))
         }
-        else if (message.args == "users") {
+        else if (message.args == "gui/users") {
             this.users = message.get_data()
             // ensure the user is still authenticated
             this.is_authenticated()
         }
-        else if (message.args == "groups") {
+        else if (message.args == "gui/groups") {
             this.groups = message.get_data()
         }
         this.log_debug("Received configuration "+message.args)

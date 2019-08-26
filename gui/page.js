@@ -9,6 +9,38 @@ class Page {
         this.widget_objects = {}
         // map each widget_id to the widget configuration
         this.widgets = {}
+        // draw the page structure
+        $("#page_wrapper").html('\
+            <div class="content-header">\
+                <div class="container-fluid">\
+                    <div class="row mb-2">\
+                        <div class="col-sm-6" id="page_header">\
+                            <div class="form-group"><input type="text" id="page_id" class="form-control d-none" placeholder="page identifier"></div>\
+                        </div>\
+                        <div class="col-sm-6">\
+                            <ol class="breadcrumb float-sm-right">\
+                                <li class="breadcrumb-item">\
+                                    <button class="btn btn-default btn-sm" id="page_new"><i class="far fa-file"></i> '+locale("page.new")+'</button>\
+                                    <button class="btn btn-default btn-sm" id="page_edit"><i class="fas fa-edit"></i> '+locale("page.edit")+'</button>\
+                                    <button class="btn btn-default btn-sm text-danger" id="page_delete"><i class="fas fa-trash-alt"></i> '+locale("page.delete")+'</button>\
+                                    <button class="btn btn-default btn-sm edit_page_item d-none" id="page_add_row"><i class="fas fa-plus"></i> '+locale("page.add_row")+'</button>\
+                                    <button class="btn btn-default d-none btn-sm edit_page_item" id="page_edit_cancel"><i class="fas fa-undo"></i> '+locale("page.discard_changes")+'</button>\
+                                    <button class="btn btn-default d-none btn-sm edit_page_item" id="page_edit_done"><i class="fas fa-save"></i> '+locale("page.save_changes")+'</button>\
+                                </li>\
+                            </ol>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+            <section class="content">\
+                <div class="container-fluid">\
+                    <div id="body"></div>\
+                    <div style="padding: 10px 0px; text-align: center;">\
+                        <div class="text-muted"><a href="javascript:window.scrollTo(0,0);">'+locale("page.discard_changes")+'</a></div>\
+                    </div>\
+                </div>\
+            </section>\
+        ')
         // if it is a user page, draw the page layout provided by the user
         if (type == "USER") this.draw(page)
         // if it is a system page, build the page layout and draw it
@@ -1171,7 +1203,6 @@ class Page {
                 return function () {
                     // clear the modal and load it
                     $("#popup_body").html("")
-                    $("#popup_title").html(title)
                     var widget_object = this_class.create_widget("popup_body", widget)
                     if (widget_object != null) widget_object.draw()
                     $("#popup").modal()

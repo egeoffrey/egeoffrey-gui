@@ -6,6 +6,50 @@ class Toolbar extends Widget {
         this.persistent = true
         this.max_items = 10
         this.notification_value_enabled = false
+        // draw toolbar structure
+        $("#toolbar").html('\
+            <li class="nav-item dropdown">\
+                <a class="nav-link" data-toggle="dropdown" href="#">\
+                    <i class="fas fa-ban"></i>\
+                    <span class="badge badge-danger navbar-badge" id="notification_alert_count"></span>\
+                </a>\
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notification_alert">\
+                    <div class="dropdown-divider"></div>\
+                    <a class="dropdown-item dropdown-footer" id="notification_alert_link">'+locale("toolbar.view_all")+'</a>\
+                </div>\
+            </li>\
+            <li class="nav-item dropdown">\
+                <a class="nav-link" data-toggle="dropdown" href="#">\
+                    <i class="fas fa-exclamation-triangle"></i>\
+                    <span class="badge badge-warning navbar-badge" id="notification_warning_count"></span>\
+                </a>\
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notification_warning">\
+                    <div class="dropdown-divider"></div>\
+                    <a class="dropdown-item dropdown-footer" id="notification_warning_link">'+locale("toolbar.view_all")+'</a>\
+                </div>\
+            </li>\
+            <li class="nav-item dropdown">\
+                <a class="nav-link" data-toggle="dropdown" href="#">\
+                    <i class="fas fa-info"></i>\
+                    <span class="badge badge-success navbar-badge" id="notification_info_count"></span>\
+                </a>\
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notification_info">\
+                    <div class="dropdown-divider"></div>\
+                    <a class="dropdown-item dropdown-footer" id="notification_info_link">'+locale("toolbar.view_all")+'</a>\
+                </div>\
+            </li>\
+            <li class="nav-item dropdown">\
+                <a class="nav-link" data-toggle="dropdown" href="#">\
+                    <input type="checkbox" id="notification_value_enabled">\
+                    <i class="fas fa-microchip"></i>\
+                    <span class="badge badge-info navbar-badge" id="notification_value_count"></span>\
+                </a>\
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notification_value">\
+                    <div class="dropdown-divider"></div>\
+                    <a class="dropdown-item dropdown-footer" id="notification_value_link">'+locale("toolbar.view_all")+'</a>\
+                </div>\
+            </li>\
+        ')
     }
     
     // draw the widget's content
