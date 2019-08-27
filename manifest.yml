@@ -9,6 +9,6 @@ icon: columns
 manifest_schema: 2
 modules: []
 package: egeoffrey-gui
-revision: 41
+revision: 42
 tags: gui
 version: 1.0

@@ -111,6 +111,10 @@ class Page {
                 var widget_object = new Rule_wizard("rule_wizard", {})
                 widget_object.draw()
             }
+            else if (page_id == "__module_wizard") {
+                var widget_object = new Module_wizard("module_wizard", {})
+                widget_object.draw()
+            }
             else if (page_id == "__menu_item_wizard") {
                 var widget_object = new Menu_item_wizard("menu_item_wizard", {})
                 widget_object.draw()

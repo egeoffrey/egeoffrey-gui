@@ -245,23 +245,24 @@ class Sensor_wizard extends Widget {
                                 var required_flag = required != "" ? "*" : ""
                                 var options_html = ""
                                 if (required == "") options_html = options_html+'<option value=""></option>'
+                                // draw a text input
+                                if (["int", "float", "string", "password"].includes(configuration["format"])) {
+                                    var placeholder = "placeholder" in configuration ? "e.g. "+configuration["placeholder"] : ""
+                                    var type = configuration["format"] == "password" ? "password" : "text"
+                                    input = '\
+                                        <div class="form-group">\
+                                            <label>'+configuration["description"]+required_flag+'</label>\
+                                            <input type="'+type+'" id="'+this_class.id+'_service_configuration_'+configuration["name"]+'" name="'+configuration["name"]+'" class="form-control" placeholder="'+placeholder+'" '+required+'>\
+                                        </div>'
+                                }
                                 // draw a select input
-                                if (configuration["format"] != "int" && configuration["format"] != "float" && configuration["format"] != "string") {
+                                else if (configuration["format"].includes("|")) {
                                     var options = configuration["format"].split("|")
                                     for (var option of options) options_html = options_html+'<option value="'+option+'">'+option+'</option>'
                                     input = '\
                                         <div class="form-group">\
                                             <label>'+configuration["description"]+required_flag+'</label>\
                                             <select id="'+this_class.id+'_service_configuration_'+configuration["name"]+'" name="'+configuration["name"]+'" class="form-control" '+required+'>'+options_html+'</select>\
-                                        </div>'
-                                } 
-                                // draw a text input
-                                else {
-                                    var placeholder = "placeholder" in configuration ? "e.g. "+configuration["placeholder"] : ""
-                                    input = '\
-                                        <div class="form-group">\
-                                            <label>'+configuration["description"]+required_flag+'</label>\
-                                            <input type="text" id="'+this_class.id+'_service_configuration_'+configuration["name"]+'" name="'+configuration["name"]+'" class="form-control" placeholder="'+placeholder+'" '+required+'>\
                                         </div>'
                                 }
                                 $('#'+this_class.id+'_tab_service_configuration_content').append(input)
@@ -382,7 +383,7 @@ class Sensor_wizard extends Widget {
             for (var module_object of manifest["modules"]) {
                 for (var module in module_object) {
                     if (! module.startsWith("service/")) continue
-                    if (! gui.is_valid_configuration(["service_configuration", "service_configuration"], module_object[module])) continue
+                    if (! gui.is_valid_configuration(["service_configuration"], module_object[module])) continue
                     // add it to the select
                     var description = "description" in module_object[module] ? module_object[module]["description"] : manifest["description"]
                     $('#'+this.id+'_service_name').append($('<option>', {

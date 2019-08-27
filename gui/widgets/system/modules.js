@@ -32,15 +32,13 @@ class Modules extends Widget {
         var message = new Message(gui)
         message.recipient = "*/*"
         message.command = "DISCOVER"
-        message.args = "req"
+        message.args = "*"
         this.modules = []
         this.send(message)
         // subscribe for start/stop notifications
         this.add_inspection_listener("+/+", "*/*", "STATUS", "#")
         // subscribe for ping responses
         this.add_inspection_listener("+/+", "+/+", "PONG", "#")
-        // subscribe for discover responses
-        this.add_inspection_listener("+/+", "*/*", "DISCOVER", "res")
     }
     
     // draw the widget's content
@@ -137,7 +135,7 @@ class Modules extends Widget {
             $("#"+this.id+"_ping_"+message.sender.replace("/","_")).html(latency+"s")
 
         }
-        else if (message.sender.startsWith("system/watchdog") && message.command == "DISCOVER" && message.args == "res") {
+        else if (message.command == "DISCOVER") {
             // for each module managed by the watchdog
             var watchdog = message.sender
             for (var module of message.get_data()) {
@@ -192,7 +190,7 @@ class Modules extends Widget {
                 // edit the module's configuration
                 $("#"+this.id+"_edit_"+module_id).unbind().click(function(scope, name) {
                     return function () {
-                        window.location.hash = '#__configuration='+scope+'/'+name;
+                        window.location.hash = '#__module_wizard='+scope+'/'+name;
                     };
                 }(module["scope"], module["name"]));
                 // start the module
