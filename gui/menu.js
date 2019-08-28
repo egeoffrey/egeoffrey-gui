@@ -24,8 +24,8 @@ class Menu extends Widget {
                             <a class="dropdown-item" id="menu_section_new" style="color: black">'+locale("menu.new_section")+'</a>\
                             <a class="dropdown-item" id="menu_section_edit" style="color: black">'+locale("menu.edit_sections")+'</a>\
                             <div class="dropdown-divider"></div>\
-                            <a class="dropdown-item" id="menu_menu_item_new" style="color: black">'+locale("menu.new_item")+'</a>\
-                            <a class="dropdown-item" id="menu_menu_item_edit" style="color: black">'+locale("menu.edit_items")+'</a>\
+                            <a class="dropdown-item" id="menu_item_new" style="color: black">'+locale("menu.new_item")+'</a>\
+                            <a class="dropdown-item" id="menu_item_edit" style="color: black">'+locale("menu.edit_items")+'</a>\
                         </div>\
                     </div>\
                 </div>\
@@ -46,87 +46,119 @@ class Menu extends Widget {
         $("#menu_edit_cancel").removeClass("d-none")
     }
     
-    // refresh the menu
-    refresh() {
+    // add a menu item to the menu
+    add_menu_item(entry, add_to_section=true) {
         var selected = null
         // check if the user selected already a page
         if (location.hash != null) selected = location.hash.replace('#','')
+        // add the entry
+        var page_tag = entry["page"].replaceAll("/","_")
+        var tag = add_to_section ? "#menu_section_"+entry["section_id"] : "#"+this.id
+        $(tag).append('\
+        <li class="nav-item">\
+            <a class="nav-link" id="menu_user_item_'+page_tag+'" href="#'+entry["page"]+'">&nbsp;\
+                <input type="text" value="'+entry["page"]+'" class="d-none" id="menu_user_item_'+page_tag+'_id">\
+                <i class="nav-icon fas fa-'+entry["icon"]+'" id="menu_user_item_'+page_tag+'_icon"></i>\
+                <p>'+capitalizeFirst(entry["text"])+'</p>\
+            </a>\
+        </li>');
+        // open the page on click
+        $("#menu_user_item_"+page_tag).unbind().click(function(page, section_id, page_tag){
+            return function () {
+                // if clicking on the current page, explicitly reload it since hash will not change
+                if (location.hash.replace("#","") == page) gui.load_page(page)
+                window.scrollTo(0,0)
+                // close active section
+                $("#menu li").removeClass("active menu-open")
+                // remove active section
+                $("#menu li a").removeClass("active")
+                // open new section
+                $("#menu_section_"+section_id+"_tree").addClass("active menu-open")
+                // make new section as active
+                $("#menu_section_"+section_id+"_name").addClass("active")
+                // set item as active
+                $("#menu_user_item_"+page_tag).addClass("active")
+            }
+        }(entry["page"], entry["section_id"], page_tag));
+        // open up the section containing the selected menu item
+        if (selected != null && selected == entry["page"]) {
+            // set section as active
+            $("#menu_section_"+entry["section_id"]+"_name").addClass("active")
+            // open the section menu
+            $("#menu_section_"+entry["section_id"]+"_tree").addClass("active menu-open")
+            // set item as active
+            $("#menu_user_item_"+page_tag).addClass("active")
+        }
+    }
+    
+    // refresh the menu
+    refresh() {
         $("#"+this.id).empty()
-        for (var section of this.sections) {
+        // clone sections and entries objects
+        var sections = this.sections.slice()
+        var entries = jQuery.extend({ }, this.entries)
+        // add welcome entries
+        this.add_menu_item({entry_id: "__welcome", text: "Welcome", icon: "robot", page: "__welcome"}, false)
+        this.add_menu_item({entry_id: "__notifications", text: "Notifications", icon: "comments", page: "__notifications"}, false)
+        sections.unshift({ header: "MY HOUSE"})
+        // add admin entries
+        if (gui.is_authorized({allow: ["house_admins"]}) || gui.is_authorized({allow: ["egeoffrey_admins"]})) sections[sections.length] = { header: "ADMINISTRATION"}
+        if (gui.is_authorized({allow: ["house_admins"]})) {
+            sections[sections.length+1] = { text: "House Admin", order: sections.length+1, section_id: "__house_admin", icon: "user-shield"}
+            entries["__house_admin"] = []
+            entries["__house_admin"].push({section_id: "__house_admin",  order: 0, entry_id: "house", text: "My House", icon: "home", page: "__house"})
+            entries["__house_admin"].push({section_id: "__house_admin",  order: 1, entry_id: "sensors", text: "Sensors", icon: "microchip", page: "__sensors"})
+            entries["__house_admin"].push({section_id: "__house_admin",  order: 2, entry_id: "rules", text: "Rules", icon: "brain", page: "__rules"})
+        }
+        if (gui.is_authorized({allow: ["egeoffrey_admins"]})) {
+            sections[sections.length+2] = { text: "eGeoffrey Admin", order: sections.length+2, section_id: "__egeoffrey_admin", icon: "toolbox"}
+            entries["__egeoffrey_admin"] = []
+            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 0, entry_id: "packages", text: "Packages", icon: "cubes", page: "__packages"})
+            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 1, entry_id: "modules", text: "Modules", icon: "server", page: "__modules"})
+            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 2, entry_id: "marketplace", text: "Marketplace", icon: "shopping-cart", page: "__marketplace"})
+            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 3, entry_id: "logs", text: "Logs", icon: "align-justify", page: "__logs"})
+            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 4, entry_id: "database", text: "Database", icon: "database", page: "__database"})
+            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 5, entry_id: "gateway", text: "Gateway", icon: "project-diagram", page: "__gateway"})
+            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 6, entry_id: "configuration", text: "Advanced Editor", icon: "edit", page: "__configuration"})
+            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 7, entry_id: "icons", text: "Icons", icon: "palette", page: "__icons"})
+        }
+        // draw the menu
+        for (var section of sections) {
             if (section == null) continue
-            if (! (section["section_id"] in this.entries)) continue
+            // this is just a header
+            if ("header" in section) {
+                $("#"+this.id).append('<li class="nav-header">'+section["header"]+'</li>')
+                continue
+            }
+            if (! (section["section_id"] in entries)) continue
+            // add the section
             var section_icon = "icon" in section ? "fas fa-"+section["icon"] : "far fa-circle"
             var section_html = '\
                 <li class="nav-item has-treeview" id="menu_section_'+section["section_id"]+'_tree">\
                     <a href="#" class="nav-link" id="menu_section_'+section["section_id"]+'_name">\
                         <input type="text" value="'+section["section_id"]+'" class="d-none" id="menu_section_'+section["section_id"]+'_id">\
                         <i class="'+section_icon+'" id="menu_section_'+section["section_id"]+'_icon"></i> \
-                        <span>'+section["text"].toUpperCase()+'</span>\
-                        <span class="float-right-container">\
-                            <i class="fa fa-angle-left float-right" id="menu_section_'+section["section_id"]+'_arrow"></i>\
-                        </span>\
+                        <p>\
+                            '+section["text"]+'\
+                            <i class="fa fa-angle-left right" id="menu_section_'+section["section_id"]+'_arrow"></i>\
+                        </p>\
                     </a>\
                     <ul class="nav nav-treeview" id="menu_section_'+section["section_id"]+'">\
                     </ul>\
                 </li>'
             $("#"+this.id).append(section_html)
+            // add the entries to the section
             var items = 0
-            for (var entry of this.entries[section["section_id"]]) {
+            for (var entry of entries[section["section_id"]]) {
                 if (entry == null) continue
                 if (entry["section_id"] != section["section_id"]) continue
                 // add the entry to the menu
                 if (! gui.is_authorized(entry)) continue
-                var page_tag = entry["page"].replaceAll("/","_")
-                $("#menu_section_"+section["section_id"]).append('\
-                <li class="nav-item">\
-                    <a class="nav-link" id="menu_user_item_'+page_tag+'" href="#'+entry["page"]+'">&nbsp;\
-                        <input type="text" value="'+entry["page"]+'" class="d-none" id="menu_user_item_'+page_tag+'_id">\
-                        <i class="nav-icon fas fa-'+entry["icon"]+'" id="menu_user_item_'+page_tag+'_icon"></i> '+capitalizeFirst(entry["text"])+'\
-                    </a>\
-                </li>');
-                // open the page on click
-                $("#menu_user_item_"+page_tag).unbind().click(function(page, section_id, page_tag){
-                    return function () {
-                        // if clicking on the current page, explicitely reload it since hash will not change
-                        if (location.hash.replace("#","") == page) gui.load_page(page)
-                        window.scrollTo(0,0)
-                        // close active section
-                        $("#menu li").removeClass("active menu-open")
-                        // remove active section
-                        $("#menu li a").removeClass("active")
-                        if ($("#menu li a span i").hasClass("fa-angle-down")) {
-                            $("#menu li a span i").removeClass("fa-angle-down")
-                            $("#menu li a span i").addClass("fa-angle-left")
-                        }
-                        // open new section
-                        $("#menu_section_"+section_id+"_tree").addClass("active menu-open")
-                        // make new section as active
-                        $("#menu_section_"+section_id+"_name").addClass("active")
-                        // place arrow down
-                        $("#menu_section_"+section_id+"_arrow").removeClass("fa-angle-left")
-                        $("#menu_section_"+section_id+"_arrow").addClass("fa-angle-down")
-                        // set item as active
-                        $("#menu_user_item_"+page_tag).addClass("active")
-                        // configure push menu
-                        //if ($("body").hasClass('menu-open')) $("body").removeClass('menu-open').removeClass('menu-collapse').trigger('collapsed.pushMenu')
-                    }
-                }(entry["page"], section["section_id"], page_tag));
+                this.add_menu_item(entry)
                 items++
-                // open up the section containing the selected menu item
-                if (selected != null && selected == entry["page"]) {
-                    // set section as active
-                    $("#menu_section_"+section["section_id"]+"_name").addClass("active")
-                    // place arrow down
-                    $("#menu_section_"+section["section_id"]+"_arrow").removeClass("fa-angle-left")
-                    $("#menu_section_"+section["section_id"]+"_arrow").addClass("fa-angle-down")
-                    // open the section menu
-                    $("#menu_section_"+section["section_id"]+"_tree").addClass("active menu-open")
-                    // set item as active
-                    $("#menu_user_item_"+page_tag).addClass("active")
-                }
             }
             // hide the section if it has no items
-            if (items == 0) $("#menu_section_"+section["section_id"]).addClass("d-none")
+            if (items == 0) $("#menu_section_"+entry["section_id"]).addClass("d-none")
         }
         var this_class = this
         // configure new menu section button

@@ -1,6 +1,0 @@
-allow:
-- house_admins
-icon: palette
-order: 99
-page: house_admin/icons
-text: Icons

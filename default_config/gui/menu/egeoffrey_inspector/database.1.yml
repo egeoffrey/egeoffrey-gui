@@ -1,6 +1,0 @@
-allow:
-- egeoffrey_admins
-icon: database
-order: 2
-page: egeoffrey_inspector/database
-text: Database

@@ -27,19 +27,24 @@ class Gui extends Module {
         this.groups = {}
         // date/time helper
         this.date = null
-        // subscribe to required settings
+        // managed configuration schema
         this.page_config_schema = 1
         this.chart_config_schema = 1
         this.settings_config_schema = 1
         this.menu_config_schema = 1
+        this.users_config_schema = 1
+        this.groups_config_schema = 1
+        // unmanaged configuration schema
+        this.supported_sensors_config_schema = 1
+        this.supported_house_config_schema = 1
+        this.supported_rules_config_schema = 1
+        this.supported_manifest_schema = 2
+        // subscribe to required settings
         this.add_configuration_listener("house", 1, true)
         this.add_configuration_listener("gui/settings", "+", true)
         this.add_configuration_listener("gui/charts", "+", true)
-        this.add_configuration_listener("gui/users", 1, true)
-        this.add_configuration_listener("gui/groups", 1, true)
-        this.supported_sensors_config_schema = 1
-        this.supported_rules_config_schema = 1
-        this.supported_manifest_schema = 2
+        this.add_configuration_listener("gui/users", "+", true)
+        this.add_configuration_listener("gui/groups", "+", true)
         // objects of the current page
         this.page = null
         this.page_listener = null
@@ -175,7 +180,7 @@ class Gui extends Module {
         // authenticate the user
         if (! (this.username in this.users)) this.join()
         var user = this.users[this.username]
-        if (user["password"] != this.password) this.join()
+        if ("password" in user && user["password"] != this.password) this.join()
         $("#user_icon").addClass("fa-"+user["icon"])
         $("#user_fullname").html(user["fullname"])
     }
@@ -278,15 +283,21 @@ class Gui extends Module {
             if (message.config_schema != this.settings_config_schema) {
                 return false
             }
-            if (! this.is_valid_configuration(["map", "default_page"], message.get_data())) return false
+            if (! this.is_valid_configuration(["default_page"], message.get_data())) return false
             this.settings = message.get_data()
         }
         else if (message.args == "gui/users") {
+            if (message.config_schema != this.users_config_schema) {
+                return false
+            }
             this.users = message.get_data()
             // ensure the user is still authenticated
             this.is_authenticated()
         }
         else if (message.args == "gui/groups") {
+            if (message.config_schema != this.groups_config_schema) {
+                return false
+            }
             this.groups = message.get_data()
         }
         this.log_debug("Received configuration "+message.args)

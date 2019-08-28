@@ -4,6 +4,7 @@ class Maps extends Widget {
         super(id, widget)
         // variables
         this.map = null
+        this.map_type = "map_type" in widget ? widget["map_type"] : "hybrid"
         // add an empty box into the given column
         this.add_large_box(this.id, this.widget["title"])
     }
@@ -36,7 +37,7 @@ class Maps extends Widget {
         if (! gui.maps_loaded) {
             // load google maps api (lazy loading since we need the api_key from the conf)
             var script = document.createElement('script')
-            script.src = "https://maps.googleapis.com/maps/api/js?key="+gui.settings["map"]["api_key"]
+            script.src = "https://maps.googleapis.com/maps/api/js?key="+this.settings["map"]["api_key"]
             script.onload = function(this_class) {
                 return function () {
                     var script = document.createElement('script');
@@ -49,7 +50,7 @@ class Maps extends Widget {
                                 div: "#"+this_class.id+"_map",
                                 lat: 0,
                                 lng: 0,
-                                mapType: gui.settings["map"]["type"],
+                                mapType: this_class.map_type,
                                 zoom: 2
                             });
                             gui.maps_loaded = true
@@ -71,7 +72,7 @@ class Maps extends Widget {
                 div: "#"+this.id+"_map",
                 lat: 0,
                 lng: 0,
-                mapType: gui.settings["map"]["type"],
+                mapType: this.map_type,
                 zoom: 2
             });
             // request the data

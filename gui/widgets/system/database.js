@@ -74,6 +74,7 @@ class Database extends Widget {
                 table.row.add([entry[0], entry[1], entry[2], entry[3], format_multiline(truncate(entry[4].replaceAll("\n", "<br>"), 100), 50)])
             }
             table.draw()
+            table.responsive.recalc()
             if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         }
     }

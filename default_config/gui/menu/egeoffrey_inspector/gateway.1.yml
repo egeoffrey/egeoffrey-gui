@@ -1,6 +1,0 @@
-allow:
-- egeoffrey_admins
-icon: project-diagram
-order: 3
-page: egeoffrey_inspector/gateway
-text: Gateway

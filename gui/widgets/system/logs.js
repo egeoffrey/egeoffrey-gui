@@ -152,6 +152,7 @@ class Logs extends Widget {
             if (this.show_only != null && message.args != this.show_only) return
             var table = $("#"+this.id+"_table").DataTable()
             table.row.add([gui.date.now(), this.format_severity(message.args), "["+message.sender+"] "+message.get_data()]).draw(false);
+            table.responsive.recalc()
         }
         else if (message.sender == "controller/db" && message.command == "GET") {
             var table = $("#"+this.id+"_table").DataTable()
@@ -164,6 +165,7 @@ class Logs extends Widget {
                 table.row.add([timestamp/1000, this.format_severity(message.args), text])
             }
             table.draw()
+            table.responsive.recalc()
             if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         }
         if (this.filter_by != null) {

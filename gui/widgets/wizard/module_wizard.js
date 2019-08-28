@@ -174,7 +174,7 @@ class Module_wizard extends Widget {
             // the manifest does not contain any information regarding this module, exiting
             if (! found) {
                 $("#wizard").modal("hide")
-                gui.notify("warning","Configuration schema of module "+this.module_id+" not found")
+                gui.notify("warning","Configuration schema of module "+this.module_id+" not available")
             }
         }
     }

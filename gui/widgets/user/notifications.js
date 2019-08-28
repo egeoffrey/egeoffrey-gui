@@ -126,6 +126,7 @@ class Notifications extends Widget {
             var severity = args[0]
             if (this.show_only != null && severity != this.show_only) return
             table.row.add([gui.date.now(), this.format_severity(severity), message.get_data()]).draw(false);
+            table.responsive.recalc()
         }
         else if (message.sender == "controller/db" && message.command == "GET") {
             var session = gui.sessions.restore(message)
@@ -135,6 +136,7 @@ class Notifications extends Widget {
                 table.row.add([entry[0]/1000, this.format_severity(message.args), entry[1]]);
             }
             table.draw()
+            table.responsive.recalc()
             if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         }
         if (this.filter_by != null) {

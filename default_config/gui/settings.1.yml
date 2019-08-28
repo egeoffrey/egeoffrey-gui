@@ -1,4 +1,2 @@
-map:
-  api_key: null
-  type: hybrid
-default_page: overview/welcome
+map_api_key: null
+default_page: __welcome

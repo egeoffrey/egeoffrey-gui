@@ -39,11 +39,9 @@ languages["en"] = {
     "page.edit": "Edit Page",
     "page.delete": "Delete Page",
     "page.add_row": "Add Row",
-    "page.discard_changes": "Discard Changes<",
+    "page.discard_changes": "Discard Changes",
     "page.save_changes": "Save Changes",
     "page.go_to_top": "Go to Top",
-    "page.new": "Cancel",
-    "page.new": "Cancel",
     
 }
 

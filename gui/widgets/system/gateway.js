@@ -97,11 +97,12 @@ class Gateway extends Widget {
     // receive data and load it into the widget
     on_message(message) {
         if (! this.live) return
+        // TODO: if now opened on this page, the table gets empty just after loading
         var table = $("#"+this.id+"_table").DataTable()
         var retain = message.retain ? '<i class="fas fa-check"></i>' : ""
         var content = truncate(format_multiline(JSON.stringify(message.get_data()), 70),1000)
-        table.row.add([gui.date.now(), message.sender, message.recipient, message.command, message.args, retain, content])
-        table.draw(false)
+        table.row.add([gui.date.now(), message.sender, message.recipient, message.command, message.args, retain, content]).draw(false)
+        table.responsive.recalc()
         if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
     }
     

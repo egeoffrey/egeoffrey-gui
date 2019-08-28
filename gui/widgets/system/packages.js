@@ -24,12 +24,13 @@ class Packages extends Widget {
         // 1: description
         // 2: modules
         // 3: version
-        // 4: up to date
-        // 5: manifest
+        // 4: sdk
+        // 5: up to date
+        // 6: manifest
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>Package</th><th>Description</th><th>Modules</th><th>Version</th><th>Up to Date</th><th>Manifest</th></tr>\
+                    <tr><th data-priority="1">Package</th><th>Description</th><th>Modules</th><th>Version</th><th>SDK</th><th>Up to Date</th><th>Manifest</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -49,7 +50,7 @@ class Packages extends Widget {
             "columnDefs": [ 
                 {
                     "className": "dt-center",
-                    "targets": [3, 4, 5]
+                    "targets": [3, 4, 5, 6]
                 }
             ],
             "language": {
@@ -80,9 +81,11 @@ class Packages extends Widget {
                 for (var module in module_object) modules = modules+module+"<br>"
             }
             var version = manifest["version"].toFixed(1)+"-"+manifest["revision"]+" ("+manifest["branch"]+")"
+            var sdk = manifest["sdk"]["version"].toFixed(1)+"-"+manifest["sdk"]["revision"]+" ("+manifest["sdk"]["branch"]+")"
             var up_to_date = '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>'
             var manifest_button = '<button type="button" id="'+this.id+'_manifest_'+manifest["package"].replace("/", "_")+'" class="btn btn-default"><i class="fas fa-newspaper"></i></button>'
-            table.row.add([package_name, description, modules, version, up_to_date, manifest_button]).draw();
+            table.row.add([package_name, description, modules, version, sdk, up_to_date, manifest_button]).draw();
+            table.responsive.recalc()
             $("#"+this.id+'_manifest_'+manifest["package"].replace("/", "_")).unbind().click(function(this_class, manifest) {
                 return function () {
                     // clear the modal and load it

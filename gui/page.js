@@ -18,7 +18,7 @@ class Page {
                             <div class="form-group"><input type="text" id="page_id" class="form-control d-none" placeholder="page identifier"></div>\
                         </div>\
                         <div class="col-sm-6">\
-                            <ol class="breadcrumb float-sm-right">\
+                            <ol class="breadcrumb float-sm-right d-none" id="page_buttons">\
                                 <li class="breadcrumb-item">\
                                     <button class="btn btn-default btn-sm" id="page_new"><i class="far fa-file"></i> '+locale("page.new")+'</button>\
                                     <button class="btn btn-default btn-sm" id="page_edit"><i class="fas fa-edit"></i> '+locale("page.edit")+'</button>\
@@ -36,11 +36,12 @@ class Page {
                 <div class="container-fluid">\
                     <div id="body"></div>\
                     <div style="padding: 10px 0px; text-align: center;">\
-                        <div class="text-muted"><a href="javascript:window.scrollTo(0,0);">'+locale("page.discard_changes")+'</a></div>\
+                        <div class="text-muted"><a href="javascript:window.scrollTo(0,0);">'+locale("page.go_to_top")+'</a></div>\
                     </div>\
                 </div>\
             </section>\
         ')
+        if ( ! page_id.startsWith("__")) $("#page_buttons").removeClass("d-none")
         // if it is a user page, draw the page layout provided by the user
         if (type == "USER") this.draw(page)
         // if it is a system page, build the page layout and draw it
@@ -124,30 +125,124 @@ class Page {
                 widget_object.draw()
             }
             else if (page_id == "__notifications") {
-                var page_layout = [
-                    {
-                        "": [
-                            {
-                                "title": "Notifications",
-                                "size": 12,
-                                "widget": "notifications"
-                            }
-                        ]
-                    }
-                ]
+                var page_layout = [ { "": [ { "title": "Notifications", "size": 12, "widget": "notifications" } ] } ]
                 this.draw(page_layout)
             }
             else if (page_id == "__configuration") {
+                var page_layout = [ { "": [ { "title": "Configuration Editor", "size": 12, "widget": "__configuration" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__database") {
+                var page_layout = [ { "": [ { "title": "Database Inspector", "size": 12, "widget": "__database" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__gateway") {
+                var page_layout = [ { "": [ { "title": "Gateway Inspector", "size": 12, "widget": "__gateway" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__house") {
+                var page_layout = [ { "": [ { "title": "House Configuration", "size": 12, "widget": "__house" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__icons") {
+                var page_layout = [ { "": [ { "title": "Available Icons", "size": 12, "widget": "__icons" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__logs") {
+                var page_layout = [ { "": [ { "title": "Log Inspector", "size": 12, "widget": "__logs" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__marketplace") {
+                var page_layout = [ { "": [ { "title": "Marketplace", "size": 12, "widget": "__marketplace" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__modules") {
+                var page_layout = [ { "": [ { "title": "Modules", "size": 12, "widget": "__modules" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__packages") {
+                var page_layout = [ { "": [ { "title": "Packages", "size": 12, "widget": "__packages" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__rules") {
+                var page_layout = [ { "": [ { "title": "Rules", "size": 12, "widget": "__rules" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__sensors") {
+                var page_layout = [ { "": [ { "title": "Registered Sensors", "size": 12, "widget": "__sensors" } ] } ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__welcome") {
                 var page_layout = [
-                    {
-                        "": [
-                            {
-                                "title": "Configuration Editor",
-                                "size": 12,
-                                "widget": "configuration"
-                            }
-                        ]
-                    }
+                  {
+                    "eGeoffrey, your personal e-servant software": [
+                      {
+                        "size": 12,
+                        "text": "You can configure your rules from the <a href='#house_admin/rules'>RULES</a> menu item on the left to trigger notifications generating E-mail, Slack alerts, SMS messages, etc. whenever a configured condition is met.<br>Notifications can also be reviewed from the web interface thorugh the widgets below.",
+                        "title": "Create your rules and receive notifications",
+                        "widget": "text"
+                      }
+                    ]
+                  },
+                  {
+                    "": [
+                      {
+                        "color": "red",
+                        "icon": "ban",
+                        "link": "overview/notifications=ALERT",
+                        "scope": "alerts",
+                        "sensor": "alert",
+                        "size": 4,
+                        "title": "Alerts",
+                        "widget": "counter"
+                      },
+                      {
+                        "color": "yellow",
+                        "icon": "exclamation-triangle",
+                        "link": "overview/notifications=WARNING",
+                        "scope": "alerts",
+                        "sensor": "warning",
+                        "size": 4,
+                        "title": "Warnings",
+                        "widget": "counter"
+                      },
+                      {
+                        "color": "info",
+                        "icon": "info",
+                        "link": "overview/notifications=INFO",
+                        "scope": "alerts",
+                        "sensor": "info",
+                        "size": 4,
+                        "title": "Informational",
+                        "widget": "counter"
+                      }
+                    ]
+                  },
+                  {
+                    "Your Sensors": [
+                      {
+                        "size": 12,
+                        "text": "Before data can be displayed here or used in a rule, a sensor has to be created through the <a href='#house_admin/sensors'>SENSORS</a> menu item on the left.<br>A sensor in eGeoffrey is a logical container of one or more values: it can hold just a single piece of data or a timeseries. Sensor's values can come from an associated service (e.g. a url with an image, a command to run, etc.), from actions associated to rules or from your interaction with widgets on this interface.<br>Once a sensor is created and data starts to get in, you can create a custom page to present values in many ways in this interface (see the <a href='#examples/widgets'>Widget Showcase</a> page for examples).<br>Live interaction is also supported thorugh your personal housebot who will take care of your house on your behalf. No need to configure anything, based on the rules and sensors you have configured the housebot will be able to answer any question you could have! The same level of interaction is also possible through Slack when you are away from Home.",
+                        "title": "Easily connect your sensors and interact with eGeoffrey in realtime",
+                        "widget": "text"
+                      }
+                    ]
+                  },
+                  {
+                    "": [
+                      {
+                        "show_only": "value",
+                        "size": 6,
+                        "title": "Latest Data",
+                        "widget": "notifications"
+                      },
+                      {
+                        "size": 6,
+                        "title": "Your Personal Housebot",
+                        "widget": "chatbot"
+                      }
+                    ]
+                  }
                 ]
                 this.draw(page_layout)
             }
@@ -416,37 +511,23 @@ class Page {
                             <label>Widget Type*</label>\
                             <select id="'+id+'_general_widget" class="form-control" required>\
                                 <option value=""></option>\
-                                <optgroup label="User Widgets">\
-                                    <option value="summary">Summary - display the latest value together with min/max of yesterday/today</option>\
-                                    <option value="value">Value - display the latest value of a sensor</option>\
-                                    <option value="timeline">Timeline - display a timeline chart</option>\
-                                    <option value="range">Range - display a chart with min and max values</option>\
-                                    <option value="status">Status - display an on/off status</option>\
-                                    <option value="control">Control an on/off switch</option>\
-                                    <option value="input">Input - display an input box</option>\
-                                    <option value="button">Button - display a button and associate actions</option>\
-                                    <option value="calendar">Calendar - display a calendar for scheduling events</option>\
-                                    <option value="image">Image - display an image stored in a sensor</option>\
-                                    <option value="map">Map - display a map plotting positions stored in a sensor</option>\
-                                    <option value="text">Text - display a text statically or from a sensor</option>\
-                                    <option value="table">Table - display a dynamic table</option>\
-                                    <option value="counter">Counter - display counter of the values stored in a sensor</option>\
-                                    <option value="tasks">Tasks - display a to-do list</option>\
-                                </optgroup>\
-                                <optgroup label="System Widgets">\
-                                    <option value="packages">Packages - list installed packages</option>\
-                                    <option value="modules">Modules - list running modules</option>\
-                                    <option value="sensors">Sensors - list configured sensors</option>\
-                                    <option value="logs">Logs - list system logs</option>\
-                                    <option value="rules">Rules - list configured rules</option>\
-                                    <option value="chatbot">Chatbot - display the interactive chatbot</option>\
-                                    <option value="configuration">Configuration - display the advanced configuration editor</option>\
-                                    <option value="icons">Icons - display available icons</option>\
-                                    <option value="database">Database - display database statistics</option>\
-                                    <option value="gateway">Gateway - inspect gateway messages</option>\
-                                    <option value="notifications">Notifications - list the latest notifications</option>\
-                                    <option value="marketplace">Marketplace - list available packages in the marketplace</option>\
-                                </optgroup>\
+                                <option value="summary">Summary - display the latest value together with min/max of yesterday/today</option>\
+                                <option value="value">Value - display the latest value of a sensor</option>\
+                                <option value="timeline">Timeline - display a timeline chart</option>\
+                                <option value="range">Range - display a chart with min and max values</option>\
+                                <option value="status">Status - display an on/off status</option>\
+                                <option value="control">Control an on/off switch</option>\
+                                <option value="input">Input - display an input box</option>\
+                                <option value="button">Button - display a button and associate actions</option>\
+                                <option value="calendar">Calendar - display a calendar for scheduling events</option>\
+                                <option value="image">Image - display an image stored in a sensor</option>\
+                                <option value="map">Map - display a map plotting positions stored in a sensor</option>\
+                                <option value="text">Text - display a text statically or from a sensor</option>\
+                                <option value="table">Table - display a dynamic table</option>\
+                                <option value="counter">Counter - display counter of the values stored in a sensor</option>\
+                                <option value="tasks">Tasks - display a to-do list</option>\
+                                <option value="notifications">Notifications - list the latest notifications</option>\
+                                <option value="chatbot">Chatbot - display the interactive chatbot</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
@@ -720,6 +801,16 @@ class Page {
                             </div>\
                         </div>\
                         <div class="form-group">\
+                            <label>Map Type</label>\
+                            <select id="'+id+'_map_map_type" class="form-control">\
+                                <option value=""></option>\
+                                <option value="roadmap">displays the default road map view</option>\
+                                <option value="satellite">displays satellite images</option>\
+                                <option value="hybrid">displays a mixture of normal and satellite views</option>\
+                                <option value="terrain">displays a physical map based on terrain information</option>\
+                            </select>\
+                        </div>\
+                        <div class="form-group">\
                             <label>Track movements with a line among positions</label>\
                             <input type="checkbox" class="form-control" id="'+id+'_map_tracking">\
                         </div><br>\
@@ -822,6 +913,7 @@ class Page {
         simple_types["tasks"] = ["sensor"]
         simple_types["logs"] = ["show_only"]
         simple_types["notifications"] = ["show_only"]
+        simple_types["map"] = ["map_type"]
         var array_types = {}
         array_types["summary"] = ["sensors"]
         array_types["timeline"] = ["sensors"]
@@ -1159,19 +1251,20 @@ class Page {
         else if (widget["widget"] == "table") widget_object = new Table(id, widget)
         else if (widget["widget"] == "counter") widget_object = new Counter(id, widget)
         else if (widget["widget"] == "tasks") widget_object = new Tasks(id, widget)
-        // system widgets
-        else if (widget["widget"] == "packages") widget_object = new Packages(id, widget)
-        else if (widget["widget"] == "modules") widget_object = new Modules(id, widget)
-        else if (widget["widget"] == "sensors") widget_object = new Sensors(id, widget)
-        else if (widget["widget"] == "logs") widget_object = new Logs(id, widget)
-        else if (widget["widget"] == "rules") widget_object = new Rules(id, widget)
-        else if (widget["widget"] == "chatbot") widget_object = new Chatbot(id, widget)
-        else if (widget["widget"] == "configuration") widget_object = new Configuration(id, widget)
-        else if (widget["widget"] == "icons") widget_object = new Icons(id, widget)
-        else if (widget["widget"] == "database") widget_object = new Database(id, widget)
-        else if (widget["widget"] == "gateway") widget_object = new Gateway(id, widget)
         else if (widget["widget"] == "notifications") widget_object = new Notifications(id, widget)
-        else if (widget["widget"] == "marketplace") widget_object = new Marketplace(id, widget)
+        else if (widget["widget"] == "chatbot") widget_object = new Chatbot(id, widget)
+        // system widgets
+        else if (widget["widget"] == "__packages") widget_object = new Packages(id, widget)
+        else if (widget["widget"] == "__modules") widget_object = new Modules(id, widget)
+        else if (widget["widget"] == "__sensors") widget_object = new Sensors(id, widget)
+        else if (widget["widget"] == "__logs") widget_object = new Logs(id, widget)
+        else if (widget["widget"] == "__rules") widget_object = new Rules(id, widget)
+        else if (widget["widget"] == "__configuration") widget_object = new Configuration(id, widget)
+        else if (widget["widget"] == "__icons") widget_object = new Icons(id, widget)
+        else if (widget["widget"] == "__database") widget_object = new Database(id, widget)
+        else if (widget["widget"] == "__gateway") widget_object = new Gateway(id, widget)
+        else if (widget["widget"] == "__marketplace") widget_object = new Marketplace(id, widget)
+        else if (widget["widget"] == "__house") widget_object = new House(id, widget)
         else gui.log_error("unknown widget "+JSON.stringify(widget))
         if (widget_object != null) this.widget_objects[id] = widget_object
         return widget_object
