@@ -69,7 +69,13 @@ class Toolbar extends Widget {
             })
             this.send(message)
         }
+        // setup notification values checkbox
         if (this.notification_value_enabled) $("#notification_value_enabled").iCheck('check')
+        $("#notification_value_enabled").iCheck({
+          checkboxClass: 'icheckbox_square-blue',
+          radioClass: 'iradio_square-blue',
+          increaseArea: '20%' 
+        });
         $("#notification_value_enabled").unbind().on('ifChanged',function(this_class) {
             return function () {
                 this_class.notification_value_enabled = this.checked
@@ -79,6 +85,14 @@ class Toolbar extends Widget {
         this.add_broadcast_listener("+/+", "NOTIFY", "#")
         // ask for manifest files needed for notifying about available updates
         if (gui.check_for_updates) this.add_broadcast_listener("+/+", "MANIFEST", "#")
+    }
+
+    // add a new item to a widget
+    add_item(tag, text) {
+        $(tag).prepend('\
+            <a class="dropdown-item">'+text+'</a>\
+            <div class="dropdown-divider"></div>\
+        ')
     }
         
     // receive data and load it into the widget
@@ -94,7 +108,7 @@ class Toolbar extends Widget {
             var counter = parseInt($(widget_counter).html())+1
             $(widget_counter).html(counter)
             // add the alert to the list
-            $(widget).prepend('<li><a title="'+alert_text+'">'+alert_text+'</a></li>')
+            this.add_item(widget, alert_text)
             // remove the oldest one
             $(widget+" li:last").remove()
             // notify the user
@@ -137,7 +151,7 @@ class Toolbar extends Widget {
             if (data.length > this.max_items) data = data.slice(-this.max_items)
             for (var entry of data) {
                 entry = truncate(escape_html(entry), 40)
-                $(widget).prepend('<a class="dropdown-item" title="'+entry+'">'+entry+'</a>')
+                this.add_item(widget, entry)
             }
         }
         // manifest file - check for updates

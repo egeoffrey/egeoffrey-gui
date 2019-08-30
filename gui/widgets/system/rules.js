@@ -34,15 +34,15 @@ class Rules extends Widget {
         // 0: rule_id (hidden)
         // 1: rule
         // 2: severity
-        // 3: type
+        // 3: type (hidden)
         // 4: for
         // 5: conditions
         // 6: actions
-        // 7: control
+        // 7: disabled (hidden)
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th>_rule_id_</th><th data-priority="1">Rule</th><th>Severity</th><th>Type</th><th>For</th><th>Conditions</th><th>Actions</th><th data-priority="2">Control</th></tr>\
+                    <tr><th>_rule_id_</th><th class="all">Rule</th><th>Severity</th><th>Type</th><th>For</th><th>Conditions</th><th>Actions</th><th>Disabled</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -60,7 +60,7 @@ class Rules extends Widget {
             "autoWidth": false,
             "columnDefs": [ 
                 {
-                    "targets" : [0],
+                    "targets" : [0, 3, 7],
                     "visible": false,
                 },
                 {
@@ -69,7 +69,7 @@ class Rules extends Widget {
                 },
                 {
                     "className": "dt-center", 
-                    "targets": [2, 7]
+                    "targets": [2]
                 }
             ],
             "language": {
@@ -118,11 +118,37 @@ class Rules extends Widget {
         // add a line to the table
         var table = $("#"+this.id+"_table").DataTable()
         var disabled = "disabled" in rule && rule["disabled"]
-        var description = "<b>"+rule["text"]+"</b><br>("+rule_id+")"
-        var type = ""
-        if (rule["type"] == "recurrent") type = '<i class="fas fa-calendar-alt fa-2x"></i><br>'+this.format_object(rule["schedule"])
-        else if (rule["type"] == "on_demand") type = '<i class="fas fa-sliders-h fa-2x"></i>'
-        else if (rule["type"] == "realtime") type = '<i class="fas fa-magic fa-2x"></i>'
+        var icon = ""
+        if (rule["type"] == "recurrent") icon = "calendar-alt"
+        else if (rule["type"] == "on_demand") icon = "sliders-h"
+        else if (rule["type"] == "realtime") icon = "magic"
+        var description = '\
+            <div>\
+                '+this.disabled_item(format_multiline('<i class="fas fa-'+icon+'"></i> '+rule["text"], 50), disabled)+'<br>\
+                <i>'+this.disabled_item("["+rule_id+"]", disabled)+'</i>\
+            </div>\
+            <div class="form-group" id="'+this.id+'_actions_'+rule_tag+'">\
+                <div class="btn-group">\
+                    <button type="button" class="btn btn-sm btn-info">Actions</button>\
+                    <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown">\
+                        <span class="caret"></span>\
+                        <span class="sr-only">Toggle Dropdown</span>\
+                    </button>\
+                    <div class="dropdown-menu" role="menu">\
+                        <a class="dropdown-item" id="'+this.id+'_run_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-play"></i> Run Rule</a>\
+                        <a class="dropdown-item" id="'+this.id+'_edit_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-edit"></i> Edit Rule</a>\
+                        <div class="dropdown-divider"></div>\
+                        <a class="dropdown-item" id="'+this.id+'_delete_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-trash"></i> Delete Rule</a>\
+                    </div>\
+                </div>\
+            </div>\
+        '
+        var severity = rule["severity"]
+        if (severity == "info") severity = '<i class="fas fa-info text-blue"></i>'
+        else if (severity == "warning") severity = '<i class="fas fa-exclamation-triangle text-yellow"></i>'
+        else if (severity == "alert") severity = '<i class="fas fa-ban text-red"></i>'
+        else if (severity == "none") severity = '<i class="fas fa-sticky-note text-gray"></i>'
+        else if (severity == "debug") severity = '<i class="fas fa-bug text-gray"></i>'
         var conditions = ""
         for (var i = 0; i < rule["conditions"].length; i++) {
             var or_condition = rule["conditions"][i]
@@ -143,7 +169,16 @@ class Rules extends Widget {
         var edit_html = '<button type="button" id="'+this.id+'_edit_'+rule_tag+'" class="btn btn-default"><i class="fas fa-edit"></i></button>'
         var delete_html = '<button type="button" id="'+this.id+'_delete_'+rule_tag+'" class="btn btn-default" ><i class="fas fa-trash"></i></button>'
         // add the row
-        table.row.add(this.disabled_item([rule_id, format_multiline(description, 50), rule["severity"] , type, for_i, conditions, format_multiline(actions, 30), run_html+" "+edit_html+" "+delete_html], disabled)).draw(false);
+        table.row.add([
+            rule_id, 
+            description, 
+            severity,
+            rule["type"], 
+            this.disabled_item(for_i, disabled), 
+            this.disabled_item(conditions, disabled), 
+            format_multiline(this.disabled_item(actions, disabled), 30), 
+            disabled,
+        ]).draw(false);
         table.responsive.recalc()
         if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
         // run the selected rule
@@ -179,6 +214,6 @@ class Rules extends Widget {
             };
         }(rule_id));
         // disable run if rule is disabled
-        if (disabled) $("#"+this.id+"_run_"+rule_tag).prop('disabled', true);
+        if (disabled) $("#"+this.id+"_run_"+rule_tag).remove();
     }
 }

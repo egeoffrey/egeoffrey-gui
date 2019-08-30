@@ -26,11 +26,10 @@ class Packages extends Widget {
         // 3: version
         // 4: sdk
         // 5: up to date
-        // 6: manifest
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                    <tr><th data-priority="1">Package</th><th>Description</th><th>Modules</th><th>Version</th><th>SDK</th><th>Up to Date</th><th>Manifest</th></tr>\
+                    <tr><th data-priority="1">Package</th><th>Description</th><th>Modules</th><th>Version</th><th>SDK</th><th>Up to Date</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -50,7 +49,7 @@ class Packages extends Widget {
             "columnDefs": [ 
                 {
                     "className": "dt-center",
-                    "targets": [3, 4, 5, 6]
+                    "targets": [3, 4, 5]
                 }
             ],
             "language": {
@@ -73,7 +72,24 @@ class Packages extends Widget {
             if (manifest["manifest_schema"] != gui.supported_manifest_schema) return
             // add a new row for this package
             var icon = "icon" in manifest ? manifest["icon"] : "cube"
-            var package_name = '<i class="fas fa-'+icon+'"></i> '+manifest["package"]
+            var manifest_tag = manifest["package"].replace("/", "_").replace("-", "_")
+            var package_name = '\
+                <div>\
+                    <i class="fas fa-'+icon+'"></i> '+manifest["package"]+'\
+                </div>\
+                <div class="form-group" id="'+this.id+'_actions_'+manifest_tag+'">\
+                    <div class="btn-group">\
+                        <button type="button" class="btn btn-sm btn-info">Actions</button>\
+                        <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown">\
+                            <span class="caret"></span>\
+                            <span class="sr-only">Toggle Dropdown</span>\
+                        </button>\
+                        <div class="dropdown-menu" role="menu">\
+                            <a class="dropdown-item" id="'+this.id+'_manifest_'+manifest_tag+'" style="cursor: pointer"><i class="fas fa-newspaper"></i> View Manifest</a>\
+                        </div>\
+                    </div>\
+                </div>\
+            '
             var description =  format_multiline(manifest["description"], 50)
             var update_id = this.id+'_'+manifest["package"]+'_update'
             var modules = ""
@@ -82,11 +98,18 @@ class Packages extends Widget {
             }
             var version = manifest["version"].toFixed(1)+"-"+manifest["revision"]+" ("+manifest["branch"]+")"
             var sdk = manifest["sdk"]["version"].toFixed(1)+"-"+manifest["sdk"]["revision"]+" ("+manifest["sdk"]["branch"]+")"
-            var up_to_date = '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></span>'
-            var manifest_button = '<button type="button" id="'+this.id+'_manifest_'+manifest["package"].replace("/", "_")+'" class="btn btn-default"><i class="fas fa-newspaper"></i></button>'
-            table.row.add([package_name, description, modules, version, sdk, up_to_date, manifest_button]).draw();
+            var up_to_date = '<span id="'+update_id+'"><i class="fas fa-spinner fa-spin"></i></span>'
+            var row = table.row.add([
+                package_name, 
+                description, 
+                modules, 
+                version, 
+                sdk, 
+                up_to_date
+            ]).draw(false);
             table.responsive.recalc()
-            $("#"+this.id+'_manifest_'+manifest["package"].replace("/", "_")).unbind().click(function(this_class, manifest) {
+            // show the manifest
+            $("#"+this.id+'_manifest_'+manifest_tag).unbind().click(function(this_class, manifest) {
                 return function () {
                     // clear the modal and load it
                     $("#wizard_body").html("")
@@ -123,11 +146,14 @@ class Packages extends Widget {
             $.get(url, function(data) {
                 var remote_manifest = jsyaml.load(data)
                 if (remote_manifest["manifest_schema"] != gui.supported_manifest_schema) {
-                    $("#"+update_id).html('<i class="fas fa-question">')
+                    row.data()[5] = '<i class="fas fa-question"></i>'
                     return
                 }
                 if (remote_manifest["version"] > manifest["version"] || (remote_manifest["version"] == manifest["version"] && remote_manifest["revision"] > manifest["revision"])) $("#"+update_id).html('<a href="https://github.com/'+manifest["github"]+'/tree/'+manifest["branch"]+'" target="_blank" ><i class="fas fa-external-link-alt"></i></a>')
-                else $("#"+update_id).html('<i class="fas fa-check text-success">')
+                else {
+                    row.data()[5] = '<i class="fas fa-check text-success"></i>'
+                    row.invalidate()
+                }
             });
             this.manifests[manifest["package"]] = manifest
         }

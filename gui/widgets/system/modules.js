@@ -8,23 +8,6 @@ class Modules extends Widget {
         this.add_large_box(this.id, this.widget["title"])
     }
     
-    // set the status to given module_id
-    set_status(module, status) {
-        var module_id = module.replace("/","_")
-        if (status == 1) {
-            $("#"+this.id+"_start_"+module_id).prop('disabled', true)
-            $("#"+this.id+"_stop_"+module_id).prop('disabled', false)
-            $("#"+this.id+"_restart_"+module_id).prop('disabled', false)
-            $("#"+this.id+"_running_"+module_id).addClass("fas fa-check")
-        }
-        else {
-            $("#"+this.id+"_start_"+module_id).prop('disabled', false)
-            $("#"+this.id+"_stop_"+module_id).prop('disabled', true)
-            $("#"+this.id+"_restart_"+module_id).prop('disabled', true)
-            $("#"+this.id+"_running_"+module_id).removeClass("fas fa-check")
-        }
-    }
-    
     // request the data
     request_data() {
         // subscribe for start/stop notifications
@@ -41,18 +24,18 @@ class Modules extends Widget {
         $(body).html("")
         // add table
         // 0: module
-        // 1: type
+        // 1: type  (hidden)
         // 2: watchdog (hidden)
         // 3: version
         // 4: running
         // 5: configured
         // 6: ping
         // 7: debug
-        // 8: actions
+        // 8: module_id (hidden)
         var table = '\
             <table id="'+this.id+'_table" class="table table-bordered table-striped">\
                 <thead>\
-                   <tr><th data-priority="1">Name</th><th>Type</th><th>Watchdog</th><th>Version</th><th data-priority="1">Running</th><th>Configured</th><th>Ping</th><th>Debug</th><th data-priority="2">Actions</th></tr>\
+                   <tr><th class="all">Name</th><th>Type</th><th>Watchdog</th><th>Version</th><th>Running</th><th>Configured</th><th>Ping</th><th>Debug</th><th>module_id</th></tr>\
                 </thead>\
                 <tbody></tbody>\
             </table>'
@@ -71,10 +54,10 @@ class Modules extends Widget {
             "columnDefs": [ 
                 {
                     "className": "dt-center",
-                    "targets": [1, 3, 4, 5, 6, 7, 8]
+                    "targets": [3, 4, 5, 6, 7]
                 },
                 {
-                    "targets" : [2],
+                    "targets" : [1, 2, 8],
                     "visible": false,
                 }
             ],
@@ -93,6 +76,16 @@ class Modules extends Widget {
         this.request_data()
         // ask for manifest files
         this.add_broadcast_listener("+/+", "MANIFEST", "#")
+    }
+    
+    // set the status to given module_id
+    set_status(module_id, status) {
+        var table = $("#"+this.id+"_table").DataTable()        
+        table.rows().every( function ( row_index, table_loop, row_loop ) {
+            var row = this.data()
+            if (row[8] != module_id) return
+            if (status == 1) table.cell(row_index, 4).data('<i class="fas fa-check" style="color: green;"></i>').draw(false)
+        });
     }
     
     // receive data and load it into the widget
@@ -117,8 +110,12 @@ class Modules extends Widget {
         // received a ping response
         else if (message.command == "PONG") {
             var latency = ((new Date()).getTime()-this.ping[message.sender])/1000
-            $("#"+this.id+"_ping_"+message.sender.replace("/","_")).html(latency+"s")
-
+            var table = $("#"+this.id+"_table").DataTable()        
+            table.rows().every( function ( row_index, table_loop, row_loop ) {
+                var row = this.data()
+                if (row[8] != message.sender) return
+                table.cell(row_index, 6).data(latency+"s").draw(false)
+            });
         }
         // received a discover response
         else if (message.command == "DISCOVER") {
@@ -131,44 +128,63 @@ class Modules extends Widget {
                 // add a row to the table with the discovered module
                 var table = $("#"+this.id+"_table").DataTable()
                 var module_id = module["scope"]+'_'+module["name"]
-                var type = "question"
-                if (module["scope"] == "controller") type = "gamepad"
-                else if (module["scope"] == "notification") type = "bell"
-                else if (module["scope"] == "interaction") type = "comment"
-                else if (module["scope"] == "service") type = "exchange-alt"
+                var icon = "question"
+                if (module["scope"] == "controller") icon = "gamepad"
+                else if (module["scope"] == "notification") icon = "bell"
+                else if (module["scope"] == "interaction") icon = "comment"
+                else if (module["scope"] == "service") icon = "exchange-alt"
+                var module_name = '<i class="fas fa-'+icon+'"></i> '+module["fullname"]
+                var module_name = '\
+                    <div>\
+                        '+'<i class="fas fa-'+icon+'"></i> '+module["fullname"]+'\
+                    </div>\
+                    <div class="form-group" id="'+this.id+'_actions_'+module_id+'">\
+                        <div class="btn-group">\
+                            <button type="button" class="btn btn-sm btn-info">Actions</button>\
+                            <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown">\
+                                <span class="caret"></span>\
+                                <span class="sr-only">Toggle Dropdown</span>\
+                            </button>\
+                            <div class="dropdown-menu" role="menu">\
+                                <a class="dropdown-item" id="'+this.id+'_edit_'+module_id+'" style="cursor: pointer"><i class="fas fa-edit"></i> Edit Configuration</a>\
+                                <div class="dropdown-divider"></div>\
+                                <a class="dropdown-item" id="'+this.id+'_start_'+module_id+'" style="cursor: pointer"><i class="fas fa-play"></i> Start Module</a>\
+                                <a class="dropdown-item" id="'+this.id+'_stop_'+module_id+'" style="cursor: pointer"><i class="fas fa-stop"></i> Stop Module</a>\
+                                <a class="dropdown-item" id="'+this.id+'_restart_'+module_id+'" style="cursor: pointer"><i class="fas fa-sync"></i> Restart Module</a>\
+                            </div>\
+                        </div>\
+                    </div>\
+                '
+                var type = module["scope"]
                 var version = module["version"]
-                var running_icon = '<i id="'+this.id+'_running_'+module_id+'" class="" style="color: green;"></i>'
-                var configured_icon = '<i id="'+this.id+'_configured_'+module_id+'" class="" style="color: green;"></i>'
                 var debug_html = '<input id="'+this.id+'_debug_'+module_id+'" type="checkbox">'
                 var set_html = module["scope"] == "notification" ? '<div class="input-group margin"><input type="text" id="'+this.id+'_set_text_'+module_id+'" class="form-control"><span class="input-group-btn"><button type="button" id="'+this.id+'_set_'+module_id+'" class="btn btn-default" ><span class="fas fa-sign-out-alt"></span></button></span></div><br>' : ""
-                var edit_html = '<button type="button" id="'+this.id+'_edit_'+module_id+'" class="btn btn-default"><i class="fas fa-edit"></i></button>'
-                var start_html = '<button type="button" id="'+this.id+'_start_'+module_id+'" class="btn btn-default" disabled><i class="fas fa-play"></i></button>'
-                var stop_html = '<button type="button" id="'+this.id+'_stop_'+module_id+'" class="btn btn-default" disabled><i class="fas fa-stop"></i></button>'
-                var restart_html = '<button type="button" id="'+this.id+'_restart_'+module_id+'" class="btn btn-default" disabled><i class="fas fa-sync"></i></button>'
                 var table_options = [
-                    module["fullname"], 
-                    '<i class="fas fa-2x fa-'+type+'"></i>',
+                    module_name, 
+                    type,
                     watchdog, 
                     version, 
-                    running_icon, 
-                    configured_icon, 
-                    '<span id="'+this.id+'_ping_'+module_id+'"></span>', 
-                    debug_html, 
-                    set_html+edit_html+ " "+start_html+" "+stop_html+" "+restart_html 
+                    "", 
+                    "", 
+                    "",
+                    debug_html,
+                    module["fullname"]
                 ]
-                table.row.add(table_options).draw();
+                var row = table.row.add(table_options).draw();
                 table.responsive.recalc()
                 if (table.data().count() == 0) $("#"+this.id+"_table_text").html('No data to display')
                 // set the debug checkbox
                 $("#"+this.id+"_debug_"+module_id).prop('checked', module["debug"])
                 // set configured checkbox
-                if (module["configured"]) $("#"+this.id+"_configured_"+module_id).addClass("fas fa-check")
-                // when the debug checkbox changes, send a message to the module's watchdog
+                row.data()[5] = '<i class="fas fa-check text-success"></i>'
+                row.invalidate()
+                // set debug checkbox
                 $("#"+this.id+"_debug_"+module_id).iCheck({
                   checkboxClass: 'icheckbox_square-blue',
                   radioClass: 'iradio_square-blue',
                   increaseArea: '20%' 
                 });
+                // when the debug checkbox changes, send a message to the module's watchdog
                 $("#"+this.id+"_debug_"+module_id).unbind().on('ifChanged',function(module, watchdog) {
                     return function () {
                         var message = new Message(gui)
