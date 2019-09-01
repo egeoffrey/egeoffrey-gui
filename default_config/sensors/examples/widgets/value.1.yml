@@ -6,7 +6,7 @@ retain: history
 service:
   configuration:
     command: echo $RANDOM
-  mode: active
+  mode: pull
   name: command
   schedule:
     seconds: 600

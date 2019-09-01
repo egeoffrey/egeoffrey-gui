@@ -5,7 +5,7 @@ retain: single_value
 service:
   configuration:
     url: http://images.opentopia.com/cams/6617/big.jpg
-  mode: active
+  mode: pull
   name: image
   schedule:
     minutes: 10

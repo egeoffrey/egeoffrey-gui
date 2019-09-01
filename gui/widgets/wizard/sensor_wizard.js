@@ -199,8 +199,8 @@ class Sensor_wizard extends Widget {
                     for (var module in module_object) {
                         for (var mode in module_object[module]["service_configuration"]) {
                             var text = ""
-                            if (mode == "active") text = "Active - periodically poll the sensor for new data"
-                            else if (mode == "passive") text = "Passive - the sensor will periodically provide new data"
+                            if (mode == "pull") text = "Pull - periodically poll the sensor for new data"
+                            else if (mode == "push") text = "Push - the sensor will periodically provide new data"
                             else if (mode == "actuator") text = "Actuator - the sensor is an actuator"
                             // add it to the select
                             $('#'+this_class.id+'_service_mode').append($('<option>', {
@@ -209,8 +209,8 @@ class Sensor_wizard extends Widget {
                             }));
                             // select the first item
                             $('#'+this_class.id+'_service_mode').prop("selectedIndex", 0).trigger("change")
-                            // if active is selected, trigger the change event on the schedule trigger
-                            if ($('#'+this_class.id+'_service_mode').val() == "active") {
+                            // if pull is selected, trigger the change event on the schedule trigger
+                            if ($('#'+this_class.id+'_service_mode').val() == "pull") {
                                 $('#'+this_class.id+'_service_schedule_trigger').prop("selectedIndex", 0).trigger("change")
                             }
                         }
@@ -224,7 +224,7 @@ class Sensor_wizard extends Widget {
                 var selected_service = $('#'+this_class.id+'_service_name').val()
                 var selected_mode = $('#'+this_class.id+'_service_mode').val()
                 // show/hide the schedule panel
-                if (selected_mode == "active") $('#'+this_class.id+'_tab_service_schedule').parent('li').removeClass("d-none")
+                if (selected_mode == "pull") $('#'+this_class.id+'_tab_service_schedule').parent('li').removeClass("d-none")
                 else $('#'+this_class.id+'_tab_service_schedule').parent('li').addClass("d-none")
                 // clear service configuration
                 $('#'+this_class.id+'_tab_service_configuration_content').html("")
@@ -310,7 +310,7 @@ class Sensor_wizard extends Widget {
                     sensor["service"] = {}
                     sensor["service"]["name"] = $("#"+this_class.id+"_service_name").val()
                     sensor["service"]["mode"] = $("#"+this_class.id+"_service_mode").val()
-                    if (sensor["service"]["mode"] == "active") {
+                    if (sensor["service"]["mode"] == "pull") {
                         var schedule_trigger = $("#"+this_class.id+"_service_schedule_trigger").val()
                         var schedule_panel = this_class.id+"_service_schedule_panel_"+schedule_trigger
                         sensor["service"]["schedule"] = {}

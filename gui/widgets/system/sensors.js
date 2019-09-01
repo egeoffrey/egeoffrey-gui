@@ -231,8 +231,8 @@ class Sensors extends Widget {
             var service_icon = ""
             service = "<u>"+sensor["service"]["name"]+"</u><br>mode: "+sensor["service"]["mode"]+"<br>configuration:<br>&nbsp;&nbsp;"+this.format_object(sensor["service"]["configuration"]).replaceAll("<br>", "<br>&nbsp;&nbsp;")
             if (sensor["service"]["mode"] == "actuator") service_icon = "cogs"
-            else if (sensor["service"]["mode"] == "passive") service_icon = "satellite-dish"
-            else if (sensor["service"]["mode"] == "active") service_icon = "play"
+            else if (sensor["service"]["mode"] == "push") service_icon = "satellite-dish"
+            else if (sensor["service"]["mode"] == "pull") service_icon = "play"
             var service_schedule = ""
             if ("schedule" in sensor["service"]) {
                 service_schedule = "schedule:<br>&nbsp;&nbsp;"+this.format_object(sensor["service"]["schedule"]).replaceAll("<br>", "<br>&nbsp;&nbsp;")
@@ -344,6 +344,6 @@ class Sensors extends Widget {
             $("#"+this.id+"_set_"+sensor_tag).remove()
             $("#"+this.id+"_set_text_"+sensor_tag).remove()
         }
-        if ( (! ("service" in sensor)) || ("service" in sensor && sensor["service"]["mode"] != "active")) $("#"+this.id+"_poll_"+sensor_tag).remove()
+        if ( (! ("service" in sensor)) || ("service" in sensor && sensor["service"]["mode"] != "pull")) $("#"+this.id+"_poll_"+sensor_tag).remove()
     }
 }
