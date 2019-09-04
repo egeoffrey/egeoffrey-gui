@@ -21,7 +21,7 @@ class Webserver(Controller):
     # What to do when running
     def on_start(self):
         self.log_info("Starting webserver...")
-        self.log_debug(sdk.python.utils.command.run("cp nginx/default.conf /etc/nginx/conf.d"))
+        self.log_debug(sdk.python.utils.command.run("cp -f setup/nginx.conf /etc/nginx/conf.d"))
         self.log_debug(sdk.python.utils.command.run("killall nginx"))
         self.log_debug(sdk.python.utils.command.run("nginx -c /etc/nginx/nginx.conf"))
         
