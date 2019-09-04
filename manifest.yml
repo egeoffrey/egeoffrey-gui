@@ -7,8 +7,9 @@ dockerhub: egeoffrey/egeoffrey-gui
 github: egeoffrey/egeoffrey-gui
 icon: columns
 manifest_schema: 2
-modules: []
+modules:
+- gui/webserver: {}
 package: egeoffrey-gui
-revision: 46
+revision: 47
 tags: gui
 version: 1.0
