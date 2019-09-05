@@ -7,3 +7,5 @@
 *.pyc
 sdk
 sdk/
+gui/html/sdk
+gui/html/sdk/
