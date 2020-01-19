@@ -9,3 +9,4 @@ sdk
 sdk/
 gui/html/sdk
 gui/html/sdk/
+gui/html/gui/env_custom.js
