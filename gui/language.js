@@ -21,7 +21,7 @@ languages["en"] = {
     
     "gui.connected": "Connected",
     "gui.popup.close": "Close",
-    "gui.wizard.close": "Close",
+    "gui.wizard.close": "Back",
     "gui.wizard.delete": "Delete",
     "gui.wizard.save": "Save",
     
