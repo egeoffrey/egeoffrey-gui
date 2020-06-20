@@ -60,7 +60,7 @@ class Menu extends Widget {
         $(tag).append('\
         <li class="nav-item">\
             <a class="nav-link" id="menu_user_item_'+page_tag+'" href="'+href+'" '+target+'>&nbsp;\
-                <input type="text" value="'+entry["page"]+'" class="d-none" id="menu_user_item_'+page_tag+'_id">\
+                <input type="text" value="'+entry["section_id"]+'/'+entry["entry_id"]+'" class="d-none" id="menu_user_item_'+page_tag+'_id">\
                 <i class="nav-icon fas fa-'+entry["icon"]+'" id="menu_user_item_'+page_tag+'_icon"></i>\
                 <p>'+capitalizeFirst(entry["text"])+'</p>\
             </a>\
@@ -194,7 +194,7 @@ class Menu extends Widget {
                 $("#"+this_class.id+" > li > a").each(function(e){
                     var id = this.id.replace("_name", "")
                     if (id.includes("__")) return
-                    // change the icon of each menu item
+                    // change the icon of each menu section
                     var section_id = $("#"+id+"_id").val()
                     $("#"+id+"_icon").removeClass().addClass("fas fa-edit")
                     // change anchor href to menu section wizard                    
