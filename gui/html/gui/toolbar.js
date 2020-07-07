@@ -84,7 +84,7 @@ class Toolbar extends Widget {
         // subscribe for new alert
         this.add_broadcast_listener("+/+", "NOTIFY", "#")
         // ask for manifest files needed for notifying about available updates
-        if (gui.settings.check_for_updates) this.add_broadcast_listener("+/+", "MANIFEST", "#")
+        this.add_broadcast_listener("+/+", "MANIFEST", "#")
     }
 
     // add a new item to a widget
@@ -173,12 +173,14 @@ class Toolbar extends Widget {
             // set gui version
             if (manifest["package"] == "egeoffrey-gui") $("#version").html(manifest["version"].toFixed(1)+"-"+manifest["revision"]+" ("+manifest["branch"]+")")
             // check for update
+			if (gui.settings.check_for_updates) {
             var url = "https://raw.githubusercontent.com/"+manifest["github"]+"/"+manifest["branch"]+"/manifest.yml?timestamp="+new Date().getTime()
-            $.get(url, function(data) {
-                var remote_manifest = jsyaml.load(data)
-                if (remote_manifest["manifest_schema"] != gui.supported_manifest_schema) return
-                if (remote_manifest["version"] > manifest["version"] || (remote_manifest["version"] == manifest["version"] && remote_manifest["revision"] > manifest["revision"])) gui.notify("info", "A new version of "+manifest["package"]+" is available")
-            });
+				$.get(url, function(data) {
+					var remote_manifest = jsyaml.load(data)
+					if (remote_manifest["manifest_schema"] != gui.supported_manifest_schema) return
+					if (remote_manifest["version"] > manifest["version"] || (remote_manifest["version"] == manifest["version"] && remote_manifest["revision"] > manifest["revision"])) gui.notify("info", "A new version of "+manifest["package"]+" is available")
+				});
+			}
         }
     }
     
