@@ -64,6 +64,15 @@ class Gui extends Module {
         this.timers = []
 		// remove any listener on the hash change, will be re-added later once the module is started
 		window.onhashchange = null
+        // safeguard, if not receiving a configuration file timely, disconnect
+        setTimeout(function(this_class) {
+            return function() {
+                if (Object.keys(this_class.settings).length === 0) {
+                    this_class.log_error("Timeout in receiving the GUI configuration, disconnecting")
+                    this_class.logout()
+                }
+            };
+        }(this), 3000);
     }
     
 	// notify the user about something
@@ -254,15 +263,6 @@ class Gui extends Module {
         // user logged in successfully
         this.logged_in = true
         $("#body").html('<center><i class="fas fa-spin fa-spinner"></i> Loading...</center>')
-        // safeguard, if not receiving a configuration file timely, disconnect
-        setTimeout(function(this_class) {
-            return function() {
-                if (Object.keys(this_class.settings).length === 0) {
-                    this_class.log_error("Timeout in receiving the configuration, disconnecting")
-                    this_class.logout()
-                }
-            };
-        }(this), 3000);
         // periodically send keepalive messages to keep connection open (default timeout is 60 seconds)
         setInterval(function(this_class) {
             return function() {

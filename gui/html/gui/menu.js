@@ -33,6 +33,7 @@ class Menu extends Widget {
             </center>\
         ')
         if (! gui.is_authorized(["house_admins"])) $("#menu_edit").addClass("d-none")
+		else $("#menu_edit").removeClass("d-none")
         // get the menu contents
         this.add_configuration_listener("gui/menu/#", gui.menu_config_schema)
     }
