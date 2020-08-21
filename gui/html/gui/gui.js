@@ -195,7 +195,8 @@ class Gui extends Module {
         if (! (this.username in this.users)) this.logout()
         var user = this.users[this.username]
         if ("password" in user && user["password"] != this.password) this.logout()
-        $("#user_icon").addClass("fa-"+user["icon"])
+        var icon = user["icon"] != "" ? user["icon"] : "user"
+        $("#user_icon").addClass("fa-"+icon)
         $("#user_fullname").html(user["fullname"])
     }
 

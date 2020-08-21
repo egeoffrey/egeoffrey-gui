@@ -131,7 +131,110 @@ class Page {
                 widget_object.draw()
             }
             else if (page_id == "__notifications") {
-                var page_layout = [ { "": [ { "title": "Notifications", "size": 12, "widget": "notifications" } ] } ]
+                var page_layout = [ 
+                    {
+                        "Notification Center": [
+                        {
+                            "size": 12,
+                            "text": "Let's have a look if we have any interesting <b>notifications</b>. Notifications are generated whenever a configured rule triggers. If for example you want to be notified whenever the temperature of you refrigerator is too high, create a rule, schedule its execution and whenever the temperature will be higher than a configured threshold you will be notified. If you are an admin, you can configure your rules from the <a href='#__rules'>RULES</a> page so to trigger notifications generating <b>E-mail, Slack alerts, SMS messages, etc.</b> whenever a configured condition is met. Notifications can also be reviewed from the web interface thorugh the widgets below.",
+                            "title": "Create your rules and receive notifications",
+                            "widget": "text"
+                          }
+                        ]
+                    },
+                    {
+                        "": [
+                          {
+                            "color": "red",
+                            "icon": "ban",
+                            "link": "__notifications=ALERT",
+                            "scope": "alerts",
+                            "sensor": "alert",
+                            "size": 4,
+                            "title": "Alerts",
+                            "widget": "counter"
+                          },
+                          {
+                            "color": "yellow",
+                            "icon": "exclamation-triangle",
+                            "link": "__notifications=WARNING",
+                            "scope": "alerts",
+                            "sensor": "warning",
+                            "size": 4,
+                            "title": "Warnings",
+                            "widget": "counter"
+                          },
+                          {
+                            "color": "info",
+                            "icon": "info",
+                            "link": "__notifications=INFO",
+                            "scope": "alerts",
+                            "sensor": "info",
+                            "size": 4,
+                            "title": "Informational",
+                            "widget": "counter"
+                          }
+                        ]
+                    },
+                    {
+                        "": [ 
+                            { 
+                                "title": "Latest Notifications", 
+                                "size": 12, 
+                                "widget": "notifications" 
+                            } 
+                        ] 
+                    } 
+                ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__chatbot") {
+                var page_layout = [ 
+                    {
+                        "Meet eGeoffrey": [
+                          {
+                            "size": 12,
+                            "title": "Inteact with eGeoffrey in realtime",
+                            "widget": "text",
+                            "text": "Yes, you can <b>interact</b> with eGeoffrey. He is not the most easygoing entity but knows his stuff. <br>Say hi to him, ask about your registered sensors, trigger interactively your configured rules, eGeoffrey will do his best to <b>answer accordingly</b>! eGeoffrey is your e-butler who will take care of your house on your behalf <b>no need to configure anything</b>. The same level of interaction is also possible through Slack, Telegram, an attached microphone etc. by installing the required packages from our Marketplace."
+                          }
+                        ]
+                    },
+                    {
+                        "": [
+                          {
+                            "size": 12,
+                            "title": "Chat with me!",
+                            "widget": "chatbot"
+                          }
+                        ]
+                    }
+                ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__measures") {
+                var page_layout = [
+                    {
+                        "Wha'ts new from your Sensors": [
+                            {
+                                "size": 12,
+                                "title": "eGeoffrey and its sensors",
+                                "text": "Let's have a look what's going on now and which <b>data has recently come in</b> from your sensors. No need to refresh anything, whenever a new value comes in will be immediately shown up at the top of the table! <br>A sensor in eGeoffrey is a sort of <b>dataset</b>, a logical container of <b>one or more values</b>: it can hold just a single piece of data or a timeseries. Sensor's values can come from an <b>associated service</b> (e.g. a url with an image, a command to run, etc.), from <b>actions triggered by a rule</b> or from your <b>interaction with widgets</b> on this interface.",
+                                "widget": "text"
+                            }
+                        ]
+                    },
+                    {
+                        "": [
+                            {
+                                "show_only": "value",
+                                "size": 12,
+                                "title": "Latest data from your sensors",
+                                "widget": "notifications"
+                            }
+                        ]
+                    }
+                ]
                 this.draw(page_layout)
             }
             else if (page_id == "__configuration") {
@@ -151,11 +254,56 @@ class Page {
             }
             else if (page_id == "__house") {
                 if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
-                var page_layout = [ { "": [ { "title": "House Configuration", "size": 12, "widget": "__house" } ] } ]
+                var page_layout = [ 
+                    { 
+                        "House Setup": 
+                            [ 
+                                { 
+                                    "title": " ", 
+                                    "size": 12, 
+                                    "widget": "text",
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/setup/house/">Documentation Portal</a>'
+                                } 
+                            ] 
+                    },
+                    { 
+                        "": 
+                            [ 
+                                { 
+                                    "title": "", 
+                                    "size": 12, 
+                                    "widget": "__house" 
+                                } 
+                            ] 
+                    } 
+                ]
                 this.draw(page_layout)
             }
-            else if (page_id == "__icons") {
-                var page_layout = [ { "": [ { "title": "Available Icons", "size": 12, "widget": "__icons" } ] } ]
+            else if (page_id == "__users") {
+                if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
+                var page_layout = [ 
+                    { 
+                        "User Management": 
+                            [ 
+                                { 
+                                    "title": "", 
+                                    "size": 12, 
+                                    "widget": "text",
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/users/">Documentation Portal</a>'
+                                } 
+                            ] 
+                    },
+                    { 
+                        "": 
+                            [ 
+                                { 
+                                    "title": "", 
+                                    "size": 12, 
+                                    "widget": "__users" 
+                                } 
+                            ] 
+                    } 
+                ]
                 this.draw(page_layout)
             }
             else if (page_id == "__logs") {
@@ -165,22 +313,110 @@ class Page {
             }
             else if (page_id == "__modules") {
                 if (! gui.is_authorized(["egeoffrey_admins"])) { this.unauthorized(); return }
-                var page_layout = [ { "": [ { "title": "Modules", "size": 12, "widget": "__modules" } ] } ]
+                var page_layout = [ 
+                    { 
+                        "eGeoffrey Modules": 
+                            [ 
+                                { 
+                                    "title": " ", 
+                                    "size": 12, 
+                                    "widget": "text",
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/modules/">Documentation Portal</a>'
+                                } 
+                            ] 
+                    },
+                    { 
+                        "": 
+                            [ 
+                                { 
+                                    "title": "", 
+                                    "size": 12, 
+                                    "widget": "__modules" 
+                                } 
+                            ] 
+                    } 
+                ]
                 this.draw(page_layout)
             }
             else if (page_id == "__packages") {
                 if (! gui.is_authorized(["egeoffrey_admins"])) { this.unauthorized(); return }
-                var page_layout = [ { "": [ { "title": "Packages", "size": 12, "widget": "__packages" } ] } ]
+                var page_layout = [ 
+                    { 
+                        "eGeoffrey Packages": 
+                            [ 
+                                { 
+                                    "title": " ", 
+                                    "size": 12, 
+                                    "widget": "text",
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/packages/">Documentation Portal</a>'
+                                } 
+                            ] 
+                    },
+                    { 
+                        "": 
+                            [ 
+                                { 
+                                    "title": "", 
+                                    "size": 12, 
+                                    "widget": "__packages" 
+                                } 
+                            ] 
+                    } 
+                ]
                 this.draw(page_layout)
             }
             else if (page_id == "__rules") {
                 if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
-                var page_layout = [ { "": [ { "title": "Rules", "size": 12, "widget": "__rules" } ] } ]
+                var page_layout = [ 
+                    { 
+                        "Rule Management": 
+                            [ 
+                                { 
+                                    "title": " ", 
+                                    "size": 12, 
+                                    "widget": "text",
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/rules/">Documentation Portal</a>'
+                                } 
+                            ] 
+                    },
+                    { 
+                        "": 
+                            [ 
+                                { 
+                                    "title": "", 
+                                    "size": 12, 
+                                    "widget": "__rules" 
+                                } 
+                            ] 
+                    } 
+                ]
                 this.draw(page_layout)
             }
             else if (page_id == "__sensors") {
                 if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
-                var page_layout = [ { "": [ { "title": "Registered Sensors", "size": 12, "widget": "__sensors" } ] } ]
+                var page_layout = [ 
+                    { 
+                        "Sensors Management": 
+                            [ 
+                                { 
+                                    "title": " ", 
+                                    "size": 12, 
+                                    "widget": "text",
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/sensors/">Documentation Portal</a>'
+                                } 
+                            ] 
+                    },
+                    { 
+                        "": 
+                            [ 
+                                { 
+                                    "title": "", 
+                                    "size": 12, 
+                                    "widget": "__sensors" 
+                                } 
+                            ] 
+                    } 
+                ]
                 this.draw(page_layout)
             }
             else if (page_id == "__welcome") {
@@ -189,78 +425,8 @@ class Page {
                     "I'm eGeoffrey, your e-butler": [
                       {
                         "size": 12,
-                        "title": "Welcome!",
-                        "text": "Through the eGeoffrey's web user interface you can control any aspect of your <b>personal e-butler</b>. It is the easiest and simplest way to <b>configure</b> your eGeoffrey's instance, register new <b>sensors</b>, <b>view your data</b>, control your <b>actuators</b>, configure <b>rules</b> which will trigger one or more notification upon specific conditions. And how data is displayed is completely up to you, you can <b>organize</b> your contents in the way you like the most and create new, custom pages. No need to edit complicated configuration files, everything can be accomplished from here!<br><br>If you are an admin, start by giving your house a name and tell eGeoffrey in which timezone and where you live through the <a href='#__house'>HOUSE SETTINGS</a> configuration page.",
-                        "widget": "text"
-                      }
-                    ]
-                  },
-                  {
-                    "Notifications and Rules": [
-                    {
-                        "size": 12,
-                        "text": "Let's have a look if we have any interesting <b>notifications</b>. Notifications are generated whenever a configured rule triggers. If for example you want to be notified whenever the temperature of you refrigerator is too high, create a rule, schedule its execution and whenever the temperature will be higher than a configured threshold you will be notified. If you are an admin, you can configure your rules from the <a href='#__rules'>RULES</a> page so to trigger notifications generating <b>E-mail, Slack alerts, SMS messages, etc.</b> whenever a configured condition is met. Notifications can also be reviewed from the web interface thorugh the widgets below.",
-                        "title": "Create your rules and receive notifications",
-                        "widget": "text"
-                      }
-                    ]
-                  },
-                  {
-                    "": [
-                      {
-                        "color": "red",
-                        "icon": "ban",
-                        "link": "__notifications=ALERT",
-                        "scope": "alerts",
-                        "sensor": "alert",
-                        "size": 4,
-                        "title": "Alerts",
-                        "widget": "counter"
-                      },
-                      {
-                        "color": "yellow",
-                        "icon": "exclamation-triangle",
-                        "link": "__notifications=WARNING",
-                        "scope": "alerts",
-                        "sensor": "warning",
-                        "size": 4,
-                        "title": "Warnings",
-                        "widget": "counter"
-                      },
-                      {
-                        "color": "info",
-                        "icon": "info",
-                        "link": "__notifications=INFO",
-                        "scope": "alerts",
-                        "sensor": "info",
-                        "size": 4,
-                        "title": "Informational",
-                        "widget": "counter"
-                      }
-                    ]
-                  },
-                  {
-                    "Your Sensors": [
-                      {
-                        "size": 12,
-                        "title": "Easily connect your sensors",
-                        "text": "Before data can be displayed here or used in a rule, a sensor has to be created. A sensor in eGeoffrey is a sort of <b>dataset</b>, a logical container of <b>one or more values</b>: it can hold just a single piece of data or a timeseries. Sensor's values can come from an <b>associated service</b> (e.g. a url with an image, a command to run, etc.), from <b>actions triggered by a rule</b> or from your <b>interaction with widgets</b> on this interface. If you are an admin, you can review existing sensors and register new ones through the <a href='#__sensors'>SENSORS</a> page. But no need to start from scratch, every time you add a new module, pages with <b>default content and sensor examples</b> are deployed as well!<br><br>Let's have a look what's going on now and which <b>data has recently come in</b> from your sensors. No need to refresh anything, whenever a new value comes in will be immediately shown up at the top of the table!",
-                        "widget": "text"
-                      },
-                      {
-                        "show_only": "value",
-                        "size": 12,
-                        "title": "Latest Data from your sensors",
-                        "widget": "notifications"
-                      }
-                    ]
-                  },
-                  {
-                    "Live Your User Experience": [
-                      {
-                        "size": 12,
-                        "text": "Once a sensor is created and data starts to get in, you can customize or <b>create custom pages</b> to present values in a number of ways trhough this interface (see the <a href='#examples/widgets'>Widget Showcase</a> page for examples) to put in place beautiful dashboards!.<br>If you are an admin, just click on the '<i>Edit Page</i>' button on the top right of the page to <b>edit existing widgets</b>, add a new one, <b>change the layout</b> of the page by simply dragging and dropping widgets around.<br> If you create a <b>new page</b> (through the '<i>New Page</i>' button on top of a page), this has to be <b>added to the menu</b> on the left to be easily accessible. To do so, if an admin, click on the '<i>Edit Menu</i>' button just below the menu, and <b>add a menu item</b> referencing the new page if you want to associate it to an existing section or create a <b>new section</b> first which will then hold your menu item.",
-                        "title": "Easily connect your sensors and interact with eGeoffrey in realtime",
+                        "title": '<i class="fas fa-robot"></i>  Welcome!',
+                        "text": 'Through the eGeoffrey\'s web user interface you can control any aspect of your <b>personal e-butler</b>. It is the easiest and simplest way to <b>configure</b> your eGeoffrey\'s instance, register new <b>sensors</b>, <b>view your data</b>, control your <b>actuators</b>, configure <b>rules</b> which will trigger one or more notification upon specific conditions. And how data is displayed is completely up to you, you can <b>organize</b> your contents in the way you like the most and create new, custom pages. No need to edit complicated configuration files, everything can be accomplished from here!',
                         "widget": "text"
                       }
                     ]
@@ -269,23 +435,28 @@ class Page {
                     "": [
                       {
                         "size": 12,
-                        "title": "Interact with eGeoffrey in realtime",
-                        "widget": "text",
-                        "text": "Yes, you can <b>interact</b> with eGeoffrey. He is not the most easygoing entity but knows his stuff. <br><br>Say hi to him, ask about your registered sensors, trigger interactively your configured rules, eGeoffrey will do his best to <b>answer accordingly</b>! eGeoffrey is your e-butler who will take care of your house on your behalf <b>no need to configure anything</b>! The same level of interaction is also possible through <b>Slack</b> and other means by plugging in additional packages."
-                      },
-                      {
-                        "size": 12,
-                        "title": "Meet eGeoffrey",
-                        "widget": "chatbot"
+                        "text": 'Either if you are a user or an admin, the best way to start is to have a look at our <b><a target="_new" href="https://docs.egeoffrey.com/configure/workflow/">Documentation Portal</a></b> for step-by-step instructions and HOW TOs in which you will learn how to: <ul><li><b>Define what you want to do and install the relevant packages</b>: eGeoffrey is modular and its capabilities are build up in self-contained components. Those are what you see listed in the <b><a target="_new" href="https://marketplace.egeoffrey.com">Marketplace</a></b>. Define first what you want to do (e.g. get temperature measures from the Internet, trigger a MySensors relay, etc.), find in the Marketplace the package providing this capability (e.g. the module in eGeoffrey\'s vocabulary) and install it; </li><li><b>Configure the newly installed module:</b> once the package is installed, the new functionalities will be ready to be leveraged. Most of the modules tough requires some basic configuration to start up (e.g. the API key of the cloud-based weather service, the serial port to connect to, etc.). One special kind of module is called "service", this is the one your sensors can leverage to get data in automatically; </li><li><b>Add a new sensor and associate it to a service:</b> register a new sensor, give it a name, tell eGeoffrey which format it has to expect your data in, if it has to apply any automatic aggregation or retention policies, which service it has to be associated with for getting data in or performing actions; </li><li><b>Once the sensor starts getting data, visualize it:</b> customize the web interface to make your data showing up in the way you like the most. Add new pages and different widgets to e.g. see the latest value of a sensor, control your actuators, etc. </li><li><b>Set conditions which would make rules triggering notifications:</b> execute specific tasks periodically or when given conditions are met by evaluating your sensors\' data and generate notifications;</li></ul><br>And for any additional question, in our <b><a target="_new" href="https://forum.egeoffrey.com">Forum</a></b> you can meet our community, get useful advices and share best practices.',
+                        "title": '<i class="fas fa-book-open"></i> Getting Started',
+                        "widget": "text"
                       }
                     ]
                   },
                   {
-                    "Still Not Enough?": [
+                    "": [
                       {
                         "size": 12,
-                        "title": "Add New Skills",
-                        "text": "eGeoffrey skills' are endless and, whatever skills you have in mind, eGeoffrey will <b>learn</b> them and will use them to satisfy your needs with its best smile. And maybe another user has already taught his eGeoffrey to do exactly what you needed. If you are an admin, visit the <a href='https://marketplace.egeoffrey.com'>MARKETPLACE</a> where our community constantly publishes <b>new and interesting contents</b> to enhance eGeofrrey's capabilities, add new ways for interacting with him, new notification mechanism and integration with third party services and tools!",
+                        "title": '<i class="fas fa-bug"></i> Found a bug or looking for enhancements?',
+                        "text": 'If you discovered a bug or want to submit an enhancement request, you are encouraged to visit first both our <b><a target="_new" href="https://forum.egeoffrey.com">Forum</a></b> to ensure the issue has bot been discussed already by other users and visit our and <b><a target="_new" href="https://github.com/egeoffrey">Github</a></b> page, where you can find for each eGeoffrey components opened issues and enhancement requests submitted by other users. If you cannot find what you are looking for, simply open up a new issue!',
+                        "widget": "text"
+                      }
+                    ]
+                  },
+                  {
+                    "": [
+                      {
+                        "size": 12,
+                        "title": '<i class="fas fa-code"></i> Willing to contribute?',
+                        "text": 'eGeoffrey skills\' are endless and, whatever skill you have in mind, eGeoffrey will <b>learn</b> it to satisfy your needs with its best smile. And maybe another user has already taught his eGeoffrey to do exactly what you needed. if you want to extend eGeoffrey and make it better, visit our website for <b><a target="_new" href="https://developer.egeoffrey.com">Developers</a></b> to understand more about its architecture and internals and guidelines on how to contribute.',
                         "widget": "text"
                       }
                     ]
@@ -605,7 +776,8 @@ class Page {
                                 <option value="2">2</option>\
                                 <option value="3">3</option>\
                                 <option value="4">4</option>\
-                                <option value="5">6</option>\
+                                <option value="5">5</option>\
+                                <option value="6">6</option>\
                                 <option value="7">7</option>\
                                 <option value="8">8</option>\
                                 <option value="9">9</option>\
@@ -627,7 +799,7 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
-                            <input type="text" id="'+id+'_summary_icon" class="form-control" placeholder="the icon to display on top of the summary">\
+                            <select id="'+id+'_summary_icon" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
@@ -700,7 +872,7 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
-                            <input type="text" id="'+id+'_value_icon" class="form-control" placeholder="the icon to display next to the value">\
+                            <select id="'+id+'_value_icon" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
@@ -770,7 +942,7 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
-                            <input type="text" id="'+id+'_control_icon" class="form-control" placeholder="the icon to display next to the control">\
+                            <select id="'+id+'_control_icon" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
@@ -797,7 +969,7 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
-                            <input type="text" id="'+id+'_input_icon" class="form-control" placeholder="the icon to display next to the input">\
+                            <select id="'+id+'_input_icon" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
@@ -836,7 +1008,7 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
-                            <input type="text" id="'+id+'_button_icon" class="form-control" placeholder="the icon to display next to the button">\
+                            <select id="'+id+'_button_icon" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
@@ -932,7 +1104,7 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
-                            <input type="text" id="'+id+'_counter_icon" class="form-control" placeholder="the icon to display next to the counter">\
+                            <select id="'+id+'_counter_icon" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Color of the box</label>\
@@ -980,7 +1152,7 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
-                            <input type="text" id="'+id+'_slider_icon" class="form-control" placeholder="the icon to display next to the slider">\
+                            <select id="'+id+'_slider_icon" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
@@ -1033,6 +1205,15 @@ class Page {
                 </div>\
             </form>\
         ')
+        // initialize select
+        init_icon_select(id+'_value_icon')
+        init_icon_select(id+'_control_icon')
+        init_icon_select(id+'_summary_icon')
+        init_icon_select(id+'_input_icon')
+        init_icon_select(id+'_button_icon')
+        init_icon_select(id+'_counter_icon')
+        init_icon_select(id+'_slider_icon')
+        // add a link to the advanced editor
         $("#wizard_body").append('<br><a id="'+id+'_advanced_editor" class="float-right text-primary d-none">Advanced Editor</a>')
         $("#"+id+"_advanced_editor").unbind().click(function(this_class) {
             return function () {
@@ -1094,7 +1275,8 @@ class Page {
                 if (widget["widget"] == type) {
                     for (var key of simple_types[type]) {
                         if (! (key in widget)) continue
-                        $("#"+id+"_"+type+"_"+key).val(widget[key])
+                        if ($("#"+id+"_"+type+"_"+key).hasClass("bootstrap-select")) $("#"+id+"_"+type+"_"+key).selectpicker("val", widget[key])
+                        else $("#"+id+"_"+type+"_"+key).val(widget[key])
                     }
                 }
             }
@@ -1438,10 +1620,10 @@ class Page {
         else if (widget["widget"] == "__logs") widget_object = new Logs(id, widget)
         else if (widget["widget"] == "__rules") widget_object = new Rules(id, widget)
         else if (widget["widget"] == "__configuration") widget_object = new Configuration(id, widget)
-        else if (widget["widget"] == "__icons") widget_object = new Icons(id, widget)
         else if (widget["widget"] == "__database") widget_object = new Database(id, widget)
         else if (widget["widget"] == "__gateway") widget_object = new Gateway(id, widget)
         else if (widget["widget"] == "__house") widget_object = new House(id, widget)
+        else if (widget["widget"] == "__users") widget_object = new Users(id, widget)
         else gui.log_error("unknown widget "+JSON.stringify(widget))
         if (widget_object != null) this.widget_objects[id] = widget_object
         return widget_object

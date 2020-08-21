@@ -105,18 +105,21 @@ class Menu extends Widget {
         // clone sections and entries objects
         var sections = this.sections.slice()
         var entries = jQuery.extend({ }, this.entries)
-        // add welcome and notifications entries on top
-        this.add_menu_item({entry_id: "__welcome", text: "Welcome", icon: "robot", page: "__welcome"}, false)
+        // add system entries on top
+        this.add_menu_item({entry_id: "__welcome", text: "Welcome", icon: "concierge-bell", page: "__welcome"}, false)
+        this.add_menu_item({entry_id: "__chatbot", text: "Chatbot", icon: "robot", page: "__chatbot"}, false)
         this.add_menu_item({entry_id: "__notifications", text: "Notifications", icon: "comments", page: "__notifications"}, false)
+        this.add_menu_item({entry_id: "__measures", text: "Incoming Data", icon: "exchange-alt", page: "__measures"}, false)
         sections.unshift({ header: "MY HOUSE"})
         // add admin entries
         if (gui.is_authorized(["house_admins"]) || gui.is_authorized(["egeoffrey_admins"])) sections[sections.length] = { header: "ADMINISTRATION"}
         if (gui.is_authorized(["house_admins"])) {
             sections[sections.length+1] = { text: "House", order: sections.length+1, section_id: "__house_admin", icon: "user-shield"}
             entries["__house_admin"] = []
-            entries["__house_admin"].push({section_id: "__house_admin",  order: 0, entry_id: "house", text: "Settings", icon: "home", page: "__house"})
+            entries["__house_admin"].push({section_id: "__house_admin",  order: 0, entry_id: "house", text: "Setup", icon: "home", page: "__house"})
             entries["__house_admin"].push({section_id: "__house_admin",  order: 1, entry_id: "sensors", text: "Sensors", icon: "microchip", page: "__sensors"})
             entries["__house_admin"].push({section_id: "__house_admin",  order: 2, entry_id: "rules", text: "Rules", icon: "brain", page: "__rules"})
+            entries["__house_admin"].push({section_id: "__house_admin",  order: 3, entry_id: "users", text: "Users", icon: "users", page: "__users"})
         }
         if (gui.is_authorized(["egeoffrey_admins"])) {
             sections[sections.length+2] = { text: "eGeoffrey", order: sections.length+2, section_id: "__egeoffrey_admin", icon: "toolbox"}
@@ -128,7 +131,6 @@ class Menu extends Widget {
             entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 4, entry_id: "database", text: "Database", icon: "database", page: "__database"})
             entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 5, entry_id: "gateway", text: "Gateway", icon: "project-diagram", page: "__gateway"})
             entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 6, entry_id: "configuration", text: "Advanced Editor", icon: "edit", page: "__configuration"})
-            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 7, entry_id: "icons", text: "Icons", icon: "palette", page: "__icons"})
         }
         if (gui.is_authorized(["house_admins"]) || gui.is_authorized(["egeoffrey_admins"])) {
             sections[sections.length+3] = { text: "Help", order: sections.length+3, section_id: "__help", icon: "question-circle"}

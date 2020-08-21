@@ -43,7 +43,7 @@ class Toolbar extends Widget {
             </li>\
             <li class="nav-item dropdown">\
                 <a class="nav-link" data-toggle="dropdown" href="#">\
-                    <input type="checkbox" id="notification_value_enabled">\
+                    <input class="d-none" type="checkbox" id="notification_value_enabled">\
                     <i class="fas fa-microchip"></i>\
                     <span class="badge badge-info navbar-badge" id="notification_value_count"></span>\
                 </a>\
@@ -73,6 +73,7 @@ class Toolbar extends Widget {
             this.send(message)
         }
         // setup notification values checkbox
+        /*
         if (this.notification_value_enabled) $("#notification_value_enabled").iCheck('check')
         $("#notification_value_enabled").iCheck({
           checkboxClass: 'icheckbox_square-blue',
@@ -84,6 +85,7 @@ class Toolbar extends Widget {
                 this_class.notification_value_enabled = this.checked
             };
         }(this));
+        */
         // subscribe for new alert
         this.add_broadcast_listener("+/+", "NOTIFY", "#")
         // ask for manifest files needed for notifying about available updates
