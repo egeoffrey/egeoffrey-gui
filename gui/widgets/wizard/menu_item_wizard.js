@@ -45,7 +45,7 @@ class Menu_item_wizard extends Widget {
                 </div>\
                 <div class="form-group">\
                     <label>Icon</label>\
-                    <input type="text" id="'+this.id+'_icon" class="form-control" placeholder="icon of the menu item">\
+                    <select id="'+this.id+'_icon" class="form-control"></select>\
                 </div>\
                 <div class="form-group">\
                     <label>Order*</label>\
@@ -61,6 +61,7 @@ class Menu_item_wizard extends Widget {
                 </div>\
             </form>\
         ')
+        init_icon_select(this.id+'_icon')
         // configure add group button
         $("#"+this.id+'_groups_add').unbind().click(function(this_class, id) {
             return function () {
@@ -213,7 +214,10 @@ class Menu_item_wizard extends Widget {
         $("#"+this.id+"_menu_item_id").prop("disabled", true)
         // populate the form
         for (var item of ["text", "page", "icon", "order"]) {
-            if (item in menu_item) $("#"+this.id+"_"+item).val(menu_item[item])
+            if (item in menu_item) {
+                if ($("#"+this.id+"_"+item).hasClass("bootstrap-select")) $("#"+this.id+"_"+item).selectpicker("val", menu_item[item])
+                $("#"+this.id+"_"+item).val(menu_item[item])
+            }
         }
         if ("allow" in menu_item) {
             for (var i = 0; i < menu_item["allow"].length; i++) {

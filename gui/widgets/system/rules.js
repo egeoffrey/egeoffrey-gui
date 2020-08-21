@@ -136,10 +136,11 @@ class Rules extends Widget {
                         <span class="sr-only">Toggle Dropdown</span>\
                     </button>\
                     <div class="dropdown-menu" role="menu">\
-                        <a class="dropdown-item" id="'+this.id+'_run_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-play"></i> Run Rule</a>\
-                        <a class="dropdown-item" id="'+this.id+'_edit_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-edit"></i> Edit Rule</a>\
+                        <a class="dropdown-item" id="'+this.id+'_run_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-play"></i> Run</a>\
+                        <a class="dropdown-item" id="'+this.id+'_edit_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-edit"></i> Edit</a>\
                         <div class="dropdown-divider"></div>\
-                        <a class="dropdown-item" id="'+this.id+'_delete_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-trash"></i> Delete Rule</a>\
+                        <a class="dropdown-item" id="'+this.id+'_rename_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-font"></i> Rename</a>\
+                        <a class="dropdown-item" id="'+this.id+'_delete_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-trash"></i> Delete</a>\
                     </div>\
                 </div>\
             </div>\
@@ -234,8 +235,32 @@ class Rules extends Widget {
                 window.location.hash = '#__rule_wizard='+rule_id;
             };
         }(rule_id));
+        // rename the rule
+        $("#"+this.id+"_rename_"+rule_tag).unbind().click(function(this_class, rule_id, config_schema) {
+            return function () {
+                bootbox.prompt("Give the rule "+rule_id+" a new name", function(result){ 
+                    if (! result) return
+                    // delete the configuration file
+                    var message = new Message(gui)
+                    message.recipient = "controller/config"
+                    message.command = "DELETE"
+                    message.args = "rules/"+rule_id
+                    message.config_schema = config_schema
+                    gui.send(message)
+                    // save the configuration file into the new position
+                    var message = new Message(gui)
+                    message.recipient = "controller/config"
+                    message.command = "SAVE"
+                    message.args = "rules/"+result
+                    message.config_schema = config_schema
+                    message.set_data(this_class.rules[rule_id])
+                    gui.send(message)
+                    gui.notify("info","Renaming rule "+rule_id+" into "+result)
+                });
+            };
+        }(this, rule_id, message.config_schema));
         // delete the rule
-        $("#"+this.id+"_delete_"+rule_tag).unbind().click(function(rule_id, version) {
+        $("#"+this.id+"_delete_"+rule_tag).unbind().click(function(rule_id, config_schema) {
             return function () {
                 gui.confirm("Do you really want to delete rule "+rule_id+"?", function(result){ 
                     if (! result) return
@@ -244,7 +269,7 @@ class Rules extends Widget {
                     message.recipient = "controller/config"
                     message.command = "DELETE"
                     message.args = "rules/"+rule_id
-                    message.config_schema = version
+                    message.config_schema = config_schema
                     gui.send(message)
                     gui.notify("info", "Requesting to delete rule "+rule_id)
                 });

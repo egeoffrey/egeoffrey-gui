@@ -31,7 +31,7 @@ class Menu_section_wizard extends Widget {
                 </div>\
                 <div class="form-group">\
                     <label>Icon</label>\
-                    <input type="text" id="'+this.id+'_icon" class="form-control" placeholder="icon of the menu item">\
+                    <select id="'+this.id+'_icon" class="form-control"></select>\
                 </div>\
                 <div class="form-group">\
                     <label>Order*</label>\
@@ -39,6 +39,7 @@ class Menu_section_wizard extends Widget {
                 </div>\
             </form>\
         ')
+        init_icon_select(this.id+'_icon')
         // add link to advanced configuration
         var link = section_id == null ? "__new__" : section_id
         $("#wizard_body").append('<a id="'+this.id+'_advanced_editor" class="float-right text-primary d-none">Advanced Editor</a>')
@@ -145,7 +146,10 @@ class Menu_section_wizard extends Widget {
         $("#"+this.id+"_section_id").prop("disabled", true)
         // populate the form
         for (var item of ["text", "icon", "order"]) {
-            if (item in section) $("#"+this.id+"_"+item).val(section[item])
+            if (item in section) {
+                if ($("#"+this.id+"_"+item).hasClass("bootstrap-select")) $("#"+this.id+"_"+item).selectpicker("val", section[item])
+                $("#"+this.id+"_"+item).val(section[item])
+            }
         }
     }
 }
