@@ -201,20 +201,26 @@ class Value extends Widget {
                     if (data.length == 1) {
                         var target = "info-box-icon"
                         var icon_class = "info-box-icon"
+                        var icon_on = "icon_on" in this.widget ? this.widget["icon_on"] : "plug"
+                        var color_on = "color_on" in this.widget ? this.widget["color_on"] : "green"
+                        var text_on = "text_on" in this.widget ? this.widget["text_on"] : "ON"
+                        var icon_off = "icon_off" in this.widget ? this.widget["icon_off"] : "power-off"
+                        var color_off = "color_off" in this.widget ? this.widget["color_off"] : "red"
+                        var text_off = "text_off" in this.widget ? this.widget["text_off"] : "OFF"
                         if ("variant" in this.widget && this.widget["variant"] == 2) {
                             target = "small-box"
                             icon_class = "small-box"
                         }
                         if (data[0] == 0) {
-                            $(tag+"_icon").removeClass().addClass("fa fa-power-off")
-                            if ($(tag+"_color").hasClass(target)) $(tag+"_color").removeClass().addClass(icon_class+" bg-red")
+                            $(tag+"_icon").removeClass().addClass("fa fa-"+icon_off)
+                            if ($(tag+"_color").hasClass(target)) $(tag+"_color").removeClass().addClass(icon_class+" bg-"+color_off)
                             // TODO: localize
-                            $(tag+"_value").html("OFF")
+                            $(tag+"_value").html(text_off)
                         }
                         else if (data[0] == 1) {
-                            $(tag+"_icon").removeClass().addClass("fa fa-plug")
-                            if ($(tag+"_color").hasClass(target)) $(tag+"_color").removeClass().addClass(icon_class+" bg-green")
-                            $(tag+"_value").html("ON")
+                            $(tag+"_icon").removeClass().addClass("fa fa-"+icon_on)
+                            if ($(tag+"_color").hasClass(target)) $(tag+"_color").removeClass().addClass(icon_class+" bg-"+color_on)
+                            $(tag+"_value").html(text_on)
                         }
                     } else {
                         $(tag+"_value").html("N/A")
@@ -332,11 +338,26 @@ class Value extends Widget {
                         if (data.length == 1) $(tag+"_input").val(data[0])
                         // if a number, add +/- buttons
                         if ("format" in sensor && sensor["format"] != "string") {
-                            var decimals = sensor["format"] == "int" ? 0 : 1
-                            var steps = sensor["format"] == "int" ? 1 : 0.1
+                            var decimals = 0
+                            var steps = 1
+                            var min = -1000000000
+                            var max = 1000000000
+                            if (sensor["format"] == "float_1") {
+                                decimals = 1
+                                steps = 0.1
+                            } 
+                            else if (sensor["format"] == "float_2") {
+                                decimals = 2
+                                steps = 0.01
+                            }
+                            if ("allowed_range" in session["widget"]) {
+                                var match = session["widget"]["allowed_range"].match(/^(-?[^-]+)-(-?[^-]+)$/)
+                                min = match[1]
+                                max = match[2]
+                            }
                             $(tag+"_input").TouchSpin({
-                                min: -1000000000,
-                                max: 1000000000,
+                                min: min,
+                                max: max,
                                 step: steps,
                                 decimals: decimals,
                                 boostat: 5,
