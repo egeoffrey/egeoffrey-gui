@@ -1,5 +1,5 @@
-// house widget
-class House extends Widget {
+// setup widget
+class Setup extends Widget {
     constructor(id, widget) {
         super(id, widget)
         // add an empty box into the given column

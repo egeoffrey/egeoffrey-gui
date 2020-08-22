@@ -49,7 +49,7 @@ class Sensors extends Widget {
         // add new sensor button
         var button_html = '\
             <div class="form-group">\
-                <button type="button" id="'+this.id+'_new" class="btn btn-block btn-primary btn-lg"><i class="fas fa-plus"></i> Register a new sensor</button>\
+                <button type="button" id="'+this.id+'_new" class="btn btn-block btn-outline-primary btn-lg"><i class="fas fa-plus"></i> Register a new sensor</button>\
             </div>\
             <div class="form-group float-right">&nbsp;\
                 <button type="button" id="'+this.id+'_request_data" class="btn btn-default btn-sm"><i class="fas fa-sync text-success"></i> Refresh Values</button>\
@@ -237,6 +237,7 @@ class Sensors extends Widget {
                             <a class="dropdown-item" id="'+this.id+'_retain_'+sensor_tag+'" style="cursor: pointer"><i class="fas fa-calendar-alt"></i> Purge</a>\
                             <div class="dropdown-divider"></div>\
                             <a class="dropdown-item" id="'+this.id+'_empty_'+sensor_tag+'" style="cursor: pointer"><i class="fas fa-database"></i> Reset</a>\
+                            <a class="dropdown-item" id="'+this.id+'_clone_'+sensor_tag+'" style="cursor: pointer"><i class="fas fa-copy"></i> Clone</a>\
                             <a class="dropdown-item" id="'+this.id+'_rename_'+sensor_tag+'" style="cursor: pointer"><i class="fas fa-font"></i> Rename</a>\
                             <a class="dropdown-item" id="'+this.id+'_delete_'+sensor_tag+'" style="cursor: pointer"><i class="fas fa-trash"></i> Delete</a>\
                         </div>\
@@ -381,6 +382,23 @@ class Sensors extends Widget {
                     });
                 };
             }(sensor_id, message.config_schema));
+            // clone the sensor
+            $("#"+this.id+"_clone_"+sensor_tag).unbind().click(function(this_class, sensor_id, config_schema) {
+                return function () {
+                    bootbox.prompt("Give the sensor you want to clone a new identifier", function(result){ 
+                        if (! result) return
+                        // save the configuration file into the new position
+                        var message = new Message(gui)
+                        message.recipient = "controller/config"
+                        message.command = "SAVE"
+                        message.args = "sensors/"+result
+                        message.config_schema = config_schema
+                        message.set_data(this_class.sensors[sensor_id])
+                        gui.send(message)
+                        gui.notify("info","Cloning sensor "+sensor_id+" into "+result)
+                    });
+                };
+            }(this, sensor_id, message.config_schema));
             // rename the sensor
             $("#"+this.id+"_rename_"+sensor_tag).unbind().click(function(this_class, sensor_id, config_schema) {
                 return function () {

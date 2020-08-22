@@ -62,6 +62,7 @@ class Menu_item_wizard extends Widget {
             </form>\
         ')
         init_icon_select(this.id+'_icon')
+        $("#"+this.id+"_order").TouchSpin();
         // configure add group button
         $("#"+this.id+'_groups_add').unbind().click(function(this_class, id) {
             return function () {

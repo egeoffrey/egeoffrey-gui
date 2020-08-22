@@ -20,7 +20,6 @@ class Page {
                         <div class="col-sm-6">\
                             <ol class="breadcrumb float-sm-right d-none" id="page_buttons">\
                                 <li class="breadcrumb-item">\
-                                    <button class="btn btn-default btn-sm" id="page_new"><i class="far fa-file"></i> '+locale("page.new")+'</button>\
                                     <button class="btn btn-default btn-sm" id="page_edit"><i class="fas fa-edit"></i> '+locale("page.edit")+'</button>\
                                     <button class="btn btn-default btn-sm text-danger" id="page_delete"><i class="fas fa-trash-alt"></i> '+locale("page.delete")+'</button>\
                                     <button class="btn btn-default btn-sm edit_page_item d-none" id="page_add_row"><i class="fas fa-plus"></i> '+locale("page.add_row")+'</button>\
@@ -125,9 +124,9 @@ class Page {
                 var widget_object = new Menu_item_wizard("menu_item_wizard", {})
                 widget_object.draw()
             }
-            else if (page_id == "__menu_section_wizard") {
+            else if (page_id == "__menu_folder_wizard") {
                 if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
-                var widget_object = new Menu_section_wizard("menu_section_wizard", {})
+                var widget_object = new Menu_folder_wizard("menu_folder_wizard", {})
                 widget_object.draw()
             }
             else if (page_id == "__notifications") {
@@ -252,17 +251,17 @@ class Page {
                 var page_layout = [ { "": [ { "title": "Gateway Inspector", "size": 12, "widget": "__gateway" } ] } ]
                 this.draw(page_layout)
             }
-            else if (page_id == "__house") {
+            else if (page_id == "__setup") {
                 if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
                 var page_layout = [ 
                     { 
-                        "House Setup": 
+                        "Your House": 
                             [ 
                                 { 
                                     "title": " ", 
                                     "size": 12, 
                                     "widget": "text",
-                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/setup/house/">Documentation Portal</a>'
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> From this page you can go through very simple steps to perform a basic setup of your house like giving it a name, setting up its position etc. You can also configure common settings of this web interface. For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/setup/house/">Documentation Portal</a>'
                                 } 
                             ] 
                     },
@@ -270,10 +269,74 @@ class Page {
                         "": 
                             [ 
                                 { 
-                                    "title": "", 
+                                    "title": "House Setup", 
                                     "size": 12, 
-                                    "widget": "__house" 
+                                    "widget": "__setup" 
                                 } 
+                            ] 
+                    } 
+                ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__pages") {
+                if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
+                var page_layout = [ 
+                    { 
+                        "Create Your Custom Pages": 
+                            [ 
+                                { 
+                                    "title": " ", 
+                                    "size": 12, 
+                                    "widget": "text",
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> A page is what you ultimately access through the web interface and is used to display sensors\' contents in a variatiy of ways. A page is made up of multiple rows and every row have one or more widget (in columns). Once your page is ready, you need to add a menu entry in order to access it from the main menu. For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/pages/">Documentation Portal</a>'
+                                } 
+                            ] 
+                    },
+                    { 
+                        "": 
+                            [ 
+                                { 
+                                    "title": '<i class="fa fa-columns"></i> Custom Pages',
+                                    "size": 12, 
+                                    "widget": "__pages" 
+                                } 
+                            ] 
+                    } 
+                ]
+                this.draw(page_layout)
+            }
+            else if (page_id == "__menu") {
+                if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
+                var page_layout = [ 
+                    { 
+                        "Customize Your Menu": 
+                            [ 
+                                { 
+                                    "title": " ", 
+                                    "size": 12, 
+                                    "widget": "text",
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> The "MY HOUSE" area of the left menu contains the links to user-defined pages and it is completely up to you the way you want to organize your contents. Since your pages will be ultimately accessible through the menu, you need to link them by creating a so-called menu item. Menu items have to belong to a menu folder so that pages which are logically linked together can be grouped. For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/pages/">Documentation Portal</a>'
+                                } 
+                            ] 
+                    },
+                    { 
+                        "": 
+                            [ 
+                                { 
+                                    "title": '<i class="fa fa-folder-open"></i> Menu Folders', 
+                                    "size": 12, 
+                                    "widget": "__menu_folders" 
+                                }
+                            ] 
+                    },
+                    { 
+                        "": 
+                            [ 
+                                { 
+                                    "title": '<i class="fa fa-copy"></i> Menu Items', 
+                                    "size": 12, 
+                                    "widget": "__menu_items" 
+                                }
                             ] 
                     } 
                 ]
@@ -283,13 +346,13 @@ class Page {
                 if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
                 var page_layout = [ 
                     { 
-                        "User Management": 
+                        "Manage Your Users": 
                             [ 
                                 { 
                                     "title": "", 
                                     "size": 12, 
                                     "widget": "text",
-                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/users/">Documentation Portal</a>'
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> You can optionally configure different users to access the web interface or set/change the password the out-of-the-box users admin and guest. Managing users is not strictly required in eGeoffrey but in case you want to prevent anonymous users to access or give different users access to different pages, you can start exploring these functionalities. For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/users/">Documentation Portal</a>'
                                 } 
                             ] 
                     },
@@ -297,7 +360,7 @@ class Page {
                         "": 
                             [ 
                                 { 
-                                    "title": "", 
+                                    "title": '<i class="fa fa-users"></i> Users and Groups', 
                                     "size": 12, 
                                     "widget": "__users" 
                                 } 
@@ -315,13 +378,13 @@ class Page {
                 if (! gui.is_authorized(["egeoffrey_admins"])) { this.unauthorized(); return }
                 var page_layout = [ 
                     { 
-                        "eGeoffrey Modules": 
+                        "Running Modules": 
                             [ 
                                 { 
                                     "title": " ", 
                                     "size": 12, 
                                     "widget": "text",
-                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/modules/">Documentation Portal</a>'
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> A module is defined as a unit providing a specific functionality to eGeoffrey. Once you install a package, this provides one or more modules. There are different kind of modules: Controller are modules part of the eGeoffrey core (e.g. interact with the database, collect data from sensors, run alerting rules, etc.), interaction are modules responsible for interacting with the user (e.g. through Slack, a microphone, etc.), notification are modules responsible for notifying the user about something (e.g. through email, slack, text messages, etc.), service are modules responsible for interfacing with a specific device or protocol to retrieve data or control actuators (e.g. a weather service, a webcam, a MySensors device, Zigbee protocol, etc.), gui are modules responsible for running the eGeoffrey GUI. For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/modules/">Documentation Portal</a>'
                                 } 
                             ] 
                     },
@@ -329,7 +392,7 @@ class Page {
                         "": 
                             [ 
                                 { 
-                                    "title": "", 
+                                    "title": '<i class="fa fa-server"></i> Modules', 
                                     "size": 12, 
                                     "widget": "__modules" 
                                 } 
@@ -342,13 +405,13 @@ class Page {
                 if (! gui.is_authorized(["egeoffrey_admins"])) { this.unauthorized(); return }
                 var page_layout = [ 
                     { 
-                        "eGeoffrey Packages": 
+                        "Installed Packages": 
                             [ 
                                 { 
-                                    "title": " ", 
+                                    "title": '', 
                                     "size": 12, 
                                     "widget": "text",
-                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/packages/">Documentation Portal</a>'
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> A package is defined as one or more modules (e.g. functionalities) packaged together. It may also include sample contents such as sensors, rules or pages. Packages are what you can find in the eGeoffrey\'s Marketplace and it is what you install when you need specific new skills added to your eGeoffrey. For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/packages/">Documentation Portal</a>'
                                 } 
                             ] 
                     },
@@ -356,7 +419,7 @@ class Page {
                         "": 
                             [ 
                                 { 
-                                    "title": "", 
+                                    "title": '<i class="fa fa-cubes"></i> Packages', 
                                     "size": 12, 
                                     "widget": "__packages" 
                                 } 
@@ -369,13 +432,13 @@ class Page {
                 if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
                 var page_layout = [ 
                     { 
-                        "Rule Management": 
+                        "Manage Your Rules": 
                             [ 
                                 { 
                                     "title": " ", 
                                     "size": 12, 
                                     "widget": "text",
-                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/rules/">Documentation Portal</a>'
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> Rules can execute specific tasks periodically or upon specific conditions. A rule is defined as a set constants (e.g. static values) and variables (e.g. values coming from sensors) combined in conditions. Notifications are generated whenever a configured rule triggers. Rules can also execute additional actions (e.g. set a value to a sensor, trigger another rule, etc.). For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/rules/">Documentation Portal</a>'
                                 } 
                             ] 
                     },
@@ -383,7 +446,7 @@ class Page {
                         "": 
                             [ 
                                 { 
-                                    "title": "", 
+                                    "title": '<i class="fa fa-cogs"></i> Configured Rules', 
                                     "size": 12, 
                                     "widget": "__rules" 
                                 } 
@@ -396,13 +459,13 @@ class Page {
                 if (! gui.is_authorized(["house_admins"])) { this.unauthorized(); return }
                 var page_layout = [ 
                     { 
-                        "Sensors Management": 
+                        "Manage Your Sensors": 
                             [ 
                                 { 
                                     "title": " ", 
                                     "size": 12, 
                                     "widget": "text",
-                                    "text": '<i class="fas fa-question-circle text-blue"></i> For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/sensors/">Documentation Portal</a>'
+                                    "text": '<i class="fas fa-question-circle text-blue"></i> A sensor is defined as a dataset, a logical container of one or more values. it can hold just a single piece of data or a timeseries. Values can come from an associated service (e.g. a url with an image, a command to run, etc.), from actions triggered by a rule or from your interaction with widgets on the web interface. A sensor is made of an id (e.g. the way you will references it) and additional information like retention policies, associated services, etc. For more information on this page, visit our <a target="_new" href="https://docs.egeoffrey.com/configure/sensors/">Documentation Portal</a>'
                                 } 
                             ] 
                     },
@@ -410,7 +473,7 @@ class Page {
                         "": 
                             [ 
                                 { 
-                                    "title": "", 
+                                    "title": '<i class="fa fa-microchip"></i> Registered Sensors', 
                                     "size": 12, 
                                     "widget": "__sensors" 
                                 } 
@@ -565,58 +628,6 @@ class Page {
                 $("#"+id+"_row_"+i).remove()
             };
         }(id, i));
-    }
-    
-    // add new page
-    new_page_wizard(id="new_page") {
-        // clear up the modal
-        $("#wizard_body").html("")
-        $("#wizard_title").html("Create a new page")
-        // show the modal
-        $("#wizard").modal()
-        // build the form
-        $("#wizard_body").append('\
-            <form method="POST" role="form" id="'+id+'_form" class="needs-validation" novalidate>\
-                <div class="form-group">\
-                    <label>Page Identifier*</label>\
-                    <input type="text" id="'+id+'_page_id" class="form-control" placeholder="Give the page an id. It will be its filename" required>\
-                </div>\
-            </form>\
-        ')
-        // configure what to do when submitting the form
-        var this_class = this
-        $('#'+id+'_form').on('submit', function (e) {
-            // form is validated
-            if ($('#'+id+'_form')[0].checkValidity()) {
-                // save the updated page
-                var page_id = $("#"+id+"_page_id").val()
-                var message = new Message(gui)
-                message.recipient = "controller/config"
-                message.command = "SAVE"
-                message.args = "gui/pages/"+page_id
-                message.config_schema = gui.page_config_schema
-                message.set_data([])
-                gui.send(message)
-                // open up the new page
-                gui.notify("success", "Page "+page_id+" saved successfully. Click on 'Edit Page' to add your favorite widgets")
-                $('#wizard').unbind('hidden.bs.modal')
-                $("#wizard").modal("hide")
-                gui.unload_page()
-                window.location.hash = "#"+page_id
-                return false
-            }
-            else {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            $('#'+id+'_form').addClass("was-validated")
-        })
-        // configure submit button
-        $('#wizard_save').unbind().click(function(this_class) {
-            return function () {
-                $("#"+id+"_form").submit()
-            };
-        }(this))
     }
     
     // add/edit a widget
@@ -1437,7 +1448,6 @@ class Page {
         $(".no_edit_page_item").addClass("d-none")
         $("#page_edit").addClass("d-none")
         $("#page_delete").addClass("d-none")
-        $("#page_new").addClass("d-none")
         $("#page_edit_done").removeClass("d-none")
     }
     
@@ -1447,7 +1457,6 @@ class Page {
         $(".no_edit_page_item").removeClass("d-none")
         $("#page_edit").removeClass("d-none")
         $("#page_delete").removeClass("d-none")
-        $("#page_new").removeClass("d-none")
         $("#page_edit_done").addClass("d-none")
     }
     
@@ -1497,12 +1506,6 @@ class Page {
         $("#page_edit").unbind().click(function(this_class) {
             return function () {
                 this_class.page_edit_start()
-            };
-        }(this));
-        // configure new page button
-        $("#page_new").unbind().click(function(this_class) {
-            return function () {
-                this_class.new_page_wizard()
             };
         }(this));
         // configure page edit cancel button
@@ -1622,8 +1625,11 @@ class Page {
         else if (widget["widget"] == "__configuration") widget_object = new Configuration(id, widget)
         else if (widget["widget"] == "__database") widget_object = new Database(id, widget)
         else if (widget["widget"] == "__gateway") widget_object = new Gateway(id, widget)
-        else if (widget["widget"] == "__house") widget_object = new House(id, widget)
+        else if (widget["widget"] == "__setup") widget_object = new Setup(id, widget)
         else if (widget["widget"] == "__users") widget_object = new Users(id, widget)
+        else if (widget["widget"] == "__pages") widget_object = new Pages(id, widget)
+        else if (widget["widget"] == "__menu_folders") widget_object = new Menu_folders(id, widget)
+        else if (widget["widget"] == "__menu_items") widget_object = new Menu_items(id, widget)
         else gui.log_error("unknown widget "+JSON.stringify(widget))
         if (widget_object != null) this.widget_objects[id] = widget_object
         return widget_object
