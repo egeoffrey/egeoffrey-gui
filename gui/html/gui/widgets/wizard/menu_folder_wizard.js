@@ -1,5 +1,5 @@
-// menu section wizard widget
-class Menu_section_wizard extends Widget {
+// menu folder wizard widget
+class Menu_folder_wizard extends Widget {
     constructor(id, widget) {
         super(id, widget)
         this.waiting_for_item = null
@@ -40,6 +40,7 @@ class Menu_section_wizard extends Widget {
             </form>\
         ')
         init_icon_select(this.id+'_icon')
+        $("#"+this.id+"_order").TouchSpin();
         // add link to advanced configuration
         var link = section_id == null ? "__new__" : section_id
         $("#wizard_body").append('<a id="'+this.id+'_advanced_editor" class="float-right text-primary d-none">Advanced Editor</a>')

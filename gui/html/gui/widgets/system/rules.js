@@ -22,7 +22,7 @@ class Rules extends Widget {
         // add new rule button
         var button_html = '\
             <div class="form-group">\
-                <button type="button" id="'+this.id+'_new" class="btn btn-block btn-primary btn-lg"><i class="fas fa-plus"></i> Add a new rule</button>\
+                <button type="button" id="'+this.id+'_new" class="btn btn-block btn-outline-primary btn-lg"><i class="fas fa-plus"></i> Add a new rule</button>\
             </div>'
         $(body).append(button_html)
         $("#"+this.id+"_new").unbind().click(function() {
@@ -139,6 +139,7 @@ class Rules extends Widget {
                         <a class="dropdown-item" id="'+this.id+'_run_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-play"></i> Run</a>\
                         <a class="dropdown-item" id="'+this.id+'_edit_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-edit"></i> Edit</a>\
                         <div class="dropdown-divider"></div>\
+                        <a class="dropdown-item" id="'+this.id+'_clone_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-copy"></i> Clone</a>\
                         <a class="dropdown-item" id="'+this.id+'_rename_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-font"></i> Rename</a>\
                         <a class="dropdown-item" id="'+this.id+'_delete_'+rule_tag+'" style="cursor: pointer"><i class="fas fa-trash"></i> Delete</a>\
                     </div>\
@@ -235,6 +236,23 @@ class Rules extends Widget {
                 window.location.hash = '#__rule_wizard='+rule_id;
             };
         }(rule_id));
+        // clone the rule
+        $("#"+this.id+"_clone_"+rule_tag).unbind().click(function(this_class, rule_id, config_schema) {
+            return function () {
+                bootbox.prompt("Give the rule you want to clone a new identifier", function(result){ 
+                    if (! result) return
+                    // save the configuration file into the new position
+                    var message = new Message(gui)
+                    message.recipient = "controller/config"
+                    message.command = "SAVE"
+                    message.args = "rules/"+result
+                    message.config_schema = config_schema
+                    message.set_data(this_class.rules[rule_id])
+                    gui.send(message)
+                    gui.notify("info","Cloning rule "+rule_id+" into "+result)
+                });
+            };
+        }(this, rule_id, message.config_schema));
         // rename the rule
         $("#"+this.id+"_rename_"+rule_tag).unbind().click(function(this_class, rule_id, config_schema) {
             return function () {
