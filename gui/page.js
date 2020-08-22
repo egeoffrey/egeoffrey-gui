@@ -814,7 +814,26 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
-                            <input type="text" id="'+id+'_summary_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                            <select id="'+id+'_summary_color" class="form-control">\
+                                <option value=""></option>\
+                                <option value="black">black</option>\
+                                <option value="gray">gray</option>\
+                                <option value="silver">silver</option>\
+                                <option value="white">white</option>\
+                                <option value="aqua">aqua</option>\
+                                <option value="blue">blue</option>\
+                                <option value="navy">navy</option>\
+                                <option value="teal">teal</option>\
+                                <option value="green">green</option>\
+                                <option value="olive">olive</option>\
+                                <option value="lime">lime</option>\
+                                <option value="yellow">yellow</option>\
+                                <option value="orange">orange</option>\
+                                <option value="red">red</option>\
+                                <option value="fuchsia">fuchsia</option>\
+                                <option value="purple">purple</option>\
+                                <option value="maroon">maroon</option>\
+                            </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon from a sensor</label>\
@@ -887,7 +906,26 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
-                            <input type="text" id="'+id+'_value_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                            <select id="'+id+'_value_color" class="form-control">\
+                                <option value=""></option>\
+                                <option value="black">black</option>\
+                                <option value="gray">gray</option>\
+                                <option value="silver">silver</option>\
+                                <option value="white">white</option>\
+                                <option value="aqua">aqua</option>\
+                                <option value="blue">blue</option>\
+                                <option value="navy">navy</option>\
+                                <option value="teal">teal</option>\
+                                <option value="green">green</option>\
+                                <option value="olive">olive</option>\
+                                <option value="lime">lime</option>\
+                                <option value="yellow">yellow</option>\
+                                <option value="orange">orange</option>\
+                                <option value="red">red</option>\
+                                <option value="fuchsia">fuchsia</option>\
+                                <option value="purple">purple</option>\
+                                <option value="maroon">maroon</option>\
+                            </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Elapsed from a different sensor</label>\
@@ -929,6 +967,68 @@ class Page {
                             <input type="text" id="'+id+'_status_sensor" class="form-control" placeholder="the sensor whose status has to be displayed" required>\
                         </div>\
                         <div class="form-group">\
+                            <label>Icon when ON (default: plug)</label>\
+                            <select id="'+id+'_status_icon_on" class="form-control"></select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Color when ON (default: green)</label>\
+                            <select id="'+id+'_status_color_on" class="form-control">\
+                                <option value=""></option>\
+                                <option value="black">black</option>\
+                                <option value="gray">gray</option>\
+                                <option value="silver">silver</option>\
+                                <option value="white">white</option>\
+                                <option value="aqua">aqua</option>\
+                                <option value="blue">blue</option>\
+                                <option value="navy">navy</option>\
+                                <option value="teal">teal</option>\
+                                <option value="green">green</option>\
+                                <option value="olive">olive</option>\
+                                <option value="lime">lime</option>\
+                                <option value="yellow">yellow</option>\
+                                <option value="orange">orange</option>\
+                                <option value="red">red</option>\
+                                <option value="fuchsia">fuchsia</option>\
+                                <option value="purple">purple</option>\
+                                <option value="maroon">maroon</option>\
+                            </select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Text when ON (default: ON)</label>\
+                            <input type="text" id="'+id+'_status_text_on" class="form-control"></select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Icon when OFF (default: power-off)</label>\
+                            <select id="'+id+'_status_icon_off" class="form-control"></select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Color when OFF (default: red)</label>\
+                            <select id="'+id+'_status_color_off" class="form-control">\
+                                <option value=""></option>\
+                                <option value="black">black</option>\
+                                <option value="gray">gray</option>\
+                                <option value="silver">silver</option>\
+                                <option value="white">white</option>\
+                                <option value="aqua">aqua</option>\
+                                <option value="blue">blue</option>\
+                                <option value="navy">navy</option>\
+                                <option value="teal">teal</option>\
+                                <option value="green">green</option>\
+                                <option value="olive">olive</option>\
+                                <option value="lime">lime</option>\
+                                <option value="yellow">yellow</option>\
+                                <option value="orange">orange</option>\
+                                <option value="red">red</option>\
+                                <option value="fuchsia">fuchsia</option>\
+                                <option value="purple">purple</option>\
+                                <option value="maroon">maroon</option>\
+                            </select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Text when OFF (default: OFF)</label>\
+                            <input type="text" id="'+id+'_status_text_off" class="form-control"></select>\
+                        </div>\
+                        <div class="form-group">\
                             <label>Elapsed from a different sensor</label>\
                             <input type="text" id="'+id+'_status_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
                         </div>\
@@ -957,7 +1057,26 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
-                            <input type="text" id="'+id+'_control_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                            <select id="'+id+'_control_color" class="form-control">\
+                                <option value=""></option>\
+                                <option value="black">black</option>\
+                                <option value="gray">gray</option>\
+                                <option value="silver">silver</option>\
+                                <option value="white">white</option>\
+                                <option value="aqua">aqua</option>\
+                                <option value="blue">blue</option>\
+                                <option value="navy">navy</option>\
+                                <option value="teal">teal</option>\
+                                <option value="green">green</option>\
+                                <option value="olive">olive</option>\
+                                <option value="lime">lime</option>\
+                                <option value="yellow">yellow</option>\
+                                <option value="orange">orange</option>\
+                                <option value="red">red</option>\
+                                <option value="fuchsia">fuchsia</option>\
+                                <option value="purple">purple</option>\
+                                <option value="maroon">maroon</option>\
+                            </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Elapsed from a different sensor</label>\
@@ -984,7 +1103,26 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
-                            <input type="text" id="'+id+'_input_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                            <select id="'+id+'_input_color" class="form-control">\
+                                <option value=""></option>\
+                                <option value="black">black</option>\
+                                <option value="gray">gray</option>\
+                                <option value="silver">silver</option>\
+                                <option value="white">white</option>\
+                                <option value="aqua">aqua</option>\
+                                <option value="blue">blue</option>\
+                                <option value="navy">navy</option>\
+                                <option value="teal">teal</option>\
+                                <option value="green">green</option>\
+                                <option value="olive">olive</option>\
+                                <option value="lime">lime</option>\
+                                <option value="yellow">yellow</option>\
+                                <option value="orange">orange</option>\
+                                <option value="red">red</option>\
+                                <option value="fuchsia">fuchsia</option>\
+                                <option value="purple">purple</option>\
+                                <option value="maroon">maroon</option>\
+                            </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Elapsed from a different sensor</label>\
@@ -1001,6 +1139,10 @@ class Page {
                         <div class="form-group">\
                             <label>Allowed Values</label>\
                             <input type="text" id="'+id+'_input_allowed_values" class="form-control" placeholder="e.g. ON,OFF">\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Allowed Range</label>\
+                            <input type="text" id="'+id+'_input_allowed_range" class="form-control" placeholder="e.g. 10-30">\
                         </div>\
                     </div>\
                     \
@@ -1023,7 +1165,26 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
-                            <input type="text" id="'+id+'_button_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                            <select id="'+id+'_button_color" class="form-control">\
+                                <option value=""></option>\
+                                <option value="black">black</option>\
+                                <option value="gray">gray</option>\
+                                <option value="silver">silver</option>\
+                                <option value="white">white</option>\
+                                <option value="aqua">aqua</option>\
+                                <option value="blue">blue</option>\
+                                <option value="navy">navy</option>\
+                                <option value="teal">teal</option>\
+                                <option value="green">green</option>\
+                                <option value="olive">olive</option>\
+                                <option value="lime">lime</option>\
+                                <option value="yellow">yellow</option>\
+                                <option value="orange">orange</option>\
+                                <option value="red">red</option>\
+                                <option value="fuchsia">fuchsia</option>\
+                                <option value="purple">purple</option>\
+                                <option value="maroon">maroon</option>\
+                            </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon from a sensor</label>\
@@ -1119,7 +1280,26 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Color of the box</label>\
-                            <input type="text" id="'+id+'_counter_color" class="form-control" placeholder="color of the box">\
+                            <select id="'+id+'_counter_color" class="form-control">\
+                                <option value=""></option>\
+                                <option value="black">black</option>\
+                                <option value="gray">gray</option>\
+                                <option value="silver">silver</option>\
+                                <option value="white">white</option>\
+                                <option value="aqua">aqua</option>\
+                                <option value="blue">blue</option>\
+                                <option value="navy">navy</option>\
+                                <option value="teal">teal</option>\
+                                <option value="green">green</option>\
+                                <option value="olive">olive</option>\
+                                <option value="lime">lime</option>\
+                                <option value="yellow">yellow</option>\
+                                <option value="orange">orange</option>\
+                                <option value="red">red</option>\
+                                <option value="fuchsia">fuchsia</option>\
+                                <option value="purple">purple</option>\
+                                <option value="maroon">maroon</option>\
+                            </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Timeframe</label>\
@@ -1167,7 +1347,26 @@ class Page {
                         </div>\
                         <div class="form-group">\
                             <label>Color of the icon</label>\
-                            <input type="text" id="'+id+'_slider_color" class="form-control" placeholder="color of the icon, leave empty for default">\
+                            <select id="'+id+'_slider_color" class="form-control">\
+                                <option value=""></option>\
+                                <option value="black">black</option>\
+                                <option value="gray">gray</option>\
+                                <option value="silver">silver</option>\
+                                <option value="white">white</option>\
+                                <option value="aqua">aqua</option>\
+                                <option value="blue">blue</option>\
+                                <option value="navy">navy</option>\
+                                <option value="teal">teal</option>\
+                                <option value="green">green</option>\
+                                <option value="olive">olive</option>\
+                                <option value="lime">lime</option>\
+                                <option value="yellow">yellow</option>\
+                                <option value="orange">orange</option>\
+                                <option value="red">red</option>\
+                                <option value="fuchsia">fuchsia</option>\
+                                <option value="purple">purple</option>\
+                                <option value="maroon">maroon</option>\
+                            </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Widget Style</label>\
@@ -1224,6 +1423,8 @@ class Page {
         init_icon_select(id+'_button_icon')
         init_icon_select(id+'_counter_icon')
         init_icon_select(id+'_slider_icon')
+        init_icon_select(id+'_status_icon_on')
+        init_icon_select(id+'_status_icon_off')
         // add a link to the advanced editor
         $("#wizard_body").append('<br><a id="'+id+'_advanced_editor" class="float-right text-primary d-none">Advanced Editor</a>')
         $("#"+id+"_advanced_editor").unbind().click(function(this_class) {
@@ -1241,9 +1442,9 @@ class Page {
         simple_types["value"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant", "link", "color_success", "color_warning", "color_danger","normalize"]
         simple_types["timeline"] = ["group_by", "timeframe", "style", "series"]
         simple_types["range"] = ["sensor", "group_by", "timeframe"]
-        simple_types["status"] = ["sensor", "timestamp_sensor", "variant"]
+        simple_types["status"] = ["sensor", "color_on", "icon_on", "text_on", "color_off", "icon_off", "text_off", "timestamp_sensor", "variant"]
         simple_types["control"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant"]
-        simple_types["input"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant", "allowed_values"]
+        simple_types["input"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant", "allowed_values", "allowed_range"]
         simple_types["button"] = ["text", "icon", "color", "icon_sensor", "variant"]
         simple_types["calendar"] = ["sensor", "time_step", "default_value", "event_template"]
         simple_types["image"] = ["sensor"]
