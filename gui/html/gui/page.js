@@ -1748,7 +1748,10 @@ class Page {
                 // restore the page layout
                 this_class.page_edit_end()
                 gui.notify("success", "Page "+this_class.page_id+" saved successfully")
-                gui.load_page()
+                if (! (JSON.stringify(page) === JSON.stringify(this_class.page))) {
+                    gui.load_page()
+                    gui.wait_for_configuration(this_class.page_id, 'Reloading page, please wait...')
+                }
             };
         }(this));
         // configure add row button

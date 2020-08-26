@@ -5,7 +5,9 @@ class Menu extends Widget {
         super(id, {})
         this.folders = []
         this.entries = {}
+        this.listener = null
         this.persistent = true
+        this.refresh_scheduled = false
     }
     
     // draw the widget's content
@@ -19,11 +21,16 @@ class Menu extends Widget {
         this.entries["__welcome"].push({section_id: "__welcome",  order: 3, entry_id: "__measures", text: "Feed", icon: "exchange-alt", page: "__measures"})
         this.folders[1] = { header: "MY HOUSE"}
         // get the menu contents
-        this.add_configuration_listener("gui/menu/#", gui.menu_config_schema)
+        this.listener = this.add_configuration_listener("gui/menu/#", gui.menu_config_schema)
     }
     
-    // receive data and load it into the widget
-    on_message(message) {
+    // redraw the menu
+    redraw() {
+        if (this.listener == null) return
+        this.folders = []
+        this.entries = {}
+        this.remove_listener(this.listener)
+        this.draw()
     }
     
     // add a menu item to the menu
@@ -151,6 +158,11 @@ class Menu extends Widget {
             // hide the folder if it has no items
             if (items == 0) $("#menu_section_"+entry["section_id"]).addClass("d-none")
         }
+        this.refresh_scheduled = false
+    }
+    
+    // receive data and load it into the widget
+    on_message(message) {
     }
     
     // receive configuration
@@ -162,13 +174,20 @@ class Menu extends Widget {
             var folder_id = message.args.replace("gui/menu/","").replace("/_section","")
             var folder = message.get_data()
             folder["section_id"] = folder_id
-            // if there is another folder with the same name name, skip it
+            var is_existing_folder = false
+            // if there is another folder with the same name name, update it
             for (var existing_folder of this.folders) {
                 if (existing_folder == null) continue
-                if (existing_folder["section_id"] == folder["section_id"]) return
+                if (existing_folder["section_id"] == folder["section_id"]) {
+                    is_existing_folder = true
+                    folder["order"] = existing_folder["order"]
+                    break
+                }
             }
             // if there is another folder in the same position, shift this ahead
-            while (this.folders[folder["order"]] != null) folder["order"]++
+            if (! is_existing_folder) {
+                while (this.folders[folder["order"]] != null) folder["order"]++
+            }
             this.folders[folder["order"]] = folder
         }
         else {
@@ -179,18 +198,33 @@ class Menu extends Widget {
             entry["entry_id"] = entry_id
             entry["section_id"] = folder_id
             // this is the first entry in the folder
+            var is_existing_entry = false
             if (! (folder_id in this.entries)) this.entries[folder_id] = []
             else {
-                // if there is another entry in this folder with the same name name, skip it
+                // if there is already another entry in this folder with the same name name, update it
                 for (var existing_entry of this.entries[folder_id]) {
                     if (existing_entry == null) continue
-                    if (existing_entry["entry_id"] == entry["entry_id"]) return
+                    if (existing_entry["entry_id"] == entry["entry_id"]) {
+                        is_existing_entry = true
+                        entry["order"] = existing_entry["order"]
+                        break
+                    }
                 }
                 // if there is another entry in the same position, shift this ahead
-                while (this.entries[folder_id][entry["order"]] != null) entry["order"]++
+                if (! is_existing_entry) {
+                    while (this.entries[folder_id][entry["order"]] != null) entry["order"]++
+                }
             }
             this.entries[folder_id][entry["order"]] = entry
         }
-        this.refresh()
+        // to avoid recreating the menu upon the receiving of every item, let's schedule its refresh in a short while
+        if (! this.refresh_scheduled) {
+            this.refresh_scheduled = true
+            setTimeout(function(this_class) {
+                return function() {
+                this_class.refresh()
+                };
+            }(this), 500);
+        }
     }
 }

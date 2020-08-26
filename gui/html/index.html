@@ -180,7 +180,7 @@
     }
 </style>
 
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<body id="index_body" class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
     <div class="wrapper">
         
         <!-- ### TOP BAR ### -->
@@ -277,8 +277,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default text-red d-none" id="wizard_delete"></button>
-                        <button type="button" class="btn btn-primary" id="wizard_save"></button>
                         <button type="button" class="btn btn-default" data-dismiss="modal" id="wizard_close"></button>
+                        <button type="button" class="btn btn-primary" id="wizard_save"></button>
                     </div>
                 </div>
             </div>
@@ -312,6 +312,19 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" id="reconnect_close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ### WAITING POPUP  ### -->
+        <div class="modal fade" id="waiting">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12 center-block" id="waiting_body"></div>
+                        </div>
                     </div>
                 </div>
             </div>

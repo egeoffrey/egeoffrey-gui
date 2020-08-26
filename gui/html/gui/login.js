@@ -141,7 +141,7 @@ class Login {
                             <input type="input" class="form-control" placeholder="'+locale("login.gateway.hostname")+'" id="egeoffrey_gateway_hostname">\
                         </div>\
                         <div class="form-group has-feedback">\
-                            <input type="input" class="form-control" placeholder="'+locale("login.gateway.port")+'" id="egeoffrey_gateway_port" value="443">\
+                            <input type="input" class="form-control" placeholder="'+locale("login.gateway.port")+'" id="egeoffrey_gateway_port">\
                         </div>\
                         <div class="form-group has-feedback">\
                             <div class="checkbox icheck">\
@@ -171,7 +171,7 @@ class Login {
                             </ul>\
                         </div>\
                         <div class="form-group has-feedback">\
-                            <input type="input" class="form-control" placeholder="'+locale("login.house.id")+'" id="egeoffrey_id" value="house">\
+                            <input type="input" class="form-control" placeholder="'+locale("login.house.id")+'" id="egeoffrey_id">\
                         </div>\
                         <div class="form-group has-feedback">\
                             <input type="password" class="form-control" placeholder="'+locale("login.house.passcode")+'" id="egeoffrey_passcode">\
@@ -197,7 +197,7 @@ class Login {
                             </ul>\
                         </div>\
                         <div class="form-group has-feedback">\
-                            <input type="input" class="form-control" placeholder="'+locale("login.user.username")+'" id="egeoffrey_username" value="guest">\
+                            <input type="input" class="form-control" placeholder="'+locale("login.user.username")+'" id="egeoffrey_username">\
                         </div>\
                         <div class="form-group has-feedback">\
                             <input type="password" class="form-control" placeholder="'+locale("login.user.password")+'" id="egeoffrey_password">\
@@ -450,7 +450,21 @@ class Login {
             this.draw()
         }
         // restore saved connection 
-		this.connections.restore()
+		var connection_id = this.connections.restore()
+        // no saved connections found, load default credentials (set in env.js and env_custom.js)
+        if (connection_id == null) {
+            var connection = {
+                "EGEOFFREY_GATEWAY_HOSTNAME": window.EGEOFFREY_GATEWAY_HOSTNAME,
+                "EGEOFFREY_GATEWAY_PORT": window.EGEOFFREY_GATEWAY_PORT,
+                "EGEOFFREY_GATEWAY_SSL": window.EGEOFFREY_GATEWAY_SSL,
+                "EGEOFFREY_ID": window.EGEOFFREY_ID,
+                "EGEOFFREY_PASSCODE": window.EGEOFFREY_PASSCODE,
+                "EGEOFFREY_USERNAME": window.EGEOFFREY_USERNAME,
+                "EGEOFFREY_PASSWORD": window.EGEOFFREY_PASSWORD,
+                "EGEOFFREY_REMEMBER_PAGE": window.EGEOFFREY_REMEMBER_PAGE
+            }
+            this.connections.load_settings(connection)
+        }
         // create a stub instance of the gui (will be used by the watchdog if a new one will not be created)
         window.gui = new Gui("gui", "guest_" + this.generate_session_id())
         // click login button
