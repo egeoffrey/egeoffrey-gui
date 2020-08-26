@@ -138,6 +138,7 @@ class Value extends Widget {
         if (message.sender == "controller/db" && message.command == "SAVED") {
             if (message.args == this.widget["sensor"]) this.request_data()
             if ("icon_sensor" in this.widget && message.args == this.widget["icon_sensor"]) this.request_data()
+            if ("timestamp_sensor" in this.widget && message.args == this.widget["timestamp_sensor"]) this.request_data()
         }
         // database returned a requested value
         else if (message.sender == "controller/db" && message.command.startsWith("GET")) {

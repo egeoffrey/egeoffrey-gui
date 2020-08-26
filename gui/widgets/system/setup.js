@@ -93,9 +93,17 @@ class Setup extends Widget {
                             <label>Map API Key - used by the Map widget to draw interactive maps (<a target="_blank" href="http://developers.google.com/maps/documentation/embed/get-api-key">get it from here</a>)</label>\
                             <input type="text" id="'+this.id+'_gui_map_api_key" class="form-control">\
                         </div>\
-                        <div class="form-group">\
-                            <label>Check for Updates at Login</label>\
-                            <input type="checkbox" id="'+this.id+'_gui_check_for_updates" class="form-control">\
+                        <div class="form-check">\
+                            <input type="checkbox" id="'+this.id+'_gui_check_for_updates" class="form-check-input">\
+                            <label>Check for updates at login</label>\
+                        </div>\
+                        <div class="form-check">\
+                            <input type="checkbox" id="'+this.id+'_gui_collapsed_sidebar" class="form-check-input">\
+                            <label>Keep the sidebar collapsed for full-width pages</label>\
+                        </div>\
+                        <div class="form-check">\
+                            <input type="checkbox" id="'+this.id+'_gui_live_feed" class="form-check-input">\
+                            <label>Live Feed - show notifications for every new measure coming from sensors</label>\
                         </div>\
                         <div class="float-right">\
                           <button type="button" class="btn btn-primary" id="'+this.id+'_gui_save">Save</button>\
@@ -211,7 +219,11 @@ class Setup extends Widget {
             for (var configuration of ["default_page", "map_api_key"]) {
                 $("#"+this.id+"_gui_"+configuration).val(data[configuration])
             }
-            $("#"+this.id+"_gui_check_for_updates").prop("checked", data["check_for_updates"])
+            for (var configuration of ["check_for_updates", "live_feed", "collapsed_sidebar"]) {
+                if (configuration in data) {
+                    $("#"+this.id+"_gui_"+configuration).prop("checked", data["configuration"])
+                }
+            }
         }
     }
 }
