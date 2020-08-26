@@ -5,6 +5,19 @@ class Login {
     constructor() {
         this.watchdog = null
 		this.connections = new Connections()
+        // set to true when the login button is pressed
+        this.login_in_progress = false
+        this.login_in_progress_timestamp = 0
+        this.login_in_progress_timeout = 3
+        // set to true when we are waiting for the house configuration
+        this.waiting_configuration_running = false
+        this.waiting_configuration_timestamp = 0
+        this.waiting_configuration_timeout = 5
+        this.waiting_configuration_timeout = 5
+        this.reconnect_timestamp = 0
+        this.reconnect_timeout = 3
+        this.database_reachable_timestamp = 0
+        this.database_reachable_timeout = 4
         this.draw()
     }
 	
@@ -20,6 +33,79 @@ class Login {
 			}
 		}
 	}
+    
+    // return a unix timestamp
+    get_timestamp() {
+        return Math.floor(Date.now() / 1000)
+    }
+    
+    // set the login status message
+    set_login_status(severity, message) {
+        for (var value of ["info", "warning", "danger", "success"]) {
+            if ($("#login_status").hasClass("callout-"+value)) $("#login_status").removeClass("callout-"+value)
+        }            
+        $("#login_status").removeClass("callout")
+        if (severity != "") $("#login_status").addClass("callout callout-"+severity)
+        $("#login_status").html(message)
+    }
+    
+    // log a message in console
+    log(severity, message) {
+        //if (severity == "debug" && (window.EGEOFFREY_DEBUG == null || ! window.EGEOFFREY_DEBUG)) return
+        console.log(format_log_line(severity, "gui/login", message))
+    }
+    
+    // function to run when waiting for the house configuration
+    waiting_configuration() {
+        setTimeout(function(this_class) {
+            return function() {
+                // configuration received, the module is configured, check if database is reachable
+                if (window.gui.configured) {
+                    this_class.set_login_status("info", '<i class="fas fa-spin fa-spinner"></i> Checking backend connection...')
+                    this_class.log("debug", "Checking backend connection...")
+                    this_class.database_reachable_timestamp = this_class.get_timestamp()
+                    this_class.database_reachable()
+                } 
+                // no configuration received yet
+                else {
+                    // wait for the timeout to expire
+                    if (this_class.get_timestamp() - this_class.waiting_configuration_timestamp < this_class.waiting_configuration_timeout) {
+                        this_class.waiting_configuration()
+                        return
+                    }
+                    this_class.set_login_status("warning", "Unable to find the house configuration")
+                    this_class.log("warning", "Unable to find the house configuration")
+                    window.gui.join()
+                }
+            };
+        }(this), 500);
+    }
+    
+     // function to run for ensuring the database is reachable by the web interface
+    database_reachable() {
+        setTimeout(function(this_class) {
+            return function() {
+                // configuration received, the module is configured, login successful
+                if (window.gui.database_reachable) {
+                    $("#login").modal("hide")
+                    this_class.set_login_status("", "")
+                } 
+                // no configuration received yet
+                else {
+                    // wait for the timeout to expire
+                    if (this_class.get_timestamp() - this_class.database_reachable_timestamp < this_class.database_reachable_timeout) {
+                        this_class.database_reachable()
+                        return
+                    }
+                    this_class.set_login_status("warning", "Unable to reach the backend")
+                    this_class.log("warning", "Unable to reach the backend")
+                    window.gui.join()
+                }
+                this_class.waiting_configuration_running = false
+                this_class.login_in_progress = false
+            };
+        }(this), 500);
+    }   
     
     // draw the login form
     draw() {
@@ -43,6 +129,14 @@ class Login {
                         </div>\
                     </div>\
                     <div class="card-body">\
+                        <div class="text-right"><a onClick=\'$("#login_gateway_help\").toggleClass(\"d-none\")\'><i class="fas fa-question-circle text-info fa-1x"></i></a></div>\
+                        <div id="login_gateway_help" class="callout callout-info d-none">\
+                            <p>The eGeoffrey Gateway is the main door for accessing eGeoffrey. All eGeoffrey components connects and interact via the gateway, ragardless where they are running:</p>\
+                            <ul>\
+                                <li>If eGeoffrey is installed in your local network, the hostname is the host or IP address where eGeoffrey is running and by default port is 443 and SSL is disabled;</li>\
+                                <li>If connecting to <a class="text-primary" href="https://docs.egeoffrey.com/configure/remote/" target="_new">eGeoffrey Cloud Gateway</a>, the hostname is <code>gateway.egeoffrey.com</code>, port is 443 and SSL is enabled;</li>\
+                            </ul>\
+                        </div>\
                         <div class="form-group has-feedback">\
                             <input type="input" class="form-control" placeholder="'+locale("login.gateway.hostname")+'" id="egeoffrey_gateway_hostname">\
                         </div>\
@@ -68,6 +162,14 @@ class Login {
                         </div>\
                     </div>\
                     <div class="card-body">\
+                        <div class="text-right"><a onClick=\'$("#login_house_help\").toggleClass(\"d-none\")\'><i class="fas fa-question-circle text-info fa-1x"></i></a></div>\
+                        <div id="login_house_help" class="callout callout-info d-none">\
+                            <p>An eGeoffrey instance can take care of multiple houses hence you want to specify which one you want to enter. House ID and passcode are eventually used as username and password for authenticating against the gateway:</p>\
+                            <ul>\
+                                <li>If eGeoffrey is installed in your local network, by default the House ID is <code>house</code> without any passcode;</li>\
+                                <li>If connecting to <a class="text-primary" href="https://docs.egeoffrey.com/configure/remote/" target="_new">eGeoffrey Cloud Gateway</a>, the House ID is the e-mail address you used for registering your account and the passcode is your password;</li>\
+                            </ul>\
+                        </div>\
                         <div class="form-group has-feedback">\
                             <input type="input" class="form-control" placeholder="'+locale("login.house.id")+'" id="egeoffrey_id" value="house">\
                         </div>\
@@ -86,6 +188,14 @@ class Login {
                         </div>\
                     </div>\
                     <div class="card-body">\
+                        <div class="text-right"><a onClick=\'$("#login_user_help\").toggleClass(\"d-none\")\'><i class="fas fa-question-circle text-info fa-1x"></i></a></div>\
+                        <div id="login_user_help" class="callout callout-info d-none">\
+                            <p>To each house can belong one or multiple users. By default you will be automatically logged in as guest user. The following two users are pre-configured:</p>\
+                            <ul>\
+                                <li><code>guest / &lt;no password&gt;</code></li>\
+                                <li><code>admin / admin</code></li>\
+                            </ul>\
+                        </div>\
                         <div class="form-group has-feedback">\
                             <input type="input" class="form-control" placeholder="'+locale("login.user.username")+'" id="egeoffrey_username" value="guest">\
                         </div>\
@@ -127,9 +237,6 @@ class Login {
                         </div>\
                     </div>\
                 </div>\
-                <center>\
-                    <p class="text-red" id="login_error"></p>\
-                </center>\
                 <div class="form-group has-feedback">\
                     <div class="checkbox icheck">\
                         <label>\
@@ -137,6 +244,7 @@ class Login {
                         </label>\
                     </div>\
                 </div>\
+                <div id="login_status" class="text-center">&nbsp;</div>\
                 <div class="form-group has-feedback">\
                     <button type="button" class="btn btn-primary btn-block btn-flat" id="login_button">'+locale("login.login_button")+'</button>\
                 </div>\
@@ -149,8 +257,6 @@ class Login {
             return false;
           }
         });
-        // set to true when the login button is pressed
-        var login_submit = false
         // setup checkboxes
         $(":checkbox").iCheck({
             checkboxClass: 'icheckbox_square-blue',
@@ -168,10 +274,6 @@ class Login {
         // configure login button
         $("#login_button").unbind().click(function(this_class) {
             return function() {
-                // disable the login button
-                $("#login_button").prop("disabled", true)
-                $("#login_button").html(locale("login.connecting"))
-                $("#login_error").html("")
 				// pull out the user's data from the form and set the variables the Gui class needs to access
                 window.EGEOFFREY_GATEWAY_HOSTNAME = $("#egeoffrey_gateway_hostname").val()
                 window.EGEOFFREY_GATEWAY_PORT = $("#egeoffrey_gateway_port").val()
@@ -184,15 +286,23 @@ class Login {
                 window.EGEOFFREY_DEBUG = $("#egeoffrey_debug").is(":checked") ? 1 : 0
                 window.EGEOFFREY_LOGGING_REMOTE = $("#egeoffrey_logging_remote").is(":checked") ? 1 : 0
 				window.EGEOFFREY_REMEMBER_PAGE = $("#egeoffrey_remember_page").is(":checked") ? 1 : 0
+                // just return if no gateway is provided
+                if (window.EGEOFFREY_GATEWAY_HOSTNAME == "") return
+                // disable the login button
+                $("#login_button").prop("disabled", true)
+                $("#login_button").html(locale("login.connecting"))
+                this_class.set_login_status("info", '<i class="fas fa-spin fa-spinner"></i> Connecting to the eGeoffrey gateway...')
+                this_class.log("debug", "Connecting to the eGeoffrey gateway...")
 				// save user's connections
 				this_class.connections.save()
-				// reload the saved connection select
+				// redraw the saved connection select
 				this_class.load_saved_connections()
 				// create a new instance of the gui and run it
                 window.gui = new Gui("gui", EGEOFFREY_USERNAME + "_" + this_class.generate_session_id())
                 this_class.restore_page()
                 window.gui.run()
-                login_submit = true
+                this_class.login_in_progress_timestamp = this_class.get_timestamp()
+                this_class.login_in_progress = true
             };
         }(this));
         // configure language selector
@@ -224,57 +334,98 @@ class Login {
                 window.gui.logout()
             };
         }(this));
+        // configure reconnect abort button
+        $("#reconnect_close").html("Cancel")
+        $("#reconnect_close").unbind().click(function(this_class) {
+            return function () {
+                // setop the gui from reconnecting
+                window.gui.join()
+                // hide the reconnect popup
+                $("#reconnect").modal("hide")
+                // show the reconnect screen
+                $("#login").modal()
+            };
+        }(this));
         // periodically check if the connection is established, otherwise show login page
         if (this.watchdog != null) clearInterval(this.watchdog)
         var this_class = this
-        this.watchdog = setInterval(function() {
-            $("#login_button").prop("disabled", false)
-            $("#login_button").html(locale("login.login_button"))
-            var login_screen = $('#login').is(':visible');
-            // when the login screen is shown
-            if (login_screen) {
-                // check if connected and if so hide the login screen
-                if (window.gui.connected) {
-                    // connected
-                    $("#login_error").html("")
-                    $("#login").modal("hide")
-                    login_submit = false
-                } else {
-                    if (login_submit) $("#login_error").html(locale("login.login_error"))
-                    login_submit = false
-                }
-            }
-            // already logged in, ensure we are still connected
-            else {
-                if (! window.gui.connected) {
-                    // if the user intentionally logged out, just disconnect and show the login screen back again
-                    if (! window.gui.logged_in) {
-                        // not connected, stop the current instance of the gui from connecting
-                        window.gui.join()
-						// if the user has selected a different connection login immediately without showing the login screen
-						if (window.EGEOFFREY_AUTOLOGON != null) {
-							window.EGEOFFREY_AUTOLOGON = null
-							$("#login_button").click()
-						} 
-						// show up the login screen
-						else {
-							$("#login").modal()
-						}
-                    // otherwise the user may have been disconnected (e.g. network change, timeout, app in background, etc.)
+        this.watchdog = setInterval(function(this_class) {
+            return function() {
+                // if connected and waiting for the configuration, just leave
+                if (this_class.waiting_configuration_running) return
+                // if the login screen is visible
+                if ($('#login').is(':visible')) {
+                    $("#login_button").prop("disabled", false)
+                    $("#login_button").html(locale("login.login_button"))
+                    // login screen is visible and gui connected, time to hide the login screen
+                    if (window.gui.connected) {
+                        this_class.set_login_status("info", '<i class="fas fa-spin fa-spinner"></i> Connected. Looking for house configuration...')
+                        this_class.log("debug", "Connected. Looking for house configuration...")
+                        // wait for a the house configuration
+                        this_class.waiting_configuration_running = true
+                        this_class.waiting_configuration_timestamp = this_class.get_timestamp()
+                        this_class.waiting_configuration()
                     } else {
-                        // check if the gui is in foreground (no need to connect and connect if it is not)
-                        if (window.EGEOFFREY_IN_FOREGROUND == null || window.EGEOFFREY_IN_FOREGROUND == true) {
-                            // create a new instance of the gui and run it
-                            window.gui = new Gui("gui", EGEOFFREY_USERNAME + "_" + this_class.generate_session_id())
-                            // retrieve and set previously opened page if any
-                            this_class.restore_page()
-                            window.gui.logged_in = true
-                            window.gui.run()
+                        // wait for a timeout before showing the unable to connect error message
+                        if (this_class.get_timestamp() - this_class.login_in_progress_timestamp > this_class.login_in_progress_timeout) {
+                            // login still visible but not connected, show error message
+                            if (this_class.login_in_progress) {
+                                this_class.set_login_status("danger", 'Unable to connect or invalid credentials')
+                                this_class.log("error", "Unable to connect or invalid credentials")
+                            }
+                            this_class.login_in_progress = false
                         }
                     }
                 }
-            }
-        }, 3000);
+                // login not visible, we should be already logged in, ensure we are still connected
+                else {
+                    if (! window.gui.connected) {
+                        // if the user intentionally logged out, just disconnect and show the login screen back again
+                        if (! window.gui.logged_in) {
+                            // not connected, stop the current instance of the gui from connecting
+                            window.gui.join()
+                            // if the user has selected a different connection, login immediately without showing the login screen
+                            if (window.EGEOFFREY_AUTOLOGON != null) {
+                                window.EGEOFFREY_AUTOLOGON = null
+                                $("#login_button").click()
+                            } 
+                            // show up the login screen
+                            else {
+                                $("#login").modal()
+                            }
+                        // otherwise the user may have been disconnected (e.g. network change, timeout, mobile app in background, etc.), try to reconnect
+                        } else {
+                            // check if not running on mobile app or the mobile app is in foreground (no need to connect and reconnect if it is not)
+                            if (window.EGEOFFREY_IN_FOREGROUND == null || window.EGEOFFREY_IN_FOREGROUND == true) {
+                                $("#reconnect_body").html('<i class="fas fa-spin fa-spinner"></i> Reconnecting...')
+                                $("#reconnect").modal()
+                                if (this_class.get_timestamp() - this_class.reconnect_timestamp > this_class.reconnect_timeout) {
+                                    // create a new instance of the gui and run it
+                                    window.gui = new Gui("gui", EGEOFFREY_USERNAME + "_" + this_class.generate_session_id())
+                                    // retrieve and set previously opened page if any
+                                    this_class.restore_page()
+                                    window.gui.logged_in = true
+                                    this_class.reconnect_timestamp = this_class.get_timestamp()
+                                    window.gui.run()
+                                }
+                            }
+                        }
+                    } else {
+                        // we are connected but the login screen is not showing, ensure we are also fully configured
+                        if (! window.gui.configured || ! window.gui.database_reachable) {
+                            window.gui.join()
+                            this_class.set_login_status("warning", "House not found or database unreachable")
+                            this_class.log("warning", "House not found or database unreachable")
+                            this_class.login_in_progress = false
+                            $("#reconnect").modal("hide")
+                            $("#login").modal()
+                        } else {
+                            $("#reconnect").modal("hide")
+                        }
+                    }
+                }
+            };
+        }(this), 1000);
     }
     
     // restore last opened page
@@ -300,9 +451,9 @@ class Login {
         }
         // restore saved connection 
 		this.connections.restore()
-        // create a gui and start it. This will automatically login if there is a valid session loaded
+        // create a stub instance of the gui (will be used by the watchdog if a new one will not be created)
         window.gui = new Gui("gui", "guest_" + this.generate_session_id())
-        this.restore_page()
-        window.gui.run()
-    }
+        // click login button
+        $("#login_button").click()
+     }
 }

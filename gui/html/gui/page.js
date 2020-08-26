@@ -1416,15 +1416,15 @@ class Page {
             </form>\
         ')
         // initialize select
-        init_icon_select(id+'_value_icon')
-        init_icon_select(id+'_control_icon')
-        init_icon_select(id+'_summary_icon')
-        init_icon_select(id+'_input_icon')
-        init_icon_select(id+'_button_icon')
-        init_icon_select(id+'_counter_icon')
-        init_icon_select(id+'_slider_icon')
-        init_icon_select(id+'_status_icon_on')
-        init_icon_select(id+'_status_icon_off')
+        gui.select_icon(id+'_value_icon')
+        gui.select_icon(id+'_control_icon')
+        gui.select_icon(id+'_summary_icon')
+        gui.select_icon(id+'_input_icon')
+        gui.select_icon(id+'_button_icon')
+        gui.select_icon(id+'_counter_icon')
+        gui.select_icon(id+'_slider_icon')
+        gui.select_icon(id+'_status_icon_on')
+        gui.select_icon(id+'_status_icon_off')
         // add a link to the advanced editor
         $("#wizard_body").append('<br><a id="'+id+'_advanced_editor" class="float-right text-primary d-none">Advanced Editor</a>')
         $("#"+id+"_advanced_editor").unbind().click(function(this_class) {

@@ -92,7 +92,7 @@ class Menu extends Widget {
             entries["__house_admin"].push({section_id: "__house_admin",  order: 1, entry_id: "sensors", text: "Sensors", icon: "microchip", page: "__sensors"})
             entries["__house_admin"].push({section_id: "__house_admin",  order: 2, entry_id: "rules", text: "Rules", icon: "cogs", page: "__rules"})
             entries["__house_admin"].push({section_id: "__house_admin",  order: 3, entry_id: "pages", text: "Pages", icon: "columns", page: "__pages"})
-            entries["__house_admin"].push({section_id: "__house_admin",  order: 4, entry_id: "menu", text: "Menu", icon: "compass", page: "__menu"})
+            entries["__house_admin"].push({section_id: "__house_admin",  order: 4, entry_id: "menu", text: "Menu", icon: "sitemap", page: "__menu"})
             entries["__house_admin"].push({section_id: "__house_admin",  order: 5, entry_id: "users", text: "Users", icon: "users", page: "__users"})
         }
         if (gui.is_authorized(["egeoffrey_admins"])) {

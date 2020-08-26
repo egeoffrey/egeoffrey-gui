@@ -39,7 +39,7 @@ class Menu_folder_wizard extends Widget {
                 </div>\
             </form>\
         ')
-        init_icon_select(this.id+'_icon')
+        gui.select_icon(this.id+'_icon')
         $("#"+this.id+"_order").TouchSpin();
         // add link to advanced configuration
         var link = section_id == null ? "__new__" : section_id

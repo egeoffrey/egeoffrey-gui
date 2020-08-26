@@ -174,7 +174,7 @@ class Sensor_wizard extends Widget {
                 </div>\
             </form>\
         ')
-        init_icon_select(this.id+'_icon')
+        gui.select_icon(this.id+'_icon')
         // add link to advanced configuration
         var link = sensor_id == null ? "__new__" : sensor_id
         $("#wizard_body").append('<br><a id="'+this.id+'_advanced_editor" class="float-right text-primary d-none">Advanced Editor</a>')

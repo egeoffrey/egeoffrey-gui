@@ -264,7 +264,7 @@ class Users extends Widget {
             </div>\
         '
         $("#"+this.id+"_users_tab_content").append(tab_content)
-        init_icon_select(this.id+'_user_'+username+'_icon')
+        gui.select_icon(this.id+'_user_'+username+'_icon')
         $("#"+this.id+'_user_'+username+'_icon').selectpicker("val", user["icon"])
     }
     

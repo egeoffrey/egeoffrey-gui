@@ -116,7 +116,6 @@
     <script src="gui/menu.js"></script>
     <script src="gui/toolbar.js"></script>
     <script src="gui/page.js"></script>
-    <script src="gui/icons.js"></script>
 
     <script src="gui/widgets/user/summary.js"></script>
     <script src="gui/widgets/user/timeline.js"></script>
@@ -301,7 +300,22 @@
                 </div>
             </div>
         </div>
-    </div>
+        
+        <!-- ### RECONNECT POPUP  ### -->
+        <div class="modal fade" id="reconnect">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12 center-block" id="reconnect_body"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="reconnect_close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <!-- ### CONTROL-SIDEBAR  ### -->
     <aside class="control-sidebar control-sidebar-dark">
@@ -309,7 +323,7 @@
 
     <!-- ### FOOTER  ### -->
     <footer class="main-footer">
-        egeoffrey-gui v<span id="version"></span>
+        egeoffrey-gui <span id="version"></span>
     </footer>
     </div>
 
