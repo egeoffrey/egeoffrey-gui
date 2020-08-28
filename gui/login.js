@@ -41,6 +41,7 @@ class Login {
     
     // set the login status message
     set_login_status(severity, message) {
+        if (! $('#login').is(':visible')) return
         for (var value of ["info", "warning", "danger", "success"]) {
             if ($("#login_status").hasClass("callout-"+value)) $("#login_status").removeClass("callout-"+value)
         }            
@@ -49,9 +50,17 @@ class Login {
         $("#login_status").html(message)
     }
     
+    // set to true/false when the login is in progress
+    set_login_in_progress(in_progress) {
+        this.login_in_progress = in_progress
+        $("#login_button").prop("disabled", in_progress)
+        if (in_progress) $("#login_button").html(locale("login.connecting"))
+        else $("#login_button").html(locale("login.login_button"))
+    }
+    
     // log a message in console
     log(severity, message) {
-        //if (severity == "debug" && (window.EGEOFFREY_DEBUG == null || ! window.EGEOFFREY_DEBUG)) return
+        if (severity == "debug" && (window.EGEOFFREY_DEBUG == null || ! window.EGEOFFREY_DEBUG)) return
         console.log(format_log_line(severity, "gui/login", message))
     }
     
@@ -102,7 +111,7 @@ class Login {
                     window.gui.join()
                 }
                 this_class.waiting_configuration_running = false
-                this_class.login_in_progress = false
+                this_class.set_login_in_progress(false)
             };
         }(this), 500);
     }   
@@ -288,9 +297,6 @@ class Login {
 				window.EGEOFFREY_REMEMBER_PAGE = $("#egeoffrey_remember_page").is(":checked") ? 1 : 0
                 // just return if no gateway is provided
                 if (window.EGEOFFREY_GATEWAY_HOSTNAME == "") return
-                // disable the login button
-                $("#login_button").prop("disabled", true)
-                $("#login_button").html(locale("login.connecting"))
                 this_class.set_login_status("info", '<i class="fas fa-spin fa-spinner"></i> Connecting to the eGeoffrey gateway...')
                 this_class.log("debug", "Connecting to the eGeoffrey gateway...")
 				// save user's connections
@@ -302,7 +308,7 @@ class Login {
                 this_class.restore_page()
                 window.gui.run()
                 this_class.login_in_progress_timestamp = this_class.get_timestamp()
-                this_class.login_in_progress = true
+                this_class.set_login_in_progress(true)
             };
         }(this));
         // configure language selector
@@ -355,8 +361,6 @@ class Login {
                 if (this_class.waiting_configuration_running) return
                 // if the login screen is visible
                 if ($('#login').is(':visible')) {
-                    $("#login_button").prop("disabled", false)
-                    $("#login_button").html(locale("login.login_button"))
                     // login screen is visible and gui connected, time to hide the login screen
                     if (window.gui.connected) {
                         this_class.set_login_status("info", '<i class="fas fa-spin fa-spinner"></i> Connected. Looking for house configuration...')
@@ -373,7 +377,7 @@ class Login {
                                 this_class.set_login_status("danger", 'Unable to connect or invalid credentials')
                                 this_class.log("error", "Unable to connect or invalid credentials")
                             }
-                            this_class.login_in_progress = false
+                            this_class.set_login_in_progress(false)
                         }
                     }
                 }
@@ -416,11 +420,13 @@ class Login {
                             window.gui.join()
                             this_class.set_login_status("warning", "House not found or database unreachable")
                             this_class.log("warning", "House not found or database unreachable")
-                            this_class.login_in_progress = false
+                            this_class.set_login_in_progress(false)
                             $("#reconnect").modal("hide")
                             $("#login").modal()
                         } else {
+                            // connected and configured
                             $("#reconnect").modal("hide")
+                            this_class.set_login_in_progress(false)
                         }
                     }
                 }

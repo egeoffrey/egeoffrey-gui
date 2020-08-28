@@ -253,10 +253,12 @@ class Value extends Widget {
                 // this is a control box, configure the checkbox
                 else if (session["widget"]["widget"] == "control") {
                     var id = tag.replace("#","")
+                    var text_on = "text_on" in this.widget ? this.widget["text_on"] : "On"
+                    var text_off = "text_off" in this.widget ? this.widget["text_off"] : "Off"
                     var html = '\
                     <center>\
                         <div class="input-group">\
-                            <input type="checkbox" id="'+id+'_toggle" data-width="100">\
+                            <input type="checkbox" id="'+id+'_toggle" data-on="'+text_on+'" data-off="'+text_off+'" data-width="100">\
                         </div>\
                     </center>'
                     $(tag).html(html)

@@ -21,7 +21,6 @@ class Page {
                             <ol class="breadcrumb float-sm-right d-none" id="page_buttons">\
                                 <li class="breadcrumb-item">\
                                     <button class="btn btn-default btn-sm" id="page_edit"><i class="fas fa-edit"></i> '+locale("page.edit")+'</button>\
-                                    <button class="btn btn-default btn-sm text-danger" id="page_delete"><i class="fas fa-trash-alt"></i> '+locale("page.delete")+'</button>\
                                     <button class="btn btn-default btn-sm edit_page_item d-none" id="page_add_row"><i class="fas fa-plus"></i> '+locale("page.add_row")+'</button>\
                                     <button class="btn btn-default d-none btn-sm edit_page_item" id="page_edit_cancel"><i class="fas fa-undo"></i> '+locale("page.discard_changes")+'</button>\
                                     <button class="btn btn-default d-none btn-sm edit_page_item" id="page_edit_done"><i class="fas fa-save"></i> '+locale("page.save_changes")+'</button>\
@@ -1079,6 +1078,14 @@ class Page {
                             </select>\
                         </div>\
                         <div class="form-group">\
+                            <label>Text when ON (default: On)</label>\
+                            <input type="text" id="'+id+'_control_text_on" class="form-control"></select>\
+                        </div>\
+                        <div class="form-group">\
+                            <label>Text when OFF (default: Off)</label>\
+                            <input type="text" id="'+id+'_control_text_off" class="form-control"></select>\
+                        </div>\
+                        <div class="form-group">\
                             <label>Elapsed from a different sensor</label>\
                             <input type="text" id="'+id+'_control_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
                         </div>\
@@ -1443,7 +1450,7 @@ class Page {
         simple_types["timeline"] = ["group_by", "timeframe", "style", "series"]
         simple_types["range"] = ["sensor", "group_by", "timeframe"]
         simple_types["status"] = ["sensor", "color_on", "icon_on", "text_on", "color_off", "icon_off", "text_off", "timestamp_sensor", "variant"]
-        simple_types["control"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant"]
+        simple_types["control"] = ["sensor", "icon", "color", "text_on", "text_off", "timestamp_sensor", "icon_sensor", "variant"]
         simple_types["input"] = ["sensor", "icon", "color", "timestamp_sensor", "icon_sensor", "variant", "allowed_values", "allowed_range"]
         simple_types["button"] = ["text", "icon", "color", "icon_sensor", "variant"]
         simple_types["calendar"] = ["sensor", "time_step", "default_value", "event_template"]
@@ -1648,7 +1655,6 @@ class Page {
         $(".edit_page_item").removeClass("d-none")
         $(".no_edit_page_item").addClass("d-none")
         $("#page_edit").addClass("d-none")
-        $("#page_delete").addClass("d-none")
         $("#page_edit_done").removeClass("d-none")
     }
     
@@ -1657,7 +1663,6 @@ class Page {
         $(".edit_page_item").addClass("d-none")
         $(".no_edit_page_item").removeClass("d-none")
         $("#page_edit").removeClass("d-none")
-        $("#page_delete").removeClass("d-none")
         $("#page_edit_done").addClass("d-none")
     }
     
@@ -1762,25 +1767,6 @@ class Page {
                 $("#title_row_"+row+" .edit_page_item").removeClass("d-none")
                 $("#title_row_"+row+" .no_edit_page_item").addClass("d-none")
                 window.scrollTo(0, document.body.scrollHeight);
-            };
-        }(this));
-        // configure page delete button
-        $("#page_delete").unbind().click(function(this_class) {
-            return function () {
-                gui.confirm("Do you really want to delete the current page?", function(result){ 
-                    if (! result) return
-                    // delete the page configuration file
-                    var message = new Message(gui)
-                    message.recipient = "controller/config"
-                    message.command = "DELETE"
-                    message.args = this_class.page_id
-                    message.config_schema = gui.page_config_schema
-                    gui.send(message)
-                    gui.notify("info", "Requesting to delete page "+this_class.page_id+". Please note the menu entry if any has to be deleted independently")
-                    gui.unload_page()
-                    // redirect to the main page
-                    window.location.hash = "" 
-                });
             };
         }(this));
         // if editing another page, clean it up
