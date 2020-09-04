@@ -8,18 +8,51 @@ class Menu extends Widget {
         this.listener = null
         this.persistent = true
         this.refresh_scheduled = false
+        // welcome menu
+        this.welcome_folders = []
+        this.welcome_entries = {}
+        this.welcome_folders[0] = { text: "Welcome", order: 0, section_id: "__welcome", icon: "concierge-bell"}
+        this.welcome_entries["__welcome"] = []
+        this.welcome_entries["__welcome"].push({section_id: "__welcome",  order: 0, entry_id: "__welcome", text: "Getting Started", icon: "book-open", page: "__welcome"})
+        this.welcome_entries["__welcome"].push({section_id: "__welcome",  order: 1, entry_id: "__chatbot", text: "Chatbot", icon: "robot", page: "__chatbot"})
+        this.welcome_entries["__welcome"].push({section_id: "__welcome",  order: 2, entry_id: "__notifications", text: "Notifications", icon: "comments", page: "__notifications"})
+        this.welcome_entries["__welcome"].push({section_id: "__welcome",  order: 3, entry_id: "__measures", text: "Feed", icon: "exchange-alt", page: "__measures"})
+        // house admin menu
+        this.house_admin_folders = []
+        this.house_admin_entries = {}
+        this.house_admin_folders[0] = { text: "House", order: 0, section_id: "__house_admin", icon: "user-shield"}
+        this.house_admin_entries["__house_admin"] = []
+        this.house_admin_entries["__house_admin"].push({section_id: "__house_admin",  order: 0, entry_id: "setup", text: "Setup", icon: "home", page: "__setup"})
+        this.house_admin_entries["__house_admin"].push({section_id: "__house_admin",  order: 1, entry_id: "sensors", text: "Sensors", icon: "microchip", page: "__sensors"})
+        this.house_admin_entries["__house_admin"].push({section_id: "__house_admin",  order: 2, entry_id: "rules", text: "Rules", icon: "cogs", page: "__rules"})
+        this.house_admin_entries["__house_admin"].push({section_id: "__house_admin",  order: 3, entry_id: "pages", text: "Pages", icon: "columns", page: "__pages"})
+        this.house_admin_entries["__house_admin"].push({section_id: "__house_admin",  order: 4, entry_id: "menu", text: "Menu", icon: "sitemap", page: "__menu"})
+        this.house_admin_entries["__house_admin"].push({section_id: "__house_admin",  order: 5, entry_id: "users", text: "Users", icon: "users", page: "__users"})
+        // egeoffrey admin menu
+        this.egeoffrey_admin_folders = []
+        this.egeoffrey_admin_entries = {}
+        this.egeoffrey_admin_folders[0] = { text: "eGeoffrey", order: 0, section_id: "__egeoffrey_admin", icon: "toolbox"}
+        this.egeoffrey_admin_entries["__egeoffrey_admin"] = []
+        this.egeoffrey_admin_entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 0, entry_id: "packages", text: "Packages", icon: "cubes", page: "__packages"})
+        this.egeoffrey_admin_entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 1, entry_id: "modules", text: "Modules", icon: "server", page: "__modules"})
+        this.egeoffrey_admin_entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 2, entry_id: "marketplace", text: "Marketplace", icon: "shopping-cart", page: "__marketplace", url: "https://marketplace.egeoffrey.com"})
+        this.egeoffrey_admin_entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 3, entry_id: "logs", text: "Logs", icon: "align-justify", page: "__logs"})
+        this.egeoffrey_admin_entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 4, entry_id: "database", text: "Database", icon: "database", page: "__database"})
+        this.egeoffrey_admin_entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 5, entry_id: "gateway", text: "Gateway", icon: "project-diagram", page: "__gateway"})
+        this.egeoffrey_admin_entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 6, entry_id: "configuration", text: "Advanced Editor", icon: "edit", page: "__configuration"})
+        // help menu
+        this.help_folders = []
+        this.help_entries = {}
+        this.help_folders[0] = { text: "Help", order: 0, section_id: "__help", icon: "question-circle"}
+        this.help_entries["__help"] = []
+        this.help_entries["__help"].push({section_id: "__help",  order: 0, entry_id: "__docs", text: "Docs", icon: "book-open", url: "https://docs.egeoffrey.com", page: "__docs"})
+        this.help_entries["__help"].push({section_id: "__help",  order: 0, entry_id: "__forum", text: "Forum", icon: "comments", url: "https://forum.egeoffrey.com", page: "__forum"})
+        this.help_entries["__help"].push({section_id: "__help",  order: 0, entry_id: "__developer", text: "Developers", icon: "code", url: "https://developer.egeoffrey.com", page: "__developer"})
+        
     }
     
     // draw the widget's content
     draw() {
-        // add system entries on top
-        this.folders[0] = { text: "Welcome", order: 0, section_id: "__welcome", icon: "concierge-bell"}
-        this.entries["__welcome"] = []
-        this.entries["__welcome"].push({section_id: "__welcome",  order: 0, entry_id: "__welcome", text: "Getting Started", icon: "book-open", page: "__welcome"})
-        this.entries["__welcome"].push({section_id: "__welcome",  order: 1, entry_id: "__chatbot", text: "Chatbot", icon: "robot", page: "__chatbot"})
-        this.entries["__welcome"].push({section_id: "__welcome",  order: 2, entry_id: "__notifications", text: "Notifications", icon: "comments", page: "__notifications"})
-        this.entries["__welcome"].push({section_id: "__welcome",  order: 3, entry_id: "__measures", text: "Feed", icon: "exchange-alt", page: "__measures"})
-        this.folders[1] = { header: "MY HOUSE"}
         // get the menu contents
         this.listener = this.add_configuration_listener("gui/menu/#", gui.menu_config_schema)
     }
@@ -31,6 +64,52 @@ class Menu extends Widget {
         this.entries = {}
         this.remove_listener(this.listener)
         this.draw()
+    }
+    
+    // add menu section to the menu
+    add_menu_section(section) {
+        $("#"+this.id).append('<li class="nav-header">'+section+'</li>')
+    }
+    
+    // add menu folders to the menu
+    add_menu_folders(folders, entries, examples=false){
+        // draw the menu
+        for (var folder of folders) {
+            if (folder == null) continue
+            if (! (folder["section_id"] in entries)) continue
+            // show only the examples
+            if (examples && ! folder["section_id"].includes("examples")) continue
+            // show everything but examples
+            if (! examples && folder["section_id"].includes("examples")) continue
+            // add the folder
+            var folder_icon = "icon" in folder ? "fas fa-"+folder["icon"] : "far fa-circle"
+            var folder_html = '\
+                <li class="nav-item has-treeview" id="menu_section_'+folder["section_id"]+'_tree">\
+                    <a href="#" class="nav-link" id="menu_section_'+folder["section_id"]+'_name">\
+                        <input type="text" value="'+folder["section_id"]+'" class="d-none" id="menu_section_'+folder["section_id"]+'_id">\
+                        <i class="'+folder_icon+' nav-icon" id="menu_section_'+folder["section_id"]+'_icon"></i> \
+                        <p>\
+                            '+folder["text"]+'\
+                            <i class="fa fa-angle-left right" id="menu_section_'+folder["section_id"]+'_arrow"></i>\
+                        </p>\
+                    </a>\
+                    <ul class="nav nav-treeview" id="menu_section_'+folder["section_id"]+'">\
+                    </ul>\
+                </li>'
+            $("#"+this.id).append(folder_html)
+            // add the entries to the folder
+            var items = 0
+            for (var entry of entries[folder["section_id"]]) {
+                if (entry == null) continue
+                if (entry["section_id"] != folder["section_id"]) continue
+                // add the entry to the menu
+                if ("allow" in entry && ! gui.is_authorized(entry["allow"])) continue
+                this.add_menu_item(entry)
+                items++
+            }
+            // hide the folder if it has no items
+            if (items == 0) $("#menu_section_"+entry["section_id"]).addClass("d-none")
+        }
     }
     
     // add a menu item to the menu
@@ -87,77 +166,17 @@ class Menu extends Widget {
     // refresh the menu
     refresh() {
         $("#"+this.id).empty()
-        // clone folders and entries objects
-        var folders = this.folders.slice()
-        var entries = jQuery.extend({ }, this.entries)
-        // add admin entries at the end
-        if (gui.is_authorized(["house_admins"]) || gui.is_authorized(["egeoffrey_admins"])) folders[folders.length] = { header: "ADMINISTRATION"}
-        if (gui.is_authorized(["house_admins"])) {
-            folders[folders.length+1] = { text: "House", order: folders.length+1, section_id: "__house_admin", icon: "user-shield"}
-            entries["__house_admin"] = []
-            entries["__house_admin"].push({section_id: "__house_admin",  order: 0, entry_id: "setup", text: "Setup", icon: "home", page: "__setup"})
-            entries["__house_admin"].push({section_id: "__house_admin",  order: 1, entry_id: "sensors", text: "Sensors", icon: "microchip", page: "__sensors"})
-            entries["__house_admin"].push({section_id: "__house_admin",  order: 2, entry_id: "rules", text: "Rules", icon: "cogs", page: "__rules"})
-            entries["__house_admin"].push({section_id: "__house_admin",  order: 3, entry_id: "pages", text: "Pages", icon: "columns", page: "__pages"})
-            entries["__house_admin"].push({section_id: "__house_admin",  order: 4, entry_id: "menu", text: "Menu", icon: "sitemap", page: "__menu"})
-            entries["__house_admin"].push({section_id: "__house_admin",  order: 5, entry_id: "users", text: "Users", icon: "users", page: "__users"})
-        }
-        if (gui.is_authorized(["egeoffrey_admins"])) {
-            folders[folders.length+2] = { text: "eGeoffrey", order: folders.length+2, section_id: "__egeoffrey_admin", icon: "toolbox"}
-            entries["__egeoffrey_admin"] = []
-            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 0, entry_id: "packages", text: "Packages", icon: "cubes", page: "__packages"})
-            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 1, entry_id: "modules", text: "Modules", icon: "server", page: "__modules"})
-            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 2, entry_id: "marketplace", text: "Marketplace", icon: "shopping-cart", page: "__marketplace", url: "https://marketplace.egeoffrey.com"})
-            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 3, entry_id: "logs", text: "Logs", icon: "align-justify", page: "__logs"})
-            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 4, entry_id: "database", text: "Database", icon: "database", page: "__database"})
-            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 5, entry_id: "gateway", text: "Gateway", icon: "project-diagram", page: "__gateway"})
-            entries["__egeoffrey_admin"].push({section_id: "__egeoffrey_admin",  order: 6, entry_id: "configuration", text: "Advanced Editor", icon: "edit", page: "__configuration"})
-        }
+        this.add_menu_folders(this.welcome_folders, this.welcome_entries)
+        this.add_menu_folders(this.folders, this.entries, true)
+        this.add_menu_section("MY PLACE")
+        this.add_menu_folders(this.folders, this.entries)
         if (gui.is_authorized(["house_admins"]) || gui.is_authorized(["egeoffrey_admins"])) {
-            folders[folders.length+3] = { text: "Help", order: folders.length+3, section_id: "__help", icon: "question-circle"}
-            entries["__help"] = []
-            entries["__help"].push({section_id: "__help",  order: 0, entry_id: "__docs", text: "Docs", icon: "book-open", url: "https://docs.egeoffrey.com", page: "__docs"})
-            entries["__help"].push({section_id: "__help",  order: 0, entry_id: "__forum", text: "Forum", icon: "comments", url: "https://forum.egeoffrey.com", page: "__forum"})
-            entries["__help"].push({section_id: "__help",  order: 0, entry_id: "__developer", text: "Developers", icon: "code", url: "https://developer.egeoffrey.com", page: "__developer"})
+            this.add_menu_section("ADMINISTRATION")
+            if (gui.is_authorized(["house_admins"])) this.add_menu_folders(this.house_admin_folders, this.house_admin_entries)
+            if (gui.is_authorized(["egeoffrey_admins"])) this.add_menu_folders(this.egeoffrey_admin_folders, this.egeoffrey_admin_entries)
         }
-        // draw the menu
-        for (var folder of folders) {
-            if (folder == null) continue
-            // this is just a header
-            if ("header" in folder) {
-                $("#"+this.id).append('<li class="nav-header">'+folder["header"]+'</li>')
-                continue
-            }
-            if (! (folder["section_id"] in entries)) continue
-            // add the folder
-            var folder_icon = "icon" in folder ? "fas fa-"+folder["icon"] : "far fa-circle"
-            var folder_html = '\
-                <li class="nav-item has-treeview" id="menu_section_'+folder["section_id"]+'_tree">\
-                    <a href="#" class="nav-link" id="menu_section_'+folder["section_id"]+'_name">\
-                        <input type="text" value="'+folder["section_id"]+'" class="d-none" id="menu_section_'+folder["section_id"]+'_id">\
-                        <i class="'+folder_icon+' nav-icon" id="menu_section_'+folder["section_id"]+'_icon"></i> \
-                        <p>\
-                            '+folder["text"]+'\
-                            <i class="fa fa-angle-left right" id="menu_section_'+folder["section_id"]+'_arrow"></i>\
-                        </p>\
-                    </a>\
-                    <ul class="nav nav-treeview" id="menu_section_'+folder["section_id"]+'">\
-                    </ul>\
-                </li>'
-            $("#"+this.id).append(folder_html)
-            // add the entries to the folder
-            var items = 0
-            for (var entry of entries[folder["section_id"]]) {
-                if (entry == null) continue
-                if (entry["section_id"] != folder["section_id"]) continue
-                // add the entry to the menu
-                if ("allow" in entry && ! gui.is_authorized(entry["allow"])) continue
-                this.add_menu_item(entry)
-                items++
-            }
-            // hide the folder if it has no items
-            if (items == 0) $("#menu_section_"+entry["section_id"]).addClass("d-none")
-        }
+        this.add_menu_section("")
+        this.add_menu_folders(this.help_folders, this.help_entries)
         this.refresh_scheduled = false
     }
     

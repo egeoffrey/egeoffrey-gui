@@ -127,6 +127,7 @@ class Pages extends Widget {
     // receive configuration
     on_configuration(message) {
         var page_id = message.args.replace("gui/pages/","")
+        var is_example = page_id.startsWith("examples/")
         // skip pages already received
         if (page_id in this.pages) return
         var page = message.get_data()
@@ -134,6 +135,7 @@ class Pages extends Widget {
         this.pages[page_id] = page
         // add a line to the table
         var table = $("#"+this.id+"_table").DataTable()
+        var view_edit = is_example ? "View" : "View/Edit"
         var description = '\
             <div>'+page_id+'</div>\
             <div class="form-group" id="'+this.id+'_actions_'+page_tag+'">\
@@ -144,10 +146,10 @@ class Pages extends Widget {
                         <span class="sr-only">Toggle Dropdown</span>\
                     </button>\
                     <div class="dropdown-menu" role="menu">\
-                        <a class="dropdown-item" id="'+this.id+'_view_'+page_tag+'" style="cursor: pointer"><i class="fas fa-eye"></i> View/Edit</a>\
+                        <a class="dropdown-item" id="'+this.id+'_view_'+page_tag+'" style="cursor: pointer"><i class="fas fa-eye"></i> '+(is_example ? "View" : "View/Edit")+'</a>\
                         <div class="dropdown-divider"></div>\
                         <a class="dropdown-item" id="'+this.id+'_clone_'+page_tag+'" style="cursor: pointer"><i class="fas fa-copy"></i> Clone</a>\
-                        <a class="dropdown-item" id="'+this.id+'_rename_'+page_tag+'" style="cursor: pointer"><i class="fas fa-font"></i> Rename</a>\
+                        <a class="dropdown-item '+(is_example ? "d-none" : "")+'" id="'+this.id+'_rename_'+page_tag+'" style="cursor: pointer"><i class="fas fa-font"></i> Rename</a>\
                         <a class="dropdown-item" id="'+this.id+'_delete_'+page_tag+'" style="cursor: pointer"><i class="fas fa-trash"></i> Delete</a>\
                     </div>\
                 </div>\
