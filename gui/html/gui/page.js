@@ -39,7 +39,7 @@ class Page {
                 </div>\
             </section>\
         ')
-        if ( ! page_id.startsWith("__") && gui.is_authorized(["house_admins"])) $("#page_buttons").removeClass("d-none")
+        if ( ! page_id.startsWith("__") && ! page_id.startsWith("gui/pages/examples/") && gui.is_authorized(["house_admins"])) $("#page_buttons").removeClass("d-none")
         // if it is a user page, draw the page layout provided by the user
         if (type == "USER") this.draw(page)
         // if it is a system page, build the page layout and draw it
