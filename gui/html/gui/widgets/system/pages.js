@@ -37,7 +37,7 @@ class Pages extends Widget {
                     <form method="POST" role="form" id="'+this_class.id+'_form" class="needs-validation" novalidate>\
                         <div class="form-group">\
                             <label>Page Identifier*</label>\
-                            <input type="text" id="'+this_class.id+'_page_id" class="form-control" placeholder="Give the page an id. It will be its filename" required>\
+                            <input type="text" id="'+this_class.id+'_page_id" class="form-control" pattern="[a-zA-Z0-9/_-]+" placeholder="Give the page an id. It will be its filename" required>\
                         </div>\
                     </form>\
                 ')

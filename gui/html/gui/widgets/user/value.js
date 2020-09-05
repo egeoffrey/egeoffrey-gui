@@ -255,6 +255,16 @@ class Value extends Widget {
                     var id = tag.replace("#","")
                     var text_on = "text_on" in this.widget ? this.widget["text_on"] : "On"
                     var text_off = "text_off" in this.widget ? this.widget["text_off"] : "Off"
+                    var icon_on = "icon_on" in this.widget ? this.widget["icon_on"] : null
+                    var color_on = "color_on" in this.widget ? this.widget["color_on"] : null
+                    var icon_off = "icon_off" in this.widget ? this.widget["icon_off"] : null
+                    var color_off = "color_off" in this.widget ? this.widget["color_off"] : null
+                    var target = "info-box-icon"
+                    var icon_class = "info-box-icon"
+                    if ("variant" in this.widget && this.widget["variant"] == 2) {
+                        target = "small-box"
+                        icon_class = "small-box"
+                    }
                     var html = '\
                     <center>\
                         <div class="input-group">\
@@ -263,8 +273,18 @@ class Value extends Widget {
                     </center>'
                     $(tag).html(html)
                     $(tag+"_toggle").bootstrapToggle()
-                    // TODO: if not defined, set 0 to the db as well
-                    if (data.length == 1) $(tag+"_toggle").prop("checked", data[0]).change()
+                    if (data.length == 1) {
+                        var tag_icon = tag.replace("_value","")
+                        if (data[0] == 0) {
+                            if (icon_off != null) $(tag_icon+"_icon").removeClass().addClass("fa fa-"+icon_off)
+                            if (color_off != null && $(tag_icon+"_color").hasClass(target)) $(tag_icon+"_color").removeClass().addClass(icon_class+" bg-"+color_off)
+                        }
+                        else if (data[0] == 1) {
+                            if (icon_on != null) $(tag_icon+"_icon").removeClass().addClass("fa fa-"+icon_on)
+                            if (color_on != null && $(tag_icon+"_color").hasClass(target)) $(tag_icon+"_color").removeClass().addClass(icon_class+" bg-"+color_on)
+                        }
+                        $(tag+"_toggle").prop("checked", data[0]).change()
+                    }
                     else $(tag+"_toggle").prop("checked", false)
                     // listen for changes
                     var actions = "actions" in this.widget ? this.widget["actions"] : null

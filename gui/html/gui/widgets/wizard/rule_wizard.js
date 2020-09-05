@@ -61,7 +61,7 @@ class Rule_wizard extends Widget {
                     <div class="tab-pane fade show active" id="'+this.id+'_tab_general_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_general">\
                         <div class="form-group">\
                             <label>Rule identifier*</label>\
-                            <input type="text" id="'+this.id+'_rule_id" class="form-control" placeholder="identifier that will be used to reference the rule" required>\
+                            <input type="text" id="'+this.id+'_rule_id" class="form-control" pattern="[a-zA-Z0-9/_-]+" placeholder="identifier that will be used to reference the rule" required>\
                         </div>\
                         <div class="form-check">\
                             <input type="checkbox" class="form-check-input" id="'+this.id+'_disabled">\

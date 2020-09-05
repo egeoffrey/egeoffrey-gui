@@ -4,6 +4,8 @@ class Menu_item_wizard extends Widget {
         super(id, widget)
         this.waiting_for_item = null
         this.menu_item = null
+        this.pages = {}
+        this.folders = {}
     }
     
     // draw the widget's content
@@ -30,19 +32,19 @@ class Menu_item_wizard extends Widget {
             <form method="POST" role="form" id="'+this.id+'_form" class="needs-validation" novalidate>\
                 <div class="form-group">\
                     <label>Folder identifier*</label>\
-                    <input type="text" id="'+this.id+'_section_id" class="form-control" placeholder="folder identifier (must exists) this item belongs to" required>\
+                    <select id="'+this.id+'_section_id" class="form-control" required><option value=""></option></select>\
                 </div>\
                 <div class="form-group">\
                     <label>Menu item identifier*</label>\
-                    <input type="text" id="'+this.id+'_menu_item_id" class="form-control" placeholder="identifier of the menu item" required>\
+                    <input type="text" id="'+this.id+'_menu_item_id" class="form-control" placeholder="identifier of the menu item" pattern="[a-zA-Z0-9/_-]+" required>\
                 </div>\
                 <div class="form-group">\
                     <label>Text*</label>\
-                    <input type="text" id="'+this.id+'_text" class="form-control" placeholder="text to show">\
+                    <input type="text" id="'+this.id+'_text" class="form-control" placeholder="text to show" required>\
                 </div>\
                 <div class="form-group">\
                     <label>Page*</label>\
-                    <input type="text" id="'+this.id+'_page" class="form-control" placeholder="page identifier to open when clicked">\
+                    <select id="'+this.id+'_page" class="form-control" required><option value=""></option></select>\
                 </div>\
                 <div class="form-group">\
                     <label>Icon</label>\
@@ -63,6 +65,15 @@ class Menu_item_wizard extends Widget {
             </form>\
         ')
         gui.select_icon(this.id+'_icon')
+        // configure page select
+        $("#"+this.id+'_page').attr("data-live-search", "true")
+        $("#"+this.id+'_page').addClass("bootstrap-select")
+        $('#'+this.id+'_page').selectpicker();
+        // configure folder select
+        $("#"+this.id+'_section_id').attr("data-live-search", "true")
+        $("#"+this.id+'_section_id').addClass("bootstrap-select")
+        $('#'+this.id+'_section_id').selectpicker();
+        // configure order input
         $("#"+this.id+"_order").TouchSpin();
         // configure add group button
         $("#"+this.id+'_groups_add').unbind().click(function(this_class, id) {
@@ -146,6 +157,8 @@ class Menu_item_wizard extends Widget {
                 };
             }(this, folder_id, menu_item_id), 100);
         }
+        this.add_configuration_listener("gui/menu/#", gui.menu_config_schema)        
+        this.add_configuration_listener("gui/pages/#", gui.page_config_schema)
     }
     
     // return a random number
@@ -185,29 +198,54 @@ class Menu_item_wizard extends Widget {
     
     // receive configuration
     on_configuration(message) {
-        // assuming we are receiving a configuration (edit)
-        var split = message.args.replace("gui/menu/","").split("/")
-        var folder_id = split[0]
-        var menu_item_id = split[1]
-        if (this.waiting_for_item == folder_id+"/"+menu_item_id) this.waiting_for_item = null
-        else return
-        this.menu_item = message.get_data()
-        $("#"+this.id+"_section_id").val(folder_id)
-        $("#"+this.id+"_section_id").prop("disabled", true)
-        $("#"+this.id+"_menu_item_id").val(menu_item_id)
-        $("#"+this.id+"_menu_item_id").prop("disabled", true)
-        // populate the form
-        for (var item of ["text", "page", "icon", "order"]) {
-            if (item in this.menu_item) {
-                if ($("#"+this.id+"_"+item).hasClass("bootstrap-select")) $("#"+this.id+"_"+item).selectpicker("val", this.menu_item[item])
-                $("#"+this.id+"_"+item).val(this.menu_item[item])
+        // receiving a menu item configuration to edit
+        if (message.args.startsWith("gui/menu/"+this.waiting_for_item)) {
+            var split = message.args.replace("gui/menu/","").split("/")
+            var folder_id = split[0]
+            var menu_item_id = split[1]
+            if (this.waiting_for_item == folder_id+"/"+menu_item_id) this.waiting_for_item = null
+            else return
+            this.menu_item = message.get_data()
+            $("#"+this.id+"_section_id").prop("disabled", true)
+            $("#"+this.id+"_section_id").selectpicker("val", folder_id)
+            $("#"+this.id+"_section_id").selectpicker("refresh")
+            $("#"+this.id+"_menu_item_id").val(menu_item_id)
+            $("#"+this.id+"_menu_item_id").prop("disabled", true)
+            // populate the form
+            for (var item of ["section_id", "text", "page", "icon", "order"]) {
+                if (item in this.menu_item) {
+                    if ($("#"+this.id+"_"+item).hasClass("bootstrap-select")) {
+                        $("#"+this.id+"_"+item).selectpicker("val", this.menu_item[item])
+                        $("#"+this.id+"_"+item).selectpicker("refresh")
+                    }
+                    $("#"+this.id+"_"+item).val(this.menu_item[item])
+                }
+            }
+            if ("allow" in this.menu_item) {
+                for (var i = 0; i < this.menu_item["allow"].length; i++) {
+                    var value = this.menu_item["allow"][i]
+                    this.add_array_item(this.id+'_groups', value)
+                }
             }
         }
-        if ("allow" in this.menu_item) {
-            for (var i = 0; i < this.menu_item["allow"].length; i++) {
-                var value = this.menu_item["allow"][i]
-                this.add_array_item(this.id+'_groups', value)
-            }
+        // pages for the select input
+        else if (message.args.startsWith("gui/pages/")) {
+            var page_id = message.args.replace("gui/pages/", "")
+            if (page_id in this.pages) return
+            this.pages[page_id] = message.get_data()
+            $('#'+this.id+"_page").append('<option val="'+page_id+'">'+page_id+'</option>')
+            $('#'+this.id+"_page").selectpicker("refresh");
+        }
+        // menu folders for the select input
+        else if (message.args.startsWith("gui/menu/")) {
+            var folder_id = message.args.replace("gui/menu/", "")
+            if (! folder_id.endsWith("_section")) return
+            folder_id = folder_id.replace("/_section", "")
+            if (folder_id in this.folders) return
+            var folder = message.get_data()
+            this.folders[folder_id] = folder
+            $('#'+this.id+"_section_id").append('<option data-icon="fas fa-'+folder["icon"]+'" value="'+folder_id+'">'+folder["text"]+' ['+folder_id+']</option>')
+            $('#'+this.id+"_section_id").selectpicker("refresh");
         }
     }
 }

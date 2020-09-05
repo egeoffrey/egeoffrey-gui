@@ -11,6 +11,6 @@ modules:
 - gui/webserver:
     description: Runs the webserver serving eGeoffrey's web interface
 package: egeoffrey-gui
-revision: 7
+revision: 8
 tags: gui
 version: 1.3
