@@ -47,7 +47,7 @@ class Sensor_wizard extends Widget {
                     <div class="tab-pane fade show active" id="'+this.id+'_tab_general_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_general">\
                         <div class="form-group">\
                             <label>Sensor identifier*</label>\
-                            <input type="text" id="'+this.id+'_sensor_id" class="form-control" placeholder="identifier that will be used to reference the sensor" required>\
+                            <input type="text" id="'+this.id+'_sensor_id" class="form-control" pattern="[a-zA-Z0-9/_-]+" placeholder="identifier that will be used to reference the sensor" required>\
                         </div>\
                         <div class="form-check">\
                             <input type="checkbox" class="form-check-input" id="'+this.id+'_disabled">\

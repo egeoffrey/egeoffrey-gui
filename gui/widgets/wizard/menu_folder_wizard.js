@@ -24,11 +24,11 @@ class Menu_folder_wizard extends Widget {
             <form method="POST" role="form" id="'+this.id+'_form" class="needs-validation" novalidate>\
                 <div class="form-group">\
                     <label>Folder identifier*</label>\
-                    <input type="text" id="'+this.id+'_section_id" class="form-control" placeholder="folder identifier" required>\
+                    <input type="text" id="'+this.id+'_section_id" class="form-control" placeholder="folder identifier" pattern="[a-zA-Z0-9/_-]+" required>\
                 </div>\
                 <div class="form-group">\
                     <label>Text*</label>\
-                    <input type="text" id="'+this.id+'_text" class="form-control" placeholder="text to show">\
+                    <input type="text" id="'+this.id+'_text" class="form-control" placeholder="text to show" required>\
                 </div>\
                 <div class="form-group">\
                     <label>Icon</label>\
