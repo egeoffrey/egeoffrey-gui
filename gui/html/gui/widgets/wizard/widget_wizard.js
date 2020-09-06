@@ -3,7 +3,35 @@ class Widget_wizard extends Widget {
     constructor(id, widget, page) {
         super(id, widget)
         this.page = page
-        this.draw()
+        this.sensor_tags = {
+            "summary": ["icon_sensor"],
+            "range": ["sensor"], 
+            "value": ["sensor", "timestamp_sensor", "icon_sensor"], 
+            "status": ["sensor", "timestamp_sensor"], 
+            "control": ["sensor", "timestamp_sensor", "icon_sensor"], 
+            "input": ["sensor", "timestamp_sensor", "icon_sensor"], 
+            "button": ["icon_sensor"], 
+            "calendar": ["sensor"], 
+            "image": ["sensor"], 
+            "text": ["sensor"], 
+            "table": ["sensor"], 
+            "counter": ["sensor"], 
+            "tasks": ["sensor"], 
+            "slider": ["sensor"], 
+            "heartbeat": ["sensor"]
+        }
+        this.color_tags = {
+            "summary": ["color"],
+            "value": ["color"],
+            "status": ["color_on", "color_off"], 
+            "control": ["color", "color_on", "color_off"], 
+            "input": ["color"], 
+            "button": ["color"], 
+            "counter": ["color"], 
+            "slider": ["color"], 
+        }
+        $("#waiting_body").html('<i class="fas fa-spin fa-spinner"></i> Loading...')
+        $("#waiting").modal()
     }
     
     // draw the widget's content
@@ -11,8 +39,6 @@ class Widget_wizard extends Widget {
         // clear up the modal
         $("#wizard_body").html("")
         $("#wizard_title").html("Widget Configuration")
-        // show the modal
-        $("#wizard").modal()
         // build the form
         $("#wizard_body").append('\
             <form method="POST" role="form" id="'+this.id+'_form" class="needs-validation" novalidate>\
@@ -185,29 +211,11 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color of the icon</label>\
                             <select id="'+this.id+'_summary_color" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon from a sensor</label>\
-                            <input type="text" id="'+this.id+'_summary_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
+                            <select id="'+this.id+'_summary_icon_sensor" class="form-control"></select>\
                         </div>\
                     </div>\
                     \
@@ -240,16 +248,16 @@ class Widget_wizard extends Widget {
                             <label>Custom Timeframe</label>\
                             <input type="text" id="'+this.id+'_timeline_timeframe" class="form-control" placeholder="Custom timeframe in the format last_24_hours. Best fit if not selected">\
                         </div>\
-                        <div class="form-group">\
-                            <label>Range with Min and Max is Displayed for First Sensor. Check for Not Displaying</label>\
-                            <input type="checkbox" class="form-control" id="'+this.id+'_timeline_no_range">\
+                        <div class="form-check">\
+                            <input type="checkbox" class="form-check-input" id="'+this.id+'_timeline_no_range">\
+                            <label class="form-check-label"><b>Range with Min and Max is Displayed for First Sensor. Check for Not Displaying</b></label>\
                         </div><br>\
                     </div>\
                     \
                     <div class="tab-pane fade" id="'+this.id+'_tab_range_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_range">\
                         <div class="form-group">\
                             <label>Sensor*</label>\
-                            <input type="text" id="'+this.id+'_range_sensor" class="form-control" placeholder="the sensor whose value has to be displayed" required>\
+                            <select id="'+this.id+'_range_sensor" class="form-control" required></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Display Aggregated Data</label>\
@@ -268,7 +276,7 @@ class Widget_wizard extends Widget {
                     <div class="tab-pane fade" id="'+this.id+'_tab_value_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_value">\
                         <div class="form-group">\
                             <label>Sensor*</label>\
-                            <input type="text" id="'+this.id+'_value_sensor" class="form-control" placeholder="the sensor whose value has to be displayed" required>\
+                            <select id="'+this.id+'_value_sensor" class="form-control" required></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
@@ -277,33 +285,15 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color of the icon</label>\
                             <select id="'+this.id+'_value_color" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Elapsed from a different sensor</label>\
-                            <input type="text" id="'+this.id+'_value_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
+                            <select type="text" id="'+this.id+'_value_timestamp_sensor" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon from a sensor</label>\
-                            <input type="text" id="'+this.id+'_value_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
+                            <select id="'+this.id+'_value_icon_sensor" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Widget Style</label>\
@@ -334,7 +324,7 @@ class Widget_wizard extends Widget {
                     <div class="tab-pane fade" id="'+this.id+'_tab_status_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_status">\
                         <div class="form-group">\
                             <label>Sensor*</label>\
-                            <input type="text" id="'+this.id+'_status_sensor" class="form-control" placeholder="the sensor whose status has to be displayed" required>\
+                            <select id="'+this.id+'_status_sensor" class="form-control" required></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon when ON (default: plug)</label>\
@@ -343,24 +333,6 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color when ON (default: green)</label>\
                             <select id="'+this.id+'_status_color_on" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
@@ -374,24 +346,6 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color when OFF (default: red)</label>\
                             <select id="'+this.id+'_status_color_off" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
@@ -400,7 +354,7 @@ class Widget_wizard extends Widget {
                         </div>\
                         <div class="form-group">\
                             <label>Elapsed from a different sensor</label>\
-                            <input type="text" id="'+this.id+'_status_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
+                            <select id="'+this.id+'_status_timestamp_sensor" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Widget Style</label>\
@@ -411,7 +365,7 @@ class Widget_wizard extends Widget {
                     <div class="tab-pane fade" id="'+this.id+'_tab_control_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_control">\
                         <div class="form-group">\
                             <label>Associated Sensor*</label>\
-                            <input type="text" id="'+this.id+'_control_sensor" class="form-control" placeholder="the sensor where to save the value of this widget" required>\
+                            <select id="'+this.id+'_control_sensor" class="form-control" required></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Additional Actions to Execute</label>\
@@ -428,24 +382,6 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color of the icon</label>\
                             <select id="'+this.id+'_control_color" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
@@ -459,24 +395,6 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color when ON (default: green)</label>\
                             <select id="'+this.id+'_control_color_on" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
@@ -490,33 +408,15 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color when OFF (default: red)</label>\
                             <select id="'+this.id+'_control_color_off" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Elapsed from a different sensor</label>\
-                            <input type="text" id="'+this.id+'_control_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
+                            <select id="'+this.id+'_control_timestamp_sensor" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon from a sensor</label>\
-                            <input type="text" id="'+this.id+'_control_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
+                            <select id="'+this.id+'_control_icon_sensor" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Widget Style</label>\
@@ -527,7 +427,7 @@ class Widget_wizard extends Widget {
                     <div class="tab-pane fade" id="'+this.id+'_tab_input_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_input">\
                         <div class="form-group">\
                             <label>Sensor*</label>\
-                            <input type="text" id="'+this.id+'_input_sensor" class="form-control" placeholder="the sensor where the input is stored" required>\
+                            <select id="'+this.id+'_input_sensor" class="form-control" required></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
@@ -536,33 +436,15 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color of the icon</label>\
                             <select id="'+this.id+'_input_color" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Elapsed from a different sensor</label>\
-                            <input type="text" id="'+this.id+'_input_timestamp_sensor" class="form-control" placeholder="the sensor from which the elapsed timestamp has to be taken from. Default from the associated sensor above">\
+                            <select id="'+this.id+'_input_timestamp_sensor" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon from a sensor</label>\
-                            <input type="text" id="'+this.id+'_input_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
+                            <select id="'+this.id+'_input_icon_sensor" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Widget Style</label>\
@@ -598,29 +480,11 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color of the icon</label>\
                             <select id="'+this.id+'_button_color" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon from a sensor</label>\
-                            <input type="text" id="'+this.id+'_button_icon_sensor" class="form-control" placeholder="the sensor from which the icon has to be taken from. Default is the static icon above">\
+                            <select id="'+this.id+'_button_icon_sensor" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Widget Style</label>\
@@ -631,7 +495,7 @@ class Widget_wizard extends Widget {
                     <div class="tab-pane fade" id="'+this.id+'_tab_calendar_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_calendar">\
                         <div class="form-group">\
                             <label>Sensor*</label>\
-                            <input type="text" id="'+this.id+'_calendar_sensor" class="form-control" placeholder="the sensor whose calendar has to be displayed" required>\
+                            <select id="'+this.id+'_calendar_sensor" class="form-control" required></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Event Time Step (Minutes)</label>\
@@ -650,7 +514,7 @@ class Widget_wizard extends Widget {
                     <div class="tab-pane fade" id="'+this.id+'_tab_image_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_image">\
                         <div class="form-group">\
                             <label>Sensor*</label>\
-                            <input type="text" id="'+this.id+'_image_sensor" class="form-control" placeholder="the sensor whose image has to be displayed" required>\
+                            <select id="'+this.id+'_image_sensor" class="form-control" required></select>\
                         </div>\
                     </div>\
                     \
@@ -677,16 +541,16 @@ class Widget_wizard extends Widget {
                             <label>Timeframe to display in days</label>\
                             <input type="text" id="'+this.id+'_map_timeframe" class="form-control" placeholder="display positions for this number of past days (default 7 days)">\
                         </div>\
-                        <div class="form-group">\
-                            <label>Track movements with a line among positions</label>\
-                            <input type="checkbox" class="form-control" id="'+this.id+'_map_tracking">\
+                        <div class="form-check">\
+                            <input type="checkbox" class="form-check-input" id="'+this.id+'_map_tracking">\
+                            <label class="form-check-label"><b>Track movements with a line among positions</b></label>\
                         </div><br>\
                     </div>\
                     \
                     <div class="tab-pane fade" id="'+this.id+'_tab_text_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_text">\
                         <div class="form-group">\
                             <label>Sensor</label>\
-                            <input type="text" id="'+this.id+'_text_sensor" class="form-control" placeholder="the sensor whose text has to be displayed">\
+                            <select id="'+this.id+'_text_sensor" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Static Text</label>\
@@ -697,14 +561,14 @@ class Widget_wizard extends Widget {
                     <div class="tab-pane fade" id="'+this.id+'_tab_table_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_table">\
                         <div class="form-group">\
                             <label>Associated Sensor</label>\
-                            <input type="text" id="'+this.id+'_table_sensor" class="form-control" placeholder="the sensor whose text has to be displayed as a table (one row per line)" required>\
+                            <select id="'+this.id+'_table_sensor" class="form-control" required></select>\
                         </div>\
                     </div>\
                     \
                     <div class="tab-pane fade" id="'+this.id+'_tab_counter_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_counter">\
                         <div class="form-group">\
                             <label>Associated Sensor*</label>\
-                            <input type="text" id="'+this.id+'_counter_sensor" class="form-control" placeholder="the sensor for which counting the values" required>\
+                            <select id="'+this.id+'_counter_sensor" class="form-control" required></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
@@ -713,24 +577,6 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color of the box</label>\
                             <select id="'+this.id+'_counter_color" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
@@ -750,7 +596,7 @@ class Widget_wizard extends Widget {
                     <div class="tab-pane fade" id="'+this.id+'_tab_tasks_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_tasks">\
                         <div class="form-group">\
                             <label>Sensor*</label>\
-                            <input type="text" id="'+this.id+'_tasks_sensor" class="form-control" placeholder="the sensor where the to-list will be saved" required>\
+                            <select id="'+this.id+'_tasks_sensor" class="form-control" required></select>\
                         </div>\
                     </div>\
                     \
@@ -770,8 +616,8 @@ class Widget_wizard extends Widget {
                     \
                     <div class="tab-pane fade" id="'+this.id+'_tab_slider_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_slider">\
                         <div class="form-group">\
-                            <label>Sensor*</label>\
-                            <input type="text" id="'+this.id+'_slider_sensor" class="form-control" placeholder="the sensor whose value has to be displayed" required>\
+                            <label>Sensor whose value has to be displayed*</label>\
+                            <select id="'+this.id+'_slider_sensor" class="form-control" required></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Icon</label>\
@@ -780,24 +626,6 @@ class Widget_wizard extends Widget {
                         <div class="form-group">\
                             <label>Color of the icon</label>\
                             <select id="'+this.id+'_slider_color" class="form-control">\
-                                <option value=""></option>\
-                                <option value="black">black</option>\
-                                <option value="gray">gray</option>\
-                                <option value="silver">silver</option>\
-                                <option value="white">white</option>\
-                                <option value="aqua">aqua</option>\
-                                <option value="blue">blue</option>\
-                                <option value="navy">navy</option>\
-                                <option value="teal">teal</option>\
-                                <option value="green">green</option>\
-                                <option value="olive">olive</option>\
-                                <option value="lime">lime</option>\
-                                <option value="yellow">yellow</option>\
-                                <option value="orange">orange</option>\
-                                <option value="red">red</option>\
-                                <option value="fuchsia">fuchsia</option>\
-                                <option value="purple">purple</option>\
-                                <option value="maroon">maroon</option>\
                             </select>\
                         </div>\
                         <div class="form-group">\
@@ -816,16 +644,16 @@ class Widget_wizard extends Widget {
                             <label>Step between values of the slider</label>\
                             <input type="text" id="'+this.id+'_slider_step" class="form-control" placeholder="e.g. 10">\
                         </div>\
-                        <div class="form-group">\
-                            <label>Normalize the values to a percentage</label>\
-                            <input type="checkbox" class="form-control" id="'+this.id+'_slider_show_percentage">\
+                        <div class="form-check">\
+                            <input type="checkbox" class="form-check-input" id="'+this.id+'_slider_show_percentage">\
+                            <label class="form-check-label"><b>Normalize the values to a percentage</b></label>\
                         </div>\
                     </div>\
                     \
                     <div class="tab-pane fade" id="'+this.id+'_tab_heartbeat_content" role="tabpanel" aria-labelledby="'+this.id+'_tab_heartbeat">\
                         <div class="form-group">\
-                            <label>Sensor*</label>\
-                            <input type="text" id="'+this.id+'_heartbeat_sensor" class="form-control" placeholder="the sensor whose elapsed has to be displayed" required>\
+                            <label>Sensor whose elapsed has to be displayed*</label>\
+                            <select id="'+this.id+'_heartbeat_sensor" class="form-control" required></select>\
                         </div>\
                         <div class="form-group">\
                             <label>Widget Style</label>\
@@ -847,7 +675,7 @@ class Widget_wizard extends Widget {
                 </div>\
             </form>\
         ')
-        // initialize select
+        // for icons initialize select
         gui.select_icon(this.id+'_value_icon')
         gui.select_icon(this.id+'_control_icon')
         gui.select_icon(this.id+'_summary_icon')
@@ -859,6 +687,19 @@ class Widget_wizard extends Widget {
         gui.select_icon(this.id+'_status_icon_off')
         gui.select_icon(this.id+'_control_icon_on')
         gui.select_icon(this.id+'_control_icon_off')
+        // for sensors, initialize select
+        for (var widget_type in this.sensor_tags) {
+            for (var sensor_tag of this.sensor_tags[widget_type]) {
+                this.select_sensor(this.id+"_"+widget_type+"_"+sensor_tag)
+            }
+        }
+        // for colors, initialize select
+        for (var widget_type in this.color_tags) {
+            for (var color_tag of this.color_tags[widget_type]) {
+                this.select_color(this.id+"_"+widget_type+"_"+color_tag)
+            }
+        }
+
         // add a link to the advanced editor
         $("#wizard_body").append('<br><a id="'+this.id+'_advanced_editor" class="float-right text-primary d-none">Advanced Editor</a>')
         $("#"+this.id+"_advanced_editor").unbind().click(function(this_class) {
@@ -933,7 +774,7 @@ class Widget_wizard extends Widget {
                         if (! (key in this.widget)) continue
                         for (var i = 0; i < this.widget[key].length; i++) {
                             var value = this.widget[key][i]
-                            this.add_array_item(id+'_'+type+'_'+key, value)
+                            this.add_array_item(this.id+'_'+type+'_'+key, value)
                         }
                     }
                 }
@@ -1075,6 +916,15 @@ class Widget_wizard extends Widget {
                 $("#"+this_class.id+"_form").submit()
             };
         }(this))
+        // request available sensors
+        this.add_configuration_listener("sensors/#", gui.supported_sensors_config_schema)
+        // show the modal
+       setTimeout(function(this_class) {
+            return function() {
+             $("#waiting").modal("hide")
+             $("#wizard").modal()
+            };
+        }(this), 2000);
     }
     
     // return a random number
@@ -1108,11 +958,62 @@ class Widget_wizard extends Widget {
         }(id, i));
     }
     
+    // build a select input with available sensors
+    select_sensor(id) {
+        $("#"+id).attr("data-live-search", "true")
+        $("#"+id).addClass("bootstrap-select")
+        $('#'+id).append('<option value=""></option>')
+        // initialize bootstrap select
+        $('#'+id).selectpicker();
+    }
+    
+    // build a select input with available colors
+    select_color(id) {
+        $("#"+id).addClass("bootstrap-select")
+        $('#'+id).append('<option style="background: white; color: #fff;" value=""></option>')
+        $('#'+id).append('<option style="background: black; color: #fff;" value="black">black</option>')
+        $('#'+id).append('<option style="background: gray; color: #fff;" value="gray">gray</option>')
+        $('#'+id).append('<option style="background: silver; color: #000;" value="silver">silver</option>')
+        $('#'+id).append('<option style="background: white; color: #000;" value="white">white</option>')
+        $('#'+id).append('<option style="background: aqua; color: #000;" value="aqua">aqua</option>')
+        $('#'+id).append('<option style="background: blue; color: #fff;" value="blue">blue</option>')
+        $('#'+id).append('<option style="background: navy; color: #fff;" value="navy">navy</option>')
+        $('#'+id).append('<option style="background: teal; color: #fff;" value="teal">teal</option>')
+        $('#'+id).append('<option style="background: green; color: #fff;" value="green">green</option>')
+        $('#'+id).append('<option style="background: olive; color: #fff;" value="olive">olive</option>')
+        $('#'+id).append('<option style="background: lime; color: #000;" value="lime">lime</option>')
+        $('#'+id).append('<option style="background: yellow; color: #000;" value="yellow">yellow</option>')
+        $('#'+id).append('<option style="background: orange; color: #fff;" value="orange">orange</option>')
+        $('#'+id).append('<option style="background: red; color: #fff;" value="red">red</option>')
+        $('#'+id).append('<option style="background: fuchsia; color: #fff;" value="fuchsia">fuchsia</option>')
+        $('#'+id).append('<option style="background: purple; color: #fff;" value="purple">purple</option>')
+        $('#'+id).append('<option style="background: maroon; color: #fff;" value="maroon">maroon</option>')
+        $('#'+id).append('<option style="background: black; color: #fff;" value="black">black</option>')
+        // initialize bootstrap select
+        $('#'+id).selectpicker();
+    }
+    
     // receive data and load it into the widget
     on_message(message) {
     }
     
     // receive configuration
     on_configuration(message) {
+        if (message.args.startsWith("sensors/")) {
+            var sensor_id = message.args.replace("sensors/", "")
+            var sensor = message.get_data()
+            var icon = "icon" in sensor ? sensor["icon"] : "microchip"
+            var description = "description" in sensor ? sensor["description"]+" ["+sensor_id+"]" : sensor_id
+            // for each select expecting a sensor, add the option
+            for (var widget_type in this.sensor_tags) {
+                for (var sensor_tag of this.sensor_tags[widget_type]) {
+                    $('#'+this.id+"_"+widget_type+"_"+sensor_tag).append('<option data-icon="fas fa-'+icon+'" value="'+sensor_id+'">'+description+'</option>')
+                    $('#'+this.id+"_"+widget_type+"_"+sensor_tag).selectpicker("refresh")
+                    if (this.widget["widget"] == widget_type && sensor_tag in this.widget) {
+                        $('#'+this.id+"_"+widget_type+"_"+sensor_tag).selectpicker("val", this.widget[sensor_tag])
+                    }
+                }
+            }
+        }
     }
 }
