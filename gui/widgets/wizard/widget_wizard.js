@@ -1009,7 +1009,7 @@ class Widget_wizard extends Widget {
                 for (var sensor_tag of this.sensor_tags[widget_type]) {
                     $('#'+this.id+"_"+widget_type+"_"+sensor_tag).append('<option data-icon="fas fa-'+icon+'" value="'+sensor_id+'">'+description+'</option>')
                     $('#'+this.id+"_"+widget_type+"_"+sensor_tag).selectpicker("refresh")
-                    if (this.widget["widget"] == widget_type && sensor_tag in this.widget) {
+                    if (this.widget != null && this.widget["widget"] == widget_type && sensor_tag in this.widget) {
                         $('#'+this.id+"_"+widget_type+"_"+sensor_tag).selectpicker("val", this.widget[sensor_tag])
                     }
                 }
