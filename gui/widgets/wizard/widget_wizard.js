@@ -389,11 +389,11 @@ class Widget_wizard extends Widget {
                             <input type="text" id="'+this.id+'_control_text_on" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
-                            <label>Icon when ON (default: plug)</label>\
+                            <label>Icon when ON</label>\
                             <select id="'+this.id+'_control_icon_on" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
-                            <label>Color when ON (default: green)</label>\
+                            <label>Color when ON</label>\
                             <select id="'+this.id+'_control_color_on" class="form-control">\
                             </select>\
                         </div>\
@@ -402,11 +402,11 @@ class Widget_wizard extends Widget {
                             <input type="text" id="'+this.id+'_control_text_off" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
-                            <label>Icon when OFF (default: power-off)</label>\
+                            <label>Icon when OFF</label>\
                             <select id="'+this.id+'_control_icon_off" class="form-control"></select>\
                         </div>\
                         <div class="form-group">\
-                            <label>Color when OFF (default: red)</label>\
+                            <label>Color when OFF</label>\
                             <select id="'+this.id+'_control_color_off" class="form-control">\
                             </select>\
                         </div>\
