@@ -403,7 +403,7 @@ class Gui extends Module {
 				for (var connection_id in connections["connections"]) {
 					var connection = connections["connections"][connection_id]
 					// add a new option to the select
-					$("#connections").append(new Option(connection["EGEOFFREY_USERNAME"]+"@"+connection["EGEOFFREY_ID"]+" ("+connection["EGEOFFREY_GATEWAY_HOSTNAME"]+":"+connection["EGEOFFREY_GATEWAY_PORT"]+")", connection_id));
+					$("#connections").append(new Option(connection["EGEOFFREY_ID"]+"/"+connection["EGEOFFREY_USERNAME"]+" ("+connection["EGEOFFREY_GATEWAY_HOSTNAME"]+":"+connection["EGEOFFREY_GATEWAY_PORT"]+")", connection_id));
 				}
 			}
 			// configure change event for the session select
