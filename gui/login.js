@@ -29,7 +29,7 @@ class Login {
 		if (connections != null) {
 			for (var connection_id in connections["connections"]) {
 				var connection = connections["connections"][connection_id]
-				$("#saved_connections").append(new Option(connection["EGEOFFREY_USERNAME"]+"@"+connection["EGEOFFREY_ID"]+" ("+connection["EGEOFFREY_GATEWAY_HOSTNAME"]+":"+connection["EGEOFFREY_GATEWAY_PORT"]+")", connection_id));
+				$("#saved_connections").append(new Option(connection["EGEOFFREY_ID"]+"/"+connection["EGEOFFREY_USERNAME"]+" ("+connection["EGEOFFREY_GATEWAY_HOSTNAME"]+":"+connection["EGEOFFREY_GATEWAY_PORT"]+")", connection_id));
 			}
 		}
 	}
