@@ -268,7 +268,7 @@ class Sensor_wizard extends Widget {
                                 if (required == "") options_html = options_html+'<option value=""></option>'
                                 // draw a text input
                                 if (["int", "float", "string", "password"].includes(configuration["format"])) {
-                                    var placeholder = "placeholder" in configuration ? "e.g. "+configuration["placeholder"] : ""
+                                    var placeholder = "placeholder" in configuration ? "e.g. "+escape_html(configuration["placeholder"]) : ""
                                     var type = configuration["format"] == "password" ? "password" : "text"
                                     input = '\
                                         <div class="form-group">\
