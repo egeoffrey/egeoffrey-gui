@@ -295,6 +295,7 @@ class Login {
                 window.EGEOFFREY_DEBUG = $("#egeoffrey_debug").is(":checked") ? 1 : 0
                 window.EGEOFFREY_LOGGING_REMOTE = $("#egeoffrey_logging_remote").is(":checked") ? 1 : 0
 				window.EGEOFFREY_REMEMBER_PAGE = $("#egeoffrey_remember_page").is(":checked") ? 1 : 0
+                window.EGEOFFREY_GATEWAY_RETAIN_CONFIG = false
                 // just return if no gateway is provided
                 if (window.EGEOFFREY_GATEWAY_HOSTNAME == "") return
                 this_class.set_login_status("info", '<i class="fas fa-spin fa-spinner"></i> Connecting to the eGeoffrey gateway...')

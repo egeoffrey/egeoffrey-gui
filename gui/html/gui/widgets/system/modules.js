@@ -75,7 +75,7 @@ class Modules extends Widget {
         $("#"+this.id+"_table_text").html('<i class="fas fa-spinner fa-spin"></i> Loading')
         this.request_data()
         // ask for manifest files
-        this.add_broadcast_listener("+/+", "MANIFEST", "#")
+        this.listener = this.add_manifest_listener()
     }
     
     // set the status to given module_id
