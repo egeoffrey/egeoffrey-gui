@@ -61,4 +61,4 @@ gui
 
 ## Version
 
-The version of this egeoffrey-gui is 1.3-16 on the development branch.
+The version of this egeoffrey-gui is 1.3-17 on the development branch.
