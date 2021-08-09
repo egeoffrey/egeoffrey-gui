@@ -8,7 +8,7 @@ class Login {
         // set to true when the login button is pressed
         this.login_in_progress = false
         this.login_in_progress_timestamp = 0
-        this.login_in_progress_timeout = 3
+        this.login_in_progress_timeout = 5
         // set to true when anonynmous guest user logs in
         this.guest_login = false
         // set to true when we are waiting for the house configuration
